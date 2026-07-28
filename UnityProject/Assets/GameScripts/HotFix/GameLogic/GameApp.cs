@@ -1,6 +1,9 @@
+using System;
 using System.Collections.Generic;
 using System.Reflection;
+using Cysharp.Threading.Tasks;
 using GameLogic;
+using UIToolkitTest;
 #if ENABLE_OBFUZ
 using Obfuz;
 #endif
@@ -33,10 +36,11 @@ public partial class GameApp
         StartGameLogic();
     }
     
-    private static void StartGameLogic()
+    private static async UniTaskVoid StartGameLogic()
     {
-        // GameEvent.Get<ILoginUI>().ShowLoginUI();
-        GameModule.UI.ShowUIAsync<BattleMainUI>();
+        WelcomeScreenController controller =
+            await GameModule.UIToolkit.ShowUIAsync<WelcomeScreenController>(
+                UITypes.WelcomeScreen);
     }
     
     private static void Release()
