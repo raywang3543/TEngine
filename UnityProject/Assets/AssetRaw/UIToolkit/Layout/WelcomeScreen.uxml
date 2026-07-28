@@ -1,0 +1,39 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/AssetRaw/UIToolkit/Style/WelcomeStyle.uss?fileID=7433441132597879392&amp;guid=5586f0c03675c4546ad1e0679d312ccf&amp;type=3#WelcomeStyle" />
+    <ui:VisualElement class="welcome-root">
+        <ui:VisualElement class="bg-blob-pink" />
+        <ui:VisualElement class="bg-blob-lime" />
+        <ui:VisualElement class="bg-dots" />
+        <ui:VisualElement class="welcome-content">
+            <ui:VisualElement class="top-bar">
+                <ui:Label text="V2.6 · BETA" class="chip" />
+                <ui:Label text="EST. 2026" class="est-label" />
+            </ui:VisualElement>
+            <ui:VisualElement class="hero">
+                <ui:Label text="MBTI · 16 种人格 · 小测试" class="subtitle-mono" />
+                <ui:Label text="你是&#10;哪一种" class="hero-title" />
+                <ui:VisualElement class="hero-highlight-box">
+                    <ui:Label text="人类？" class="hero-highlight-text" />
+                </ui:VisualElement>
+                <ui:Label text="12 题，约 3 分钟。&#10;答题过程中 不用想太多——直觉比分析更诚实。" class="hero-desc" />
+            </ui:VisualElement>
+            <ui:VisualElement class="stats-badge">
+                <ui:VisualElement name="star-badge" class="star-badge">
+                    <ui:Label text="★" class="star-icon-label" />
+                </ui:VisualElement>
+                <ui:VisualElement class="stats-info">
+                    <ui:Label text="已有 2,847,193 人测过" class="stats-main" />
+                    <ui:Label text="今日新增 12,304 次 · TOP 1 INFP" class="stats-sub" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:Button name="btn-start" text="开始测试 →" class="btn btn-primary" />
+            <ui:Button name="btn-history" text="查看历史记录" class="btn btn-ghost" />
+            <ui:VisualElement class="marquee-strip">
+                <ui:VisualElement name="marquee-track" class="marquee-track">
+                    <ui:Label name="marquee-a" text="INTJ · ENFP · ISTP · ESFJ · INFJ · ENTP · ISFP · ESTJ · INTP · ENFJ · ISTJ · ESTP · INFP · ENTJ · ISFJ · ESFP ·   " class="marquee-text" />
+                    <ui:Label name="marquee-b" text="INTJ · ENFP · ISTP · ESFJ · INFJ · ENTP · ISFP · ESTJ · INTP · ENFJ · ISTJ · ESTP · INFP · ENTJ · ISFJ · ESFP ·   " class="marquee-text" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

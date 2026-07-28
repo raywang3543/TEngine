@@ -65,6 +65,13 @@ public class GameModule
     private static UIModule _ui;
 
     /// <summary>
+    /// 获取 UI Toolkit 模块。
+    /// </summary>
+    public static UIToolkitModule UIToolkit => _uiToolkit ??= UIToolkitModule.Instance;
+
+    private static UIToolkitModule _uiToolkit;
+
+    /// <summary>
     /// 获取场景模块。
     /// </summary>
     public static ISceneModule Scene => _scene ??= Get<ISceneModule>();
@@ -111,6 +118,7 @@ public class GameModule
         _resource = null;
         _audio = null;
         _ui = null;
+        _uiToolkit = null;
         _scene = null;
         _timer = null;
         _localization = null;

@@ -163,6 +163,27 @@ MonoBehaviour:
         FilterRuleName: CollectAll
         AssetTags: 
         UserData: 
+    - GroupName: UIToolkit
+      GroupDesc: 
+      AssetTags: 
+      ActiveRuleName: EnableGroup
+      Collectors:
+      - CollectPath: Assets/AssetRaw/UIToolkit/Style
+        CollectorGUID: 14eba58e047a642aa83c919536f8670c
+        CollectorType: 0
+        AddressRuleName: AddressByFileName
+        PackRuleName: PackSeparately
+        FilterRuleName: CollectAll
+        AssetTags: 
+        UserData: 
+      - CollectPath: Assets/AssetRaw/UIToolkit/Layout
+        CollectorGUID: 85da876f1c1a04e16ac5bf574cea0082
+        CollectorType: 0
+        AddressRuleName: AddressByFileName
+        PackRuleName: PackSeparately
+        FilterRuleName: CollectAll
+        AssetTags: 
+        UserData: 
   - PackageName: OtherPackage
     PackageDesc: 
     EnableAddressable: 1
