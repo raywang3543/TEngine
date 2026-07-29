@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using Cysharp.Threading.Tasks;
 using GameLogic;
+using GameLogic.Core;
 #if ENABLE_OBFUZ
 using Obfuz;
 #endif
@@ -26,7 +27,6 @@ public partial class GameApp
     /// <param name="objects"></param>
     public static void Entrance(object[] objects)
     {
-        GameEventHelper.Init();
         _hotfixAssembly = (List<Assembly>)objects[0];
         Log.Warning("======= 看到此条日志代表你成功运行了热更新代码 =======");
         Log.Warning("======= Entrance GameApp =======");
@@ -37,7 +37,7 @@ public partial class GameApp
     
     private static async UniTaskVoid StartGameLogic()
     {
-        GameModule.Debugger.ActiveWindow = false;
+        CarnivalSystem.Instance.Active();
         await GameModule.UIToolkit.ShowUIAsync<CarnivalTableController>(
             UITypes.CarnivalTable);
     }

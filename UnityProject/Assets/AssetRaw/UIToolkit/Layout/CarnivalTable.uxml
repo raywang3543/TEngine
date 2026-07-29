@@ -8,27 +8,39 @@
             <ui:VisualElement name="screen-sheen-effect" class="shader-effect screen-sheen-effect" picking-mode="Ignore" />
             <ui:VisualElement class="top-bar">
                 <ui:VisualElement class="brand-lockup">
-                    <ui:Label text="MIDNIGHT" class="brand-kicker" />
-                    <ui:Label text="马戏牌局" class="brand-title" />
+                    <ui:Label text="MIDNIGHT CARNIVAL" class="brand-kicker" />
+                    <ui:Label text="午夜马戏牌局" class="brand-title" />
                 </ui:VisualElement>
                 <ui:VisualElement class="round-chip">
                     <ui:Label text="LIVE" class="live-dot" />
-                    <ui:Label name="round-label" text="巡演 1 / 5" class="round-label" />
+                    <ui:Label name="round-label" text="底注 1 · Small" class="round-label" />
                 </ui:VisualElement>
                 <ui:Button name="restart-button" text="重新开局" class="quiet-button" />
             </ui:VisualElement>
 
             <ui:VisualElement class="performer-section">
                 <ui:VisualElement class="section-heading">
-                    <ui:Label text="表演者 · 从左到右触发" class="section-title" />
+                    <ui:Label text="阵容编排 · 从左向右依次结算" class="section-title" />
                     <ui:Label name="performer-count" text="2 / 5" class="section-meta" />
                 </ui:VisualElement>
-                <ui:VisualElement name="performer-row" class="performer-row" />
+                <ui:VisualElement class="loadout-row">
+                    <ui:VisualElement name="performer-row" class="performer-row" />
+                    <ui:VisualElement class="consumable-panel">
+                        <ui:VisualElement class="consumable-heading">
+                            <ui:Label text="消耗牌" class="panel-eyebrow" />
+                            <ui:Label name="consumable-count" text="0 / 2" class="section-meta" />
+                        </ui:VisualElement>
+                        <ui:VisualElement name="consumable-row" class="consumable-row" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
             </ui:VisualElement>
 
             <ui:VisualElement class="main-grid">
                 <ui:VisualElement class="score-panel panel">
-                    <ui:Label text="本场得分" class="panel-eyebrow" />
+                    <ui:Label text="BLIND / 当前盲注" class="panel-eyebrow blind-eyebrow" />
+                    <ui:Label name="blind-label" text="小盲注" class="blind-label" />
+                    <ui:Label name="blind-rule-label" text="基础目标，奖励较少。" class="blind-rule-label" />
+                    <ui:Label text="SCORE / 本场得分" class="panel-eyebrow score-eyebrow" />
                     <ui:VisualElement class="score-line">
                         <ui:Label name="score-label" text="0" class="score-value" />
                         <ui:Label name="target-label" text="/ 280" class="score-target" />
@@ -54,11 +66,13 @@
                             <ui:Label name="deck-label" text="44" class="metric-value" />
                         </ui:VisualElement>
                     </ui:VisualElement>
+                    <ui:Button name="skip-blind-button" text="跳过盲注 · +$2" class="skip-blind-button" />
                 </ui:VisualElement>
 
                 <ui:VisualElement class="table-panel panel">
                     <ui:VisualElement class="result-strip">
-                        <ui:VisualElement>
+                        <ui:VisualElement class="result-copy">
+                            <ui:Label text="HAND / 当前牌型" class="panel-eyebrow result-eyebrow" />
                             <ui:Label name="hand-name" text="等待出牌" class="hand-name" />
                             <ui:Label name="formula-label" text="选择 1–5 张牌，组成牌型" class="formula-label" />
                         </ui:VisualElement>
@@ -85,8 +99,8 @@
         <ui:VisualElement name="shop-overlay" class="overlay">
             <ui:VisualElement class="overlay-card shop-window">
                 <ui:Label text="巡演间歇" class="overlay-kicker" />
-                <ui:Label text="邀请新表演者" class="overlay-title" />
-                <ui:Label text="效果按照牌桌上从左到右的顺序触发。每次邀请都会改变构筑方向。" class="overlay-copy" />
+                <ui:Label text="巡演补给商店" class="overlay-title" />
+                <ui:Label text="购买表演者牌，或囤积秘仪、星球与幽影消耗牌。效果与风险会共同改变构筑方向。" class="overlay-copy" />
                 <ui:VisualElement name="shop-offers" class="shop-offers" />
                 <ui:VisualElement class="overlay-actions">
                     <ui:Label text="未消费的现金会保留到下一场" class="shop-hint" />
