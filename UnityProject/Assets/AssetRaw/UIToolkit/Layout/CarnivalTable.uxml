@@ -1,0 +1,107 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <ui:Style src="project://database/Assets/AssetRaw/UIToolkit/Style/CarnivalTableStyle.uss" />
+    <ui:VisualElement class="carnival-root">
+        <ui:VisualElement name="ambient-effect" class="shader-effect ambient-effect" picking-mode="Ignore" />
+        <ui:VisualElement class="backdrop-ring backdrop-ring-a" />
+        <ui:VisualElement class="backdrop-ring backdrop-ring-b" />
+        <ui:VisualElement class="screen">
+            <ui:VisualElement name="screen-sheen-effect" class="shader-effect screen-sheen-effect" picking-mode="Ignore" />
+            <ui:VisualElement class="top-bar">
+                <ui:VisualElement class="brand-lockup">
+                    <ui:Label text="MIDNIGHT" class="brand-kicker" />
+                    <ui:Label text="马戏牌局" class="brand-title" />
+                </ui:VisualElement>
+                <ui:VisualElement class="round-chip">
+                    <ui:Label text="LIVE" class="live-dot" />
+                    <ui:Label name="round-label" text="巡演 1 / 5" class="round-label" />
+                </ui:VisualElement>
+                <ui:Button name="restart-button" text="重新开局" class="quiet-button" />
+            </ui:VisualElement>
+
+            <ui:VisualElement class="performer-section">
+                <ui:VisualElement class="section-heading">
+                    <ui:Label text="表演者 · 从左到右触发" class="section-title" />
+                    <ui:Label name="performer-count" text="2 / 5" class="section-meta" />
+                </ui:VisualElement>
+                <ui:VisualElement name="performer-row" class="performer-row" />
+            </ui:VisualElement>
+
+            <ui:VisualElement class="main-grid">
+                <ui:VisualElement class="score-panel panel">
+                    <ui:Label text="本场得分" class="panel-eyebrow" />
+                    <ui:VisualElement class="score-line">
+                        <ui:Label name="score-label" text="0" class="score-value" />
+                        <ui:Label name="target-label" text="/ 280" class="score-target" />
+                    </ui:VisualElement>
+                    <ui:VisualElement class="progress-track">
+                        <ui:VisualElement name="progress-fill" class="progress-fill" />
+                    </ui:VisualElement>
+                    <ui:VisualElement class="metric-grid">
+                        <ui:VisualElement class="metric-box metric-pink">
+                            <ui:Label text="出牌" class="metric-label" />
+                            <ui:Label name="hands-label" text="4" class="metric-value" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="metric-box metric-blue">
+                            <ui:Label text="弃牌" class="metric-label" />
+                            <ui:Label name="discards-label" text="3" class="metric-value" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="metric-box metric-gold">
+                            <ui:Label text="现金" class="metric-label" />
+                            <ui:Label name="money-label" text="$6" class="metric-value" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="metric-box metric-ink">
+                            <ui:Label text="牌堆" class="metric-label" />
+                            <ui:Label name="deck-label" text="44" class="metric-value" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+
+                <ui:VisualElement class="table-panel panel">
+                    <ui:VisualElement class="result-strip">
+                        <ui:VisualElement>
+                            <ui:Label name="hand-name" text="等待出牌" class="hand-name" />
+                            <ui:Label name="formula-label" text="选择 1–5 张牌，组成牌型" class="formula-label" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="sort-row">
+                            <ui:Button name="sort-rank-button" text="按点数" class="mini-button" />
+                            <ui:Button name="sort-suit-button" text="按花色" class="mini-button" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                    <ui:VisualElement class="felt">
+                        <ui:VisualElement name="felt-effect" class="shader-effect felt-effect" picking-mode="Ignore" />
+                        <ui:VisualElement class="felt-mark felt-mark-left" />
+                        <ui:VisualElement class="felt-mark felt-mark-right" />
+                        <ui:VisualElement name="card-row" class="card-row" />
+                    </ui:VisualElement>
+                    <ui:Label name="status-label" text="选择牌开始演出。" class="status-label" />
+                    <ui:VisualElement class="action-row">
+                        <ui:Button name="discard-button" text="弃牌重抽" class="action-button action-secondary" />
+                        <ui:Button name="play-button" text="打出这手牌  →" class="action-button action-primary" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <ui:VisualElement name="shop-overlay" class="overlay">
+            <ui:VisualElement class="overlay-card shop-window">
+                <ui:Label text="巡演间歇" class="overlay-kicker" />
+                <ui:Label text="邀请新表演者" class="overlay-title" />
+                <ui:Label text="效果按照牌桌上从左到右的顺序触发。每次邀请都会改变构筑方向。" class="overlay-copy" />
+                <ui:VisualElement name="shop-offers" class="shop-offers" />
+                <ui:VisualElement class="overlay-actions">
+                    <ui:Label text="未消费的现金会保留到下一场" class="shop-hint" />
+                    <ui:Button name="next-round-button" text="前往巡演 2  →" class="action-button action-primary" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <ui:VisualElement name="end-overlay" class="overlay">
+            <ui:VisualElement class="overlay-card end-window">
+                <ui:Label name="end-kicker" text="演出中止" class="overlay-kicker" />
+                <ui:Label name="end-title" text="灯光熄灭" class="end-title" />
+                <ui:Label name="end-description" text="目标未达成。" class="overlay-copy end-copy" />
+                <ui:Button name="end-restart-button" text="再次登台  →" class="action-button action-primary end-button" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

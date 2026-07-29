@@ -1,27 +1,60 @@
 # Repository Guidelines
 
-## Project Structure & Module Organization
+## Project Structure & Documentation
 
-`UnityProject/` is the runnable Unity project (currently pinned to Unity `6000.3.20f1`). Framework code lives under `Assets/TEngine/{Runtime,Editor}`, startup code under `Assets/Launcher`, and hot-update assemblies under `Assets/GameScripts/HotFix/{GameLogic,GameProto}`. Game assets are split between editable sources in `Assets/AssetRaw` and bundle-oriented content in `Assets/AssetArt`. Treat `Packages/YooAsset`, `Packages/UniTask`, and other vendored packages as upstream code unless the change explicitly targets them.
+`UnityProject/` is the runnable Unity `6000.3.20f1` project. Framework runtime and editor code live in
+`Assets/TEngine/{Runtime,Editor}`; native startup and procedure code lives in `Assets/Launcher` and
+`Assets/GameScripts/Procedure`. Hot-update business code belongs in `Assets/GameScripts/HotFix/GameLogic`, while
+Luban output belongs in `HotFix/GameProto`. Editable assets are under `Assets/AssetRaw`; bundle-oriented assets are
+under `Assets/AssetArt`.
 
-Configuration sources are in `Configs/GameConfig/Datas`; generated C# and binary outputs go to `GameProto/GameConfig` and `Assets/AssetRaw/Configs/bytes`. Documentation and screenshots live in `Books/`. Build automation is in `BuildCLI/`, while standalone Roslyn tooling is under `Tools/GameEventSourceGenerator/`.
+Place the game's main logic in `Assets/GameScripts/HotFix/GameLogic/Core/`. Organize supporting UI, module, or
+feature-specific code in neighboring `GameLogic` subdirectories rather than mixing it into framework runtime code.
+
+Use `Books/` for task-focused usage guides and `UnityProject/repowiki/zh/content/` for deeper architecture/API
+reference. Some pages describe older Unity versions or historical APIs, so current source, assembly definitions,
+settings assets, and `ProjectVersion.txt` take precedence.
+
+## Framework Usage Rules
+
+- Application code accesses services through `GameModule.Resource`, `.UI`, `.UIToolkit`, `.Audio`, `.Scene`,
+  `.Timer`, `.Fsm`, `.Procedure`, or `.Localization`. Reserve `ModuleSystem.GetModule<T>()` for framework internals
+  and custom module implementation.
+- Prefer UniTask for I/O and lengthy work. Await async APIs; when a procedure lifecycle method starts a
+  `UniTaskVoid`, call `.Forget()`. Do not introduce `async void` or new coroutine-based flows.
+- Load GameObjects with `LoadGameObjectAsync` so `AssetsReference` tracks ownership. Addressable locations omit file
+  extensions and must be unique. Retain dynamically loaded non-GameObject assets and pass them to `UnloadAsset`.
+- Define cross-module events with `[EventInterface]`; use generated event IDs rather than hard-coded integers.
+  `GameEventHelper.Init()` must remain first in `GameApp.Entrance`. UI classes register through `AddUIEvent`; non-UI
+  listeners must unregister symmetrically or clear a local `GameEventMgr`.
+- Implement screens as `[Window]`-annotated `UIWindow` classes and reusable parts as `UIWidget`. Use ScriptGenerator
+  prefixes such as `m_btn_`, `m_img_`, `m_tmp_`, and `m_item_`. Do not override `OnUpdate` with an empty method.
+- Keep each `ProcedureBase` state single-purpose and transition with `ChangeState<T>()`. Pooled data implements
+  `IMemory.Clear`; never access or release it twice after `MemoryPool.Release`. Pooled entities inherit `ObjectBase`
+  and clear references in `Release`.
+- Edit Luban sources in `Configs/GameConfig/Datas`, then regenerate code and binary data. Never hand-edit generated
+  files; lazy configuration access through `ConfigSystem.Instance.Tables` is preferred.
 
 ## Build, Test, and Development Commands
 
-- Open `UnityProject/` with Unity Hub using the version in `ProjectSettings/ProjectVersion.txt`; run the `Assets/Scenes/main.unity` launcher scene for local validation.
-- `cd Configs/GameConfig && ./gen_code_bin_to_project.sh` regenerates Luban client code and binary tables. Commit source data and generated outputs together.
-- `dotnet build Tools/GameEventSourceGenerator/SourceGenerator.sln` compiles the event analyzer/source-generator tools.
-- Configure local paths in `BuildCLI/path_define.sh`, then run `./BuildCLI/build_android.sh` for the batch Android build.
-- Run tests from **Window > General > Test Runner**. For CI, use Unity’s `-batchmode -projectPath UnityProject -runTests -testPlatform EditMode -testResults results.xml -quit` arguments.
+- Open `UnityProject/` with the version in `ProjectSettings/ProjectVersion.txt`; validate from `Assets/Scenes/main.unity`.
+- `cd Configs/GameConfig && ./gen_code_bin_to_project.sh` regenerates client configuration.
+- `dotnet build Tools/GameEventSourceGenerator/SourceGenerator.sln` builds event tooling.
+- Configure `BuildCLI/path_define.sh`, then run `./BuildCLI/build_android.sh` for Android.
+- Run EditMode/PlayMode tests through Unity Test Runner, or use
+  `-batchmode -projectPath UnityProject -runTests -testPlatform EditMode -testResults results.xml`.
 
-## Coding Style & Naming Conventions
+## Coding Style & Naming
 
-Use four-space indentation and Allman braces for C#. Keep lines within the ReSharper limit of 180 characters from `UnityProject/.editorconfig`. Use `PascalCase` for types and public members, `_camelCase` for private fields, and `UPPER_SNAKE_CASE` for established constants. Match the surrounding namespace and XML documentation style. Never hand-edit generated Luban files. Add and move Unity assets together with their `.meta` files.
+Use four spaces, Allman braces, and blank lines between logical sections. Aim for 120-character lines; never exceed
+the `.editorconfig` ReSharper limit of 180. Use `PascalCase` for types, methods, properties, and constants,
+`camelCase` for locals/parameters, and `_camelCase` for private fields. Keep namespaces aligned with assemblies
+(`TEngine`, `GameLogic`, `Launcher`) and directories. Add XML summaries to public APIs and comments only for intent
+or edge cases. Move Unity assets with their `.meta` files.
 
-## Testing Guidelines
+## Testing, Commits & Pull Requests
 
-The repository has Unity Test Framework support but no substantial first-party test suite yet. Add EditMode or PlayMode test assemblies near the feature, name fixtures and files `*Tests`, and use `[Test]` or `[UnityTest]` as appropriate. Before submitting, run relevant tests plus an Editor play-through; asset or UI changes should also verify bundle loading.
-
-## Commit & Pull Request Guidelines
-
-Recent history mixes terse `update` commits with focused Chinese or English summaries; prefer the focused form, such as `Fix RawFile handle cast crash`. Keep commits scoped and include regenerated artifacts when required. Pull requests should explain behavior and validation, link related issues, and attach screenshots or recordings for UI/editor changes. Note tested Unity version and target platform for build-sensitive changes.
+Name test fixtures/files `*Tests` and place EditMode or PlayMode assemblies near the feature. Run relevant tests plus
+an Editor play-through; verify bundle loading for asset/UI changes. Prefer focused commit subjects such as
+`Fix RawFile handle cast crash` over `update`. Pull requests should describe behavior, validation, tested Unity
+version/platform, linked issues, and include screenshots or recordings for UI/editor changes.

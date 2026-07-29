@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Reflection;
 using Cysharp.Threading.Tasks;
 using GameLogic;
-using UIToolkitTest;
 #if ENABLE_OBFUZ
 using Obfuz;
 #endif
@@ -33,14 +32,14 @@ public partial class GameApp
         Log.Warning("======= Entrance GameApp =======");
         Utility.Unity.AddDestroyListener(Release);
         Log.Warning("======= StartGameLogic =======");
-        StartGameLogic();
+        StartGameLogic().Forget();
     }
     
     private static async UniTaskVoid StartGameLogic()
     {
-        WelcomeScreenController controller =
-            await GameModule.UIToolkit.ShowUIAsync<WelcomeScreenController>(
-                UITypes.WelcomeScreen);
+        GameModule.Debugger.ActiveWindow = false;
+        await GameModule.UIToolkit.ShowUIAsync<CarnivalTableController>(
+            UITypes.CarnivalTable);
     }
     
     private static void Release()
