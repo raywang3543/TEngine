@@ -51,93 +51,7 @@ namespace GameLogic.Core
             List<CarnivalCard> playedCards,
             CarnivalScoreResult result)
         {
-            if (performer.Effect != CarnivalPerformerEffect.Custom)
-            {
-                ApplyDataDrivenPerformer(performer, playedCards, result);
-                return;
-            }
-
-            int matchingCount;
-            switch (performer.Id)
-            {
-                case "red-ribbons":
-                    matchingCount = CountScoringCards(playedCards, result, card => card.Suit == CarnivalSuit.Hearts);
-                    if (matchingCount > 0)
-                    {
-                        result.Multiplier += matchingCount * 3;
-                        result.Breakdown.Add($"红绸舞者 +{matchingCount * 3} 倍率");
-                    }
-                    break;
-                case "pocket-confetti":
-                    if (playedCards.Count <= 3)
-                    {
-                        result.Chips += 24;
-                        result.Breakdown.Add("口袋彩屑 +24 筹码");
-                    }
-                    break;
-                case "club-lantern":
-                    matchingCount = CountScoringCards(playedCards, result, card => card.Suit == CarnivalSuit.Clubs);
-                    if (matchingCount > 0)
-                    {
-                        result.Multiplier += matchingCount * 5;
-                        result.Breakdown.Add($"梅花提灯 +{matchingCount * 5} 倍率");
-                    }
-                    break;
-                case "mirror-duet":
-                    if (ContainsPair(result.Kind))
-                    {
-                        result.Multiplier *= 2f;
-                        result.Breakdown.Add("镜面二重奏 ×2 倍率");
-                    }
-                    break;
-                case "street-runner":
-                    if (result.Kind == CarnivalHandKind.Straight ||
-                        result.Kind == CarnivalHandKind.StraightFlush)
-                    {
-                        _runnerBonus += 12;
-                    }
-
-                    if (_runnerBonus > 0)
-                    {
-                        result.Chips += _runnerBonus;
-                        result.Breakdown.Add($"高跷跑者 +{_runnerBonus} 筹码");
-                    }
-                    break;
-                case "diamond-register":
-                    matchingCount = CountScoringCards(
-                        playedCards,
-                        result,
-                        card => card.Suit == CarnivalSuit.Diamonds);
-                    if (matchingCount > 0)
-                    {
-                        Money += matchingCount;
-                        result.Breakdown.Add($"钻石收银机 +${matchingCount}");
-                    }
-                    break;
-                case "late-finale":
-                    if (HandsRemaining == 0)
-                    {
-                        result.Multiplier *= 2.5f;
-                        result.Breakdown.Add("压轴面具 ×2.5 倍率");
-                    }
-                    break;
-                case "full-tent":
-                    int bonus = _performers.Count * 4;
-                    result.Multiplier += bonus;
-                    result.Breakdown.Add($"满座帐篷 +{bonus} 倍率");
-                    break;
-                case "odd-acrobat":
-                    matchingCount = CountScoringCards(
-                        playedCards,
-                        result,
-                        card => card.Rank == 14 || card.Rank % 2 == 1);
-                    if (matchingCount > 0)
-                    {
-                        result.Chips += matchingCount * 18;
-                        result.Breakdown.Add($"奇数杂技团 +{matchingCount * 18} 筹码");
-                    }
-                    break;
-            }
+            ApplyDataDrivenPerformer(performer, playedCards, result);
         }
 
         private void ApplyDataDrivenPerformer(
@@ -207,6 +121,44 @@ namespace GameLogic.Core
                     if (matchingCount == 0)
                         return;
                     Money += (int)(matchingCount * performer.EffectValue);
+                    break;
+                case CarnivalPerformerEffect.MaxPlayedCardsChips:
+                    if (playedCards.Count > performer.ConditionValue)
+                        return;
+                    result.Chips += (int)performer.EffectValue;
+                    break;
+                case CarnivalPerformerEffect.PairFamilyMultiplyMultiplier:
+                    if (!ContainsPair(result.Kind))
+                        return;
+                    result.Multiplier *= performer.EffectValue;
+                    break;
+                case CarnivalPerformerEffect.StraightPermanentChips:
+                    if (result.Kind == CarnivalHandKind.Straight ||
+                        result.Kind == CarnivalHandKind.StraightFlush)
+                    {
+                        _runnerBonus += (int)performer.EffectValue;
+                    }
+
+                    if (_runnerBonus == 0)
+                        return;
+                    result.Chips += _runnerBonus;
+                    break;
+                case CarnivalPerformerEffect.SuitMoneyPerCard:
+                    matchingCount = CountScoringCards(
+                        playedCards,
+                        result,
+                        card => card.Suit == performer.Suit);
+                    if (matchingCount == 0)
+                        return;
+                    Money += (int)(matchingCount * performer.EffectValue);
+                    break;
+                case CarnivalPerformerEffect.LastHandMultiplyMultiplier:
+                    if (HandsRemaining != 0)
+                        return;
+                    result.Multiplier *= performer.EffectValue;
+                    break;
+                case CarnivalPerformerEffect.PerformerCountMultiplier:
+                    result.Multiplier += _performers.Count * performer.EffectValue;
                     break;
                 default:
                     return;
@@ -465,51 +417,32 @@ namespace GameLogic.Core
             return count;
         }
 
-        private static void ApplyCardEnhancement(CarnivalCard card, CarnivalScoreResult result)
+        private void ApplyCardEnhancement(CarnivalCard card, CarnivalScoreResult result)
         {
-            switch (card.Enhancement)
-            {
-                case CarnivalCardEnhancement.Bonus:
-                    result.Chips += 30;
-                    result.Breakdown.Add($"{card.RankText}{card.SuitText} 奖励牌 +30 筹码");
-                    break;
-                case CarnivalCardEnhancement.Mult:
-                    result.Multiplier += 4f;
-                    result.Breakdown.Add($"{card.RankText}{card.SuitText} 倍率牌 +4 倍率");
-                    break;
-                case CarnivalCardEnhancement.Glass:
-                    result.Multiplier *= 2f;
-                    result.Breakdown.Add($"{card.RankText}{card.SuitText} 玻璃牌 ×2 倍率");
-                    break;
-                case CarnivalCardEnhancement.Lucky:
-                    result.Multiplier += 4f;
-                    result.Breakdown.Add($"{card.RankText}{card.SuitText} 幸运牌 +4 倍率");
-                    break;
-                case CarnivalCardEnhancement.Steel:
-                    result.Multiplier *= 1.5f;
-                    result.Breakdown.Add($"{card.RankText}{card.SuitText} 钢铁牌 ×1.5 倍率");
-                    break;
-                case CarnivalCardEnhancement.Gold:
-                    result.Chips += 20;
-                    result.Breakdown.Add($"{card.RankText}{card.SuitText} 黄金牌 +20 筹码");
-                    break;
-                case CarnivalCardEnhancement.Stone:
-                    result.Chips += 50;
-                    result.Breakdown.Add($"{card.RankText}{card.SuitText} 石牌 +50 筹码");
-                    break;
-            }
+            if (card.Enhancement == CarnivalCardEnhancement.None)
+                return;
+
+            CarnivalCardEnhancementContent content = _contentModel.FindEnhancement(card.Enhancement);
+            result.Chips += content.Chips;
+            result.Multiplier += content.AdditiveMultiplier;
+            result.Multiplier *= content.MultiplierFactor;
+            result.Breakdown.Add($"{card.RankText}{card.SuitText} {content.Name}：{content.Description}");
         }
 
-        private void ResolveGlassCards(List<CarnivalCard> playedCards, CarnivalScoreResult result)
+        private void ResolveBreakingCards(List<CarnivalCard> playedCards, CarnivalScoreResult result)
         {
             foreach (CarnivalCard card in playedCards)
             {
-                if (card.Enhancement != CarnivalCardEnhancement.Glass || _random.NextDouble() >= 0.25)
+                if (card.Enhancement == CarnivalCardEnhancement.None)
+                    continue;
+
+                CarnivalCardEnhancementContent content = _contentModel.FindEnhancement(card.Enhancement);
+                if (content.BreakChance <= 0f || _random.NextDouble() >= content.BreakChance)
                     continue;
 
                 _selectedCardIds.Remove(card.Id);
                 _hand.RemoveAll(item => item.Id == card.Id);
-                result.Breakdown.Add($"{card.RankText}{card.SuitText} 玻璃牌碎裂");
+                result.Breakdown.Add($"{card.RankText}{card.SuitText} {content.Name}碎裂");
             }
         }
     }

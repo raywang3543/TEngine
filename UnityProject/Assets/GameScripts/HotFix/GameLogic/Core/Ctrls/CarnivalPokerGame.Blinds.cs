@@ -10,8 +10,11 @@ namespace GameLogic.Core
             _performers.Clear();
             _consumables.Clear();
             ResetHandLevels();
-            _performers.Add(_contentModel.FindPerformer("red-ribbons"));
-            _performers.Add(_contentModel.FindPerformer("pocket-confetti"));
+            foreach (CarnivalPerformer performer in _contentModel.Performers)
+            {
+                if (performer.IsStarting && _performers.Count < MaxPerformers)
+                    _performers.Add(performer);
+            }
             StartRound();
         }
 

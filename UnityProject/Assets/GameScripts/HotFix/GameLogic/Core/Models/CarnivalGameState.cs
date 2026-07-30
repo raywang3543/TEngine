@@ -33,6 +33,22 @@ namespace GameLogic.Core
             }
 
             SelectedCardIds = selectedCardIds;
+
+            var enhancementDescriptions = new Dictionary<CarnivalCardEnhancement, string>();
+            foreach (CarnivalCard card in source.Hand)
+            {
+                if (card.Enhancement == CarnivalCardEnhancement.None ||
+                    enhancementDescriptions.ContainsKey(card.Enhancement))
+                {
+                    continue;
+                }
+
+                enhancementDescriptions.Add(
+                    card.Enhancement,
+                    source.GetEnhancementDescription(card.Enhancement));
+            }
+
+            EnhancementDescriptions = enhancementDescriptions;
         }
 
         public IReadOnlyList<CarnivalCard> Hand { get; }
@@ -51,10 +67,18 @@ namespace GameLogic.Core
         public int CardsInDeck { get; }
         public string StatusMessage { get; }
         private HashSet<int> SelectedCardIds { get; }
+        private Dictionary<CarnivalCardEnhancement, string> EnhancementDescriptions { get; }
 
         public bool IsSelected(int cardId)
         {
             return SelectedCardIds.Contains(cardId);
+        }
+
+        public string GetEnhancementDescription(CarnivalCardEnhancement enhancement)
+        {
+            return EnhancementDescriptions.TryGetValue(enhancement, out string description)
+                ? description
+                : enhancement.ToString();
         }
 
         private static IReadOnlyList<T> Copy<T>(IReadOnlyList<T> source)

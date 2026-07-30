@@ -1,6 +1,8 @@
 using GameLogic.Core;
 using NUnit.Framework;
 using System.Collections.Generic;
+using System.IO;
+using UnityEngine;
 
 namespace GameLogic.Tests
 {
@@ -9,7 +11,7 @@ namespace GameLogic.Tests
         [Test]
         public void StartNewRun_CreatesSmallBlindAndStartingBuild()
         {
-            var game = new CarnivalPokerGame(17);
+            CarnivalPokerGame game = CreateGame(17);
 
             game.StartNewRun();
 
@@ -24,7 +26,7 @@ namespace GameLogic.Tests
         [Test]
         public void SkipBlind_AdvancesToBossAndBossCannotBeSkipped()
         {
-            var game = new CarnivalPokerGame(31);
+            CarnivalPokerGame game = CreateGame(31);
             game.StartNewRun();
 
             Assert.That(game.SkipBlind(), Is.True);
@@ -38,7 +40,7 @@ namespace GameLogic.Tests
         [Test]
         public void FiveCardBoss_RejectsAHandWithFewerThanFiveCards()
         {
-            var game = new CarnivalPokerGame(53);
+            CarnivalPokerGame game = CreateGame(53);
             game.StartNewRun();
             game.SkipBlind();
             game.SkipBlind();
@@ -55,7 +57,7 @@ namespace GameLogic.Tests
         [Test]
         public void ContentCatalog_MatchesBalatro101oCategoryCounts()
         {
-            var content = new CarnivalContentModel();
+            CarnivalContentModel content = CreateContent();
             var familyCounts = new Dictionary<CarnivalConsumableFamily, int>();
             var performerIds = new HashSet<string>();
             var consumableIds = new HashSet<string>();
@@ -80,7 +82,7 @@ namespace GameLogic.Tests
         [Test]
         public void PerformerCatalog_UsesOfficialRarityDistribution()
         {
-            var content = new CarnivalContentModel();
+            CarnivalContentModel content = CreateContent();
             var counts = new Dictionary<string, int>();
 
             foreach (CarnivalPerformer performer in content.Performers)
@@ -98,7 +100,7 @@ namespace GameLogic.Tests
         [Test]
         public void PlanetCatalog_CoversAllTwelveHandKinds()
         {
-            var content = new CarnivalContentModel();
+            CarnivalContentModel content = CreateContent();
             var kinds = new HashSet<CarnivalHandKind>();
 
             foreach (CarnivalConsumable consumable in content.Consumables)
@@ -111,6 +113,18 @@ namespace GameLogic.Tests
             Assert.That(kinds, Does.Contain(CarnivalHandKind.FiveOfAKind));
             Assert.That(kinds, Does.Contain(CarnivalHandKind.FlushHouse));
             Assert.That(kinds, Does.Contain(CarnivalHandKind.FlushFive));
+        }
+
+        private static CarnivalPokerGame CreateGame(int seed)
+        {
+            return new CarnivalPokerGame(CreateContent(), seed);
+        }
+
+        private static CarnivalContentModel CreateContent()
+        {
+            string configDirectory = Path.Combine(Application.dataPath, "AssetRaw/Configs/bytes");
+            return CarnivalContentModel.LoadFromBytes(file =>
+                File.ReadAllBytes(Path.Combine(configDirectory, $"{file}.bytes")));
         }
     }
 }

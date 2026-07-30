@@ -105,6 +105,42 @@ namespace GameLogic.Core
         OddRankChipsPerCard,
         FaceMultiplierPerCard,
         MoneyPerScoringCard,
+        MaxPlayedCardsChips,
+        PairFamilyMultiplyMultiplier,
+        StraightPermanentChips,
+        SuitMoneyPerCard,
+        LastHandMultiplyMultiplier,
+        PerformerCountMultiplier,
+    }
+
+    /// <summary>
+    /// 消耗牌行为执行器。
+    /// </summary>
+    public enum CarnivalConsumableAction
+    {
+        EnhanceSelected,
+        ShiftSelectedRanks,
+        UpgradeHand,
+        UpgradeRandomHands,
+        UnifyHandRank,
+        ChangeSelectedSuit,
+        AddMoney,
+        CopySelectedCard,
+        DestroySelected,
+        RandomizeSelectedRanks,
+        CreateRandomConsumable,
+        AddDiscards,
+        AddHands,
+        EnhanceAndUpgradeRandomHand,
+        EnhanceAndMoney,
+        ChangeWholeHandSuitAndMoney,
+        DestroyAndUpgradeRandomHand,
+        AddMoneyAndDiscards,
+        RandomizeWholeHandRanks,
+        EnhanceFaceCards,
+        UpgradeRandomHandsAndClearMoney,
+        AddRandomLegendaryPerformer,
+        UpgradeAllHands,
     }
 
     /// <summary>

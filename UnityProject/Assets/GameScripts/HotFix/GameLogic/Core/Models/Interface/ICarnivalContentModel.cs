@@ -9,7 +9,9 @@ namespace GameLogic.Core
     {
         IReadOnlyList<CarnivalPerformer> Performers { get; }
         IReadOnlyList<CarnivalConsumable> Consumables { get; }
+        IReadOnlyDictionary<CarnivalCardEnhancement, CarnivalCardEnhancementContent> Enhancements { get; }
 
         CarnivalPerformer FindPerformer(string performerId);
+        CarnivalCardEnhancementContent FindEnhancement(CarnivalCardEnhancement enhancement);
     }
 }

@@ -35,7 +35,7 @@ namespace GameLogic.Core
         {
         }
 
-        internal CarnivalPokerGame(ICarnivalContentModel contentModel, int seed = 0)
+        public CarnivalPokerGame(ICarnivalContentModel contentModel, int seed = 0)
         {
             _contentModel = contentModel ?? throw new ArgumentNullException(nameof(contentModel));
             _random = seed == 0 ? new Random() : new Random(seed);
@@ -58,6 +58,12 @@ namespace GameLogic.Core
         public int Money { get; private set; }
         public int CardsInDeck => _deck.Count;
         public string StatusMessage { get; private set; }
+
+        public string GetEnhancementDescription(CarnivalCardEnhancement enhancement)
+        {
+            CarnivalCardEnhancementContent content = _contentModel.FindEnhancement(enhancement);
+            return $"{content.Name}：{content.Description}";
+        }
 
         public bool IsSelected(int cardId)
         {
@@ -104,7 +110,7 @@ namespace GameLogic.Core
             HandsRemaining--;
             LastResult = Evaluate(playedCards);
             RoundScore += LastResult.Score;
-            ResolveGlassCards(playedCards, LastResult);
+            ResolveBreakingCards(playedCards, LastResult);
             RemoveSelectedCards();
 
             if (RoundScore >= TargetScore)

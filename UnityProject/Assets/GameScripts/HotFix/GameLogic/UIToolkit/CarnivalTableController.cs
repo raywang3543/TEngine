@@ -279,7 +279,7 @@ namespace GameLogic
                 number.AddToClassList("performer-number");
                 card.Add(number);
 
-                var icon = new Label(GetPerformerIcon(performer.Id));
+                var icon = new Label(performer.Icon);
                 icon.AddToClassList("performer-icon");
                 card.Add(icon);
 
@@ -321,7 +321,7 @@ namespace GameLogic
                 if (card.Enhancement != CarnivalCardEnhancement.None)
                 {
                     cardButton.AddToClassList("playing-card-enhanced");
-                    cardButton.tooltip = GetEnhancementText(card.Enhancement);
+                    cardButton.tooltip = _state.GetEnhancementDescription(card.Enhancement);
                 }
 
                 var topRank = new Label(card.RankText);
@@ -359,7 +359,7 @@ namespace GameLogic
                 offer.Add(rarity);
 
                 string iconText = shopOffer.Kind == CarnivalShopOfferKind.Performer
-                    ? GetPerformerIcon(shopOffer.Performer.Id)
+                    ? shopOffer.Performer.Icon
                     : GetConsumableIcon(shopOffer.Consumable.Family);
                 var icon = new Label(iconText);
                 icon.AddToClassList("shop-icon");
@@ -426,48 +426,5 @@ namespace GameLogic
             }
         }
 
-        private static string GetEnhancementText(CarnivalCardEnhancement enhancement)
-        {
-            switch (enhancement)
-            {
-                case CarnivalCardEnhancement.Bonus:
-                    return "奖励牌：计分时 +30 筹码";
-                case CarnivalCardEnhancement.Mult:
-                    return "倍率牌：计分时 +4 倍率";
-                case CarnivalCardEnhancement.Wild:
-                    return "万能牌：可视为任意花色";
-                case CarnivalCardEnhancement.Glass:
-                    return "玻璃牌：计分倍率 ×2，随后有 25% 概率碎裂";
-                default:
-                    return enhancement.ToString();
-            }
-        }
-
-        private static string GetPerformerIcon(string performerId)
-        {
-            switch (performerId)
-            {
-                case "red-ribbons":
-                    return "♥";
-                case "pocket-confetti":
-                    return "✦";
-                case "club-lantern":
-                    return "♣";
-                case "mirror-duet":
-                    return "◈";
-                case "street-runner":
-                    return "↟";
-                case "diamond-register":
-                    return "♦";
-                case "late-finale":
-                    return "☾";
-                case "full-tent":
-                    return "♜";
-                case "odd-acrobat":
-                    return "★";
-                default:
-                    return "?";
-            }
-        }
     }
 }

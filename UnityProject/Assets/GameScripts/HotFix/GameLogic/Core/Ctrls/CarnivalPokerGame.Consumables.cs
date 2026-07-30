@@ -23,164 +23,111 @@ namespace GameLogic.Core
 
         private bool ApplyConsumable(CarnivalConsumable consumable)
         {
-            switch (consumable.Id)
+            switch (consumable.Action)
             {
-                case "tarot-forge":
-                    return EnhanceSelected(consumable, 2, CarnivalCardEnhancement.Bonus);
-                case "tarot-mask":
-                    return EnhanceSelected(consumable, 3, CarnivalCardEnhancement.Wild);
-                case "tarot-rise":
-                    return RaiseSelectedRanks(consumable, 2);
-                case "spectral-glass":
-                    return EnhanceSelected(consumable, 1, CarnivalCardEnhancement.Glass);
-                case "spectral-echo":
-                    UpgradeRandomHands();
-                    Money = Math.Max(0, Money - 3);
-                    StatusMessage = "群星回声升级了 2 种牌型，但夺走了 $3。";
+                case CarnivalConsumableAction.EnhanceSelected:
+                    return EnhanceSelected(consumable, consumable.MaxSelected, consumable.Enhancement);
+                case CarnivalConsumableAction.ShiftSelectedRanks:
+                    return ShiftSelectedRanks(consumable, consumable.MaxSelected, consumable.Amount);
+                case CarnivalConsumableAction.UpgradeHand:
+                    return UpgradeConfiguredHand(consumable);
+                case CarnivalConsumableAction.UpgradeRandomHands:
+                    UpgradeRandomHands(consumable.Amount);
+                    Money = Math.Max(0, Money + consumable.SecondaryAmount);
+                    StatusMessage = $"{consumable.Name}：{consumable.Description}";
                     return true;
-                case "spectral-void":
+                case CarnivalConsumableAction.UnifyHandRank:
                     int targetRank = _hand[_random.Next(_hand.Count)].Rank;
                     for (int i = 0; i < _hand.Count; i++)
                         _hand[i] = _hand[i].WithRank(targetRank);
-                    HandsRemaining = Math.Max(1, HandsRemaining - 1);
-                    StatusMessage = $"虚空契约将整手牌化为 {RankText(targetRank)}，并吞噬 1 次出牌。";
+                    HandsRemaining = Math.Max(1, HandsRemaining + consumable.Amount);
+                    StatusMessage = $"{consumable.Name}将整手牌化为 {RankText(targetRank)}。";
                     return true;
-                default:
-                    if (consumable.HandKind.HasValue)
-                    {
-                        CarnivalHandKind kind = consumable.HandKind.Value;
-                        _handLevels[kind].Upgrade();
-                        StatusMessage = $"{consumable.Name}：对应牌型升至 Lv.{_handLevels[kind].Level}。";
-                        return true;
-                    }
-
-                    if (consumable.Id.StartsWith("tarot-", StringComparison.Ordinal))
-                        return ApplyExpandedTarot(consumable);
-                    if (consumable.Id.StartsWith("spectral-", StringComparison.Ordinal))
-                        return ApplyExpandedSpectral(consumable);
-                    return false;
-            }
-        }
-
-        private bool ApplyExpandedTarot(CarnivalConsumable consumable)
-        {
-            switch (consumable.Id)
-            {
-                case "tarot-04":
-                    return EnhanceSelected(consumable, 2, CarnivalCardEnhancement.Mult);
-                case "tarot-05":
-                    return EnhanceSelected(consumable, 1, CarnivalCardEnhancement.Gold);
-                case "tarot-06":
-                    return EnhanceSelected(consumable, 1, CarnivalCardEnhancement.Steel);
-                case "tarot-07":
-                    return EnhanceSelected(consumable, 1, CarnivalCardEnhancement.Lucky);
-                case "tarot-08":
-                    return EnhanceSelected(consumable, 2, CarnivalCardEnhancement.None);
-                case "tarot-09":
-                    Money += 8;
-                    StatusMessage = $"{consumable.Name}带来了 $8。";
+                case CarnivalConsumableAction.ChangeSelectedSuit:
+                    return ChangeSelectedSuit(consumable, consumable.MaxSelected, consumable.Suit.Value);
+                case CarnivalConsumableAction.AddMoney:
+                    Money = Math.Max(0, Money + consumable.Amount);
+                    StatusMessage = $"{consumable.Name}：{consumable.Description}";
                     return true;
-                case "tarot-10":
-                    UpgradeRandomHands();
-                    StatusMessage = $"{consumable.Name}随机提升了 2 种牌型。";
-                    return true;
-                case "tarot-11":
-                    return ChangeSelectedSuit(consumable, CarnivalSuit.Hearts);
-                case "tarot-12":
-                    return ChangeSelectedSuit(consumable, CarnivalSuit.Spades);
-                case "tarot-13":
-                    return ChangeSelectedSuit(consumable, CarnivalSuit.Diamonds);
-                case "tarot-14":
-                    return ChangeSelectedSuit(consumable, CarnivalSuit.Clubs);
-                case "tarot-15":
-                    return CopySelectedCard(consumable, true);
-                case "tarot-16":
-                    return DestroySelected(consumable, 2);
-                case "tarot-17":
-                    return RandomizeSelectedRanks(consumable, 5);
-                case "tarot-18":
-                    return ShiftSelectedRanks(consumable, 2, -1);
-                case "tarot-19":
-                    Money += 5;
-                    StatusMessage = $"{consumable.Name}换得 $5。";
-                    return true;
-                case "tarot-20":
+                case CarnivalConsumableAction.CopySelectedCard:
+                    return CopySelectedCard(consumable, consumable.BoolValue);
+                case CarnivalConsumableAction.DestroySelected:
+                    return DestroySelected(consumable, consumable.MaxSelected);
+                case CarnivalConsumableAction.RandomizeSelectedRanks:
+                    return RandomizeSelectedRanks(consumable, consumable.MaxSelected);
+                case CarnivalConsumableAction.CreateRandomConsumable:
                     return CreateRandomConsumable(consumable);
-                case "tarot-21":
-                    DiscardsRemaining++;
-                    StatusMessage = $"{consumable.Name}恢复了 1 次弃牌。";
+                case CarnivalConsumableAction.AddDiscards:
+                    DiscardsRemaining = Math.Max(0, DiscardsRemaining + consumable.Amount);
+                    StatusMessage = $"{consumable.Name}：{consumable.Description}";
                     return true;
-                case "tarot-22":
-                    HandsRemaining++;
-                    StatusMessage = $"{consumable.Name}恢复了 1 次出牌。";
+                case CarnivalConsumableAction.AddHands:
+                    HandsRemaining = Math.Max(1, HandsRemaining + consumable.Amount);
+                    StatusMessage = $"{consumable.Name}：{consumable.Description}";
+                    return true;
+                case CarnivalConsumableAction.EnhanceAndUpgradeRandomHand:
+                    if (!EnhanceSelected(consumable, consumable.MaxSelected, consumable.Enhancement))
+                        return false;
+                    UpgradeOneRandomHand();
+                    return true;
+                case CarnivalConsumableAction.EnhanceAndMoney:
+                    if (!EnhanceSelected(consumable, consumable.MaxSelected, consumable.Enhancement))
+                        return false;
+                    Money = Math.Max(0, Money + consumable.Amount);
+                    return true;
+                case CarnivalConsumableAction.ChangeWholeHandSuitAndMoney:
+                    ChangeWholeHandSuit(consumable.Suit.Value);
+                    Money = Math.Max(0, Money + consumable.Amount);
+                    StatusMessage = $"{consumable.Name}：{consumable.Description}";
+                    return true;
+                case CarnivalConsumableAction.DestroyAndUpgradeRandomHand:
+                    if (!DestroySelected(consumable, consumable.MaxSelected))
+                        return false;
+                    UpgradeOneRandomHand();
+                    return true;
+                case CarnivalConsumableAction.AddMoneyAndDiscards:
+                    Money = Math.Max(0, Money + consumable.Amount);
+                    DiscardsRemaining = Math.Max(0, DiscardsRemaining + consumable.SecondaryAmount);
+                    StatusMessage = $"{consumable.Name}：{consumable.Description}";
+                    return true;
+                case CarnivalConsumableAction.RandomizeWholeHandRanks:
+                    RandomizeWholeHandRanks();
+                    StatusMessage = $"{consumable.Name}：{consumable.Description}";
+                    return true;
+                case CarnivalConsumableAction.EnhanceFaceCards:
+                    EnhanceFaceCards(consumable.Enhancement);
+                    StatusMessage = $"{consumable.Name}：{consumable.Description}";
+                    return true;
+                case CarnivalConsumableAction.UpgradeRandomHandsAndClearMoney:
+                    UpgradeRandomHands(consumable.Amount);
+                    Money = 0;
+                    StatusMessage = $"{consumable.Name}：{consumable.Description}";
+                    return true;
+                case CarnivalConsumableAction.AddRandomLegendaryPerformer:
+                    return AddRandomLegendaryPerformer(consumable);
+                case CarnivalConsumableAction.UpgradeAllHands:
+                    foreach (CarnivalHandLevel level in _handLevels.Values)
+                    {
+                        for (int index = 0; index < consumable.Amount; index++)
+                            level.Upgrade();
+                    }
+                    StatusMessage = $"{consumable.Name}：{consumable.Description}";
                     return true;
                 default:
                     return false;
             }
         }
 
-        private bool ApplyExpandedSpectral(CarnivalConsumable consumable)
+        private bool UpgradeConfiguredHand(CarnivalConsumable consumable)
         {
-            switch (consumable.Id)
-            {
-                case "spectral-04":
-                    if (!EnhanceSelected(consumable, 2, CarnivalCardEnhancement.Mult))
-                        return false;
-                    UpgradeOneRandomHand();
-                    return true;
-                case "spectral-05":
-                    if (!EnhanceSelected(consumable, 2, CarnivalCardEnhancement.Glass))
-                        return false;
-                    Money = Math.Max(0, Money - 2);
-                    return true;
-                case "spectral-06":
-                    return EnhanceSelected(consumable, 1, CarnivalCardEnhancement.Gold);
-                case "spectral-07":
-                    return EnhanceSelected(consumable, 1, CarnivalCardEnhancement.Steel);
-                case "spectral-08":
-                    return EnhanceSelected(consumable, 1, CarnivalCardEnhancement.Lucky);
-                case "spectral-09":
-                    return EnhanceSelected(consumable, 1, CarnivalCardEnhancement.Stone);
-                case "spectral-10":
-                    ChangeWholeHandSuit(CarnivalSuit.Hearts);
-                    Money = Math.Max(0, Money - 3);
-                    StatusMessage = $"{consumable.Name}将整手牌化为红心，并夺走了 $3。";
-                    return true;
-                case "spectral-11":
-                    return CopySelectedCard(consumable, false);
-                case "spectral-12":
-                    if (!DestroySelected(consumable, 3))
-                        return false;
-                    UpgradeOneRandomHand();
-                    return true;
-                case "spectral-13":
-                    Money += 10;
-                    DiscardsRemaining = Math.Max(0, DiscardsRemaining - 1);
-                    StatusMessage = $"{consumable.Name}给予 $10，但吞噬了 1 次弃牌。";
-                    return true;
-                case "spectral-14":
-                    RandomizeWholeHandRanks();
-                    StatusMessage = $"{consumable.Name}重排了整手牌的点数。";
-                    return true;
-                case "spectral-15":
-                    EnhanceFaceCards();
-                    StatusMessage = $"{consumable.Name}将所有人头牌强化为倍率牌。";
-                    return true;
-                case "spectral-16":
-                    UpgradeRandomHands(3);
-                    Money = 0;
-                    StatusMessage = $"{consumable.Name}提升 3 种牌型，并夺走全部金币。";
-                    return true;
-                case "spectral-17":
-                    return AddRandomLegendaryPerformer(consumable);
-                case "spectral-18":
-                    foreach (CarnivalHandLevel level in _handLevels.Values)
-                        level.Upgrade();
-                    StatusMessage = $"{consumable.Name}令所有牌型提升 1 级。";
-                    return true;
-                default:
-                    return false;
-            }
+            if (!consumable.HandKind.HasValue)
+                return false;
+
+            CarnivalHandKind kind = consumable.HandKind.Value;
+            for (int index = 0; index < consumable.Amount; index++)
+                _handLevels[kind].Upgrade();
+            StatusMessage = $"{consumable.Name}：对应牌型升至 Lv.{_handLevels[kind].Level}。";
+            return true;
         }
 
         private bool EnhanceSelected(
@@ -203,28 +150,6 @@ namespace GameLogic.Core
             return true;
         }
 
-        private bool RaiseSelectedRanks(CarnivalConsumable consumable, int maximum)
-        {
-            List<CarnivalCard> cards = GetSelectedCards();
-            if (cards.Count == 0 || cards.Count > maximum)
-            {
-                StatusMessage = $"{consumable.Name}需要选择 1–{maximum} 张牌。";
-                return false;
-            }
-
-            foreach (CarnivalCard card in cards)
-                ReplaceCard(card.WithRank(card.Rank == 14 ? 2 : card.Rank + 1));
-
-            _selectedCardIds.Clear();
-            StatusMessage = $"{consumable.Name}提升了 {cards.Count} 张牌的点数。";
-            return true;
-        }
-
-        private void UpgradeRandomHands()
-        {
-            UpgradeRandomHands(2);
-        }
-
         private void UpgradeRandomHands(int count)
         {
             var kinds = new List<CarnivalHandKind>(_handLevels.Keys);
@@ -239,12 +164,12 @@ namespace GameLogic.Core
             _handLevels[kinds[_random.Next(kinds.Count)]].Upgrade();
         }
 
-        private bool ChangeSelectedSuit(CarnivalConsumable consumable, CarnivalSuit suit)
+        private bool ChangeSelectedSuit(CarnivalConsumable consumable, int maximum, CarnivalSuit suit)
         {
             List<CarnivalCard> cards = GetSelectedCards();
-            if (cards.Count == 0 || cards.Count > 3)
+            if (cards.Count == 0 || cards.Count > maximum)
             {
-                StatusMessage = $"{consumable.Name}需要选择 1–3 张牌。";
+                StatusMessage = $"{consumable.Name}需要选择 1–{maximum} 张牌。";
                 return false;
             }
 
@@ -258,9 +183,9 @@ namespace GameLogic.Core
         private bool CopySelectedCard(CarnivalConsumable consumable, bool copySuit)
         {
             List<CarnivalCard> cards = GetSelectedCards();
-            if (cards.Count != 2)
+            if (cards.Count != consumable.MaxSelected)
             {
-                StatusMessage = $"{consumable.Name}需要选择恰好 2 张牌。";
+                StatusMessage = $"{consumable.Name}需要选择恰好 {consumable.MaxSelected} 张牌。";
                 return false;
             }
 
@@ -357,12 +282,12 @@ namespace GameLogic.Core
                 _hand[i] = _hand[i].WithRank(_random.Next(2, 15));
         }
 
-        private void EnhanceFaceCards()
+        private void EnhanceFaceCards(CarnivalCardEnhancement enhancement)
         {
             for (int i = 0; i < _hand.Count; i++)
             {
                 if (_hand[i].IsFace)
-                    _hand[i] = _hand[i].WithEnhancement(CarnivalCardEnhancement.Mult);
+                    _hand[i] = _hand[i].WithEnhancement(enhancement);
             }
         }
 

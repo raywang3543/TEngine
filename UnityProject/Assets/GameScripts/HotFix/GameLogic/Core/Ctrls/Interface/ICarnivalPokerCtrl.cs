@@ -27,6 +27,7 @@ namespace GameLogic.Core
 
         void StartNewRun();
         bool IsSelected(int cardId);
+        string GetEnhancementDescription(CarnivalCardEnhancement enhancement);
         bool ToggleCard(int cardId);
         CarnivalScoreResult PlaySelected();
         bool DiscardSelected();

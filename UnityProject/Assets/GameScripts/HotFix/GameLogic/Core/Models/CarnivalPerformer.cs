@@ -12,8 +12,11 @@ namespace GameLogic.Core
             string description,
             int cost,
             string rarity,
+            string icon,
+            bool isStarting,
             CarnivalPerformerEffect effect = CarnivalPerformerEffect.Custom,
             float effectValue = 0f,
+            int conditionValue = 0,
             CarnivalHandKind? handKind = null,
             CarnivalSuit? suit = null)
         {
@@ -23,8 +26,11 @@ namespace GameLogic.Core
             Description = description;
             Cost = cost;
             Rarity = rarity;
+            Icon = icon;
+            IsStarting = isStarting;
             Effect = effect;
             EffectValue = effectValue;
+            ConditionValue = conditionValue;
             HandKind = handKind;
             Suit = suit;
         }
@@ -35,8 +41,11 @@ namespace GameLogic.Core
         public string Description { get; }
         public int Cost { get; }
         public string Rarity { get; }
+        public string Icon { get; }
+        public bool IsStarting { get; }
         public CarnivalPerformerEffect Effect { get; }
         public float EffectValue { get; }
+        public int ConditionValue { get; }
         public CarnivalHandKind? HandKind { get; }
         public CarnivalSuit? Suit { get; }
     }
