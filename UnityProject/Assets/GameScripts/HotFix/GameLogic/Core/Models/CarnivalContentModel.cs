@@ -90,7 +90,18 @@ namespace GameLogic.Core
                     config.EffectValue,
                     config.ConditionValue,
                     ParseOptionalEnum<CarnivalHandKind>(config.HandKind, nameof(config.HandKind), config.Id),
-                    ParseOptionalEnum<CarnivalSuit>(config.Suit, nameof(config.Suit), config.Id));
+                    ParseOptionalEnum<CarnivalSuit>(config.Suit, nameof(config.Suit), config.Id),
+                    config.OriginalOrder,
+                    config.NameEn,
+                    config.DescEn,
+                    config.UnlockRequirement,
+                    config.UnlockedByDefault,
+                    config.Activation,
+                    config.JokerType,
+                    config.BlueprintCompatible,
+                    config.PerishableCompatible,
+                    config.EternalCompatible,
+                    config.Parameters);
             }
 
             return performers;

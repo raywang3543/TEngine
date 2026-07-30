@@ -5,16 +5,22 @@ namespace GameLogic.Core
         public void StartNewRun()
         {
             Round = 1;
-            Money = 6;
+            Money = 4;
             _runnerBonus = 0;
             _performers.Clear();
             _consumables.Clear();
+            _deck.Clear();
+            _hand.Clear();
+            _discardPile.Clear();
+            _nextCardId = 0;
+            ResetBalatroRunState();
             ResetHandLevels();
             foreach (CarnivalPerformer performer in _contentModel.Performers)
             {
                 if (performer.IsStarting && _performers.Count < MaxPerformers)
-                    _performers.Add(performer);
+                    AddOwnedPerformer(performer);
             }
+            BuildStandardDeck();
             StartRound();
         }
 
@@ -26,10 +32,11 @@ namespace GameLogic.Core
                 return false;
             }
 
-            Money += 2;
+            string tagResult = CollectCurrentBlindTag();
+            _blindsSkippedThisRun++;
             Round++;
             StartRound();
-            StatusMessage = $"跳过盲注获得 $2。现在挑战「{CurrentBlind.Name}」。";
+            StatusMessage = $"{tagResult}。现在挑战「{CurrentBlind.Name}」。";
             return true;
         }
 
@@ -38,9 +45,9 @@ namespace GameLogic.Core
             _handLevels.Clear();
             _handLevels.Add(CarnivalHandKind.HighCard, new CarnivalHandLevel(5, 1f, 10, 1f));
             _handLevels.Add(CarnivalHandKind.Pair, new CarnivalHandLevel(20, 2f, 15, 1f));
-            _handLevels.Add(CarnivalHandKind.TwoPair, new CarnivalHandLevel(30, 2f, 20, 1f));
+            _handLevels.Add(CarnivalHandKind.TwoPair, new CarnivalHandLevel(20, 2f, 20, 1f));
             _handLevels.Add(CarnivalHandKind.ThreeOfAKind, new CarnivalHandLevel(30, 3f, 20, 2f));
-            _handLevels.Add(CarnivalHandKind.Straight, new CarnivalHandLevel(35, 4f, 30, 3f));
+            _handLevels.Add(CarnivalHandKind.Straight, new CarnivalHandLevel(30, 4f, 30, 3f));
             _handLevels.Add(CarnivalHandKind.Flush, new CarnivalHandLevel(35, 4f, 15, 2f));
             _handLevels.Add(CarnivalHandKind.FullHouse, new CarnivalHandLevel(40, 4f, 25, 2f));
             _handLevels.Add(CarnivalHandKind.FourOfAKind, new CarnivalHandLevel(60, 7f, 30, 3f));
@@ -69,13 +76,13 @@ namespace GameLogic.Core
             switch (rule)
             {
                 case CarnivalBossRule.FiveCardOnly:
-                    return new CarnivalBlind("Boss · 五幕", tier, rule, 2f, 6, "每手必须恰好打出 5 张牌。");
+                    return new CarnivalBlind("Boss · 五幕", tier, rule, 2f, 5, "每手必须恰好打出 5 张牌。");
                 case CarnivalBossRule.DebuffFaceCards:
-                    return new CarnivalBlind("Boss · 无面王", tier, rule, 2f, 6, "J、Q、K 不提供筹码或强化效果。");
+                    return new CarnivalBlind("Boss · 无面王", tier, rule, 2f, 5, "J、Q、K 不提供筹码或强化效果。");
                 case CarnivalBossRule.HalveBaseScore:
-                    return new CarnivalBlind("Boss · 燧石幕", tier, rule, 2f, 6, "每手牌型的基础筹码与倍率减半。");
+                    return new CarnivalBlind("Boss · 燧石幕", tier, rule, 2f, 5, "每手牌型的基础筹码与倍率减半。");
                 default:
-                    return new CarnivalBlind("Boss · 断弦", tier, rule, 2f, 6, "本盲注少 1 次弃牌机会。");
+                    return new CarnivalBlind("Boss · 断弦", tier, rule, 2f, 5, "本盲注少 1 次弃牌机会。");
             }
         }
     }

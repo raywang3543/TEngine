@@ -23,6 +23,20 @@ namespace GameLogic
             RuntimeId.ToRuntimeId("EventDefine.CarnivalBuyPerformer");
         public static readonly int CarnivalBuyConsumable =
             RuntimeId.ToRuntimeId("EventDefine.CarnivalBuyConsumable");
+        public static readonly int CarnivalBuyBoosterPack =
+            RuntimeId.ToRuntimeId("EventDefine.CarnivalBuyBoosterPack");
+        public static readonly int CarnivalChooseBoosterReward =
+            RuntimeId.ToRuntimeId("EventDefine.CarnivalChooseBoosterReward");
+        public static readonly int CarnivalSkipBoosterPack =
+            RuntimeId.ToRuntimeId("EventDefine.CarnivalSkipBoosterPack");
+        public static readonly int CarnivalRerollShop =
+            RuntimeId.ToRuntimeId("EventDefine.CarnivalRerollShop");
+        public static readonly int CarnivalSellPerformer =
+            RuntimeId.ToRuntimeId("EventDefine.CarnivalSellPerformer");
+        public static readonly int CarnivalMovePerformerLeft =
+            RuntimeId.ToRuntimeId("EventDefine.CarnivalMovePerformerLeft");
+        public static readonly int CarnivalMovePerformerRight =
+            RuntimeId.ToRuntimeId("EventDefine.CarnivalMovePerformerRight");
         public static readonly int CarnivalUseConsumable =
             RuntimeId.ToRuntimeId("EventDefine.CarnivalUseConsumable");
         public static readonly int CarnivalContinueFromShop =

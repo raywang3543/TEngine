@@ -28,37 +28,46 @@ namespace GameLogic.Core
             Phase = CarnivalRunPhase.Playing;
             RoundScore = 0;
             CurrentBlind = CreateBlind(Round);
+            GenerateBlindTag();
             TargetScore = (int)Math.Round(AnteBaseTargets[Ante - 1] * CurrentBlind.ScoreScale);
             HandsRemaining = 4;
             DiscardsRemaining = 3;
-            if (CurrentBlind.BossRule == CarnivalBossRule.LoseDiscard)
+            ResetBalatroRoundState();
+            ApplyBlindSelectionJokers();
+            if (!_bossBlindDisabled && CurrentBlind.BossRule == CarnivalBossRule.LoseDiscard)
                 DiscardsRemaining--;
             LastResult = null;
             StatusMessage = $"{CurrentBlind.Name}：{CurrentBlind.Description}";
             _selectedCardIds.Clear();
-            _hand.Clear();
-            _discardPile.Clear();
-            BuildAndShuffleDeck();
+            PrepareDeckForRound();
             DrawToHandSize();
+            ApplyAfterInitialDrawJokers();
             SortHandByRank();
         }
 
-        private void BuildAndShuffleDeck()
+        private void BuildStandardDeck()
         {
             _deck.Clear();
-            int id = 0;
             foreach (CarnivalSuit suit in Enum.GetValues(typeof(CarnivalSuit)))
             {
                 for (int rank = 2; rank <= 14; rank++)
-                    _deck.Add(new CarnivalCard(id++, suit, rank));
+                    _deck.Add(new CarnivalCard(_nextCardId++, suit, rank));
             }
+            _startingDeckSize = _deck.Count;
+        }
 
+        private void PrepareDeckForRound()
+        {
+            _deck.AddRange(_hand);
+            _deck.AddRange(_discardPile);
+            _hand.Clear();
+            _discardPile.Clear();
             Shuffle(_deck);
         }
 
         private void DrawToHandSize()
         {
-            while (_hand.Count < HandSize)
+            while (_hand.Count < CurrentHandSize)
             {
                 if (_deck.Count == 0)
                 {

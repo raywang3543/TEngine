@@ -11,6 +11,7 @@ namespace GameLogic.Core
         IReadOnlyList<CarnivalPerformer> Performers { get; }
         IReadOnlyList<CarnivalShopOffer> ShopOffers { get; }
         IReadOnlyList<CarnivalConsumable> Consumables { get; }
+        IReadOnlyList<CarnivalConsumable> BoosterChoices { get; }
         IReadOnlyDictionary<CarnivalHandKind, CarnivalHandLevel> HandLevels { get; }
         CarnivalBlind CurrentBlind { get; }
         CarnivalRunPhase Phase { get; }
@@ -23,6 +24,14 @@ namespace GameLogic.Core
         int DiscardsRemaining { get; }
         int Money { get; }
         int CardsInDeck { get; }
+        int PerformerSlotLimit { get; }
+        int RerollCost { get; }
+        CarnivalBoosterPack CurrentBoosterPack { get; }
+        CarnivalBoosterPack OpenedBoosterPack { get; }
+        CarnivalBlindTag CurrentBlindTag { get; }
+        bool IsBoosterOpen { get; }
+        int DoubleTagCount { get; }
+        int TagsCollectedThisRun { get; }
         string StatusMessage { get; }
 
         void StartNewRun();
@@ -33,6 +42,15 @@ namespace GameLogic.Core
         bool DiscardSelected();
         bool BuyPerformer(string performerId);
         bool BuyConsumable(string consumableId);
+        bool BuyBoosterPack();
+        bool ChooseBoosterReward(string consumableId);
+        bool SkipBoosterPack();
+        int GetBoosterPackCost();
+        bool RerollShop();
+        bool SellPerformer(int performerIndex);
+        bool MovePerformer(int performerIndex, int direction);
+        int GetPerformerSellValue(int performerIndex);
+        int GetOfferCost(string offerId);
         bool UseConsumable(string consumableId);
         void ContinueFromShop();
         bool SkipBlind();

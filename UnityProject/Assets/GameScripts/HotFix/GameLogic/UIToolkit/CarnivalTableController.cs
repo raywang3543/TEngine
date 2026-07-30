@@ -42,6 +42,7 @@ namespace GameLogic
         private Button _playButton;
         private Button _discardButton;
         private Button _nextRoundButton;
+        private Button _rerollShopButton;
         private Button _sortRankButton;
         private Button _sortSuitButton;
         private Button _restartButton;
@@ -113,6 +114,7 @@ namespace GameLogic
             _playButton = _root.Q<Button>("play-button");
             _discardButton = _root.Q<Button>("discard-button");
             _nextRoundButton = _root.Q<Button>("next-round-button");
+            _rerollShopButton = _root.Q<Button>("reroll-shop-button");
             _sortRankButton = _root.Q<Button>("sort-rank-button");
             _sortSuitButton = _root.Q<Button>("sort-suit-button");
             _restartButton = _root.Q<Button>("restart-button");
@@ -125,6 +127,7 @@ namespace GameLogic
             _playButton.clicked += PlaySelected;
             _discardButton.clicked += DiscardSelected;
             _nextRoundButton.clicked += ContinueFromShop;
+            _rerollShopButton.clicked += RerollShop;
             _sortRankButton.clicked += SortByRank;
             _sortSuitButton.clicked += SortBySuit;
             _restartButton.clicked += RestartRun;
@@ -143,6 +146,8 @@ namespace GameLogic
                 _discardButton.clicked -= DiscardSelected;
             if (_nextRoundButton != null)
                 _nextRoundButton.clicked -= ContinueFromShop;
+            if (_rerollShopButton != null)
+                _rerollShopButton.clicked -= RerollShop;
             if (_sortRankButton != null)
                 _sortRankButton.clicked -= SortByRank;
             if (_sortSuitButton != null)
@@ -168,6 +173,11 @@ namespace GameLogic
         private void ContinueFromShop()
         {
             GameEvent.Send(EventDefine.CarnivalContinueFromShop);
+        }
+
+        private void RerollShop()
+        {
+            GameEvent.Send(EventDefine.CarnivalRerollShop);
         }
 
         private void RestartRun()
@@ -205,7 +215,7 @@ namespace GameLogic
             _moneyLabel.text = $"${_state.Money}";
             _deckLabel.text = _state.CardsInDeck.ToString();
             _statusLabel.text = _state.StatusMessage;
-            _performerCountLabel.text = $"{_state.Performers.Count} / 5";
+            _performerCountLabel.text = $"{_state.Performers.Count} / {_state.PerformerSlotLimit}";
             _consumableCountLabel.text = $"{_state.Consumables.Count} / 2";
 
             float progress = _state.TargetScore == 0
@@ -226,6 +236,12 @@ namespace GameLogic
             _playButton.SetEnabled(canAct);
             _discardButton.SetEnabled(canAct && _state.DiscardsRemaining > 0);
             _skipBlindButton.SetEnabled(canAct && _state.CurrentBlind.Tier != CarnivalBlindTier.Boss);
+            _skipBlindButton.text = _state.CurrentBlindTag == null
+                ? "Boss 盲注不可跳过"
+                : _state.DoubleTagCount > 0
+                    ? $"跳过并获得 {_state.CurrentBlindTag.Name} ×{_state.DoubleTagCount + 1}"
+                    : $"跳过并获得 {_state.CurrentBlindTag.Name}";
+            _skipBlindButton.tooltip = _state.CurrentBlindTag?.Description ?? string.Empty;
 
             RenderPerformers();
             RenderConsumables();
@@ -270,6 +286,7 @@ namespace GameLogic
             int index = 0;
             foreach (CarnivalPerformer performer in _state.Performers)
             {
+                int capturedIndex = index;
                 var card = new VisualElement();
                 card.AddToClassList("performer-card");
                 card.AddToClassList($"performer-tone-{index % 4}");
@@ -286,6 +303,38 @@ namespace GameLogic
                 var name = new Label(performer.ShortName);
                 name.AddToClassList("performer-name");
                 card.Add(name);
+
+                var actions = new VisualElement();
+                actions.AddToClassList("performer-actions");
+                var moveLeft = new Button(() =>
+                    GameEvent.Send(EventDefine.CarnivalMovePerformerLeft, capturedIndex))
+                {
+                    text = "←",
+                    tooltip = "向左移动",
+                };
+                moveLeft.AddToClassList("performer-mini-button");
+                moveLeft.SetEnabled(capturedIndex > 0);
+                actions.Add(moveLeft);
+
+                var sell = new Button(() =>
+                    GameEvent.Send(EventDefine.CarnivalSellPerformer, capturedIndex))
+                {
+                    text = $"${_state.PerformerSellValues[capturedIndex]}",
+                    tooltip = "出售小丑牌",
+                };
+                sell.AddToClassList("performer-mini-button");
+                actions.Add(sell);
+
+                var moveRight = new Button(() =>
+                    GameEvent.Send(EventDefine.CarnivalMovePerformerRight, capturedIndex))
+                {
+                    text = "→",
+                    tooltip = "向右移动",
+                };
+                moveRight.AddToClassList("performer-mini-button");
+                moveRight.SetEnabled(capturedIndex + 1 < _state.Performers.Count);
+                actions.Add(moveRight);
+                card.Add(actions);
 
                 _performerRow.Add(card);
                 index++;
@@ -348,6 +397,12 @@ namespace GameLogic
                 return;
 
             _shopOffers.Clear();
+            if (_state.IsBoosterOpen)
+            {
+                RenderOpenedBoosterPack();
+                return;
+            }
+
             foreach (CarnivalShopOffer shopOffer in _state.ShopOffers)
             {
                 CarnivalShopOffer capturedOffer = shopOffer;
@@ -373,6 +428,7 @@ namespace GameLogic
                 description.AddToClassList("shop-description");
                 offer.Add(description);
 
+                int offerCost = _state.GetOfferCost(shopOffer.Id);
                 var buyButton = new Button(() =>
                 {
                     if (capturedOffer.Kind == CarnivalShopOfferKind.Performer)
@@ -381,18 +437,114 @@ namespace GameLogic
                         GameEvent.Send(EventDefine.CarnivalBuyConsumable, capturedOffer.Id);
                 })
                 {
-                    text = $"购买  ${shopOffer.Cost}",
+                    text = $"购买  ${offerCost}",
                 };
                 buyButton.AddToClassList("shop-buy-button");
                 bool hasSpace = shopOffer.Kind == CarnivalShopOfferKind.Performer
-                    ? _state.Performers.Count < 5
+                    ? _state.Performers.Count < _state.PerformerSlotLimit
                     : _state.Consumables.Count < 2;
-                buyButton.SetEnabled(_state.Money >= shopOffer.Cost && hasSpace);
+                buyButton.SetEnabled(hasSpace);
                 offer.Add(buyButton);
                 _shopOffers.Add(offer);
             }
 
+            if (_state.CurrentBoosterPack != null)
+                RenderBoosterPackOffer(_state.CurrentBoosterPack);
+
+            _nextRoundButton.style.display = DisplayStyle.Flex;
+            _rerollShopButton.style.display = DisplayStyle.Flex;
             _nextRoundButton.text = $"挑战下一盲注  →";
+            _rerollShopButton.text = _state.RerollCost == 0
+                ? "免费重掷商店"
+                : $"重掷商店  ${_state.RerollCost}";
+        }
+
+        private void RenderBoosterPackOffer(CarnivalBoosterPack pack)
+        {
+            var offer = new VisualElement();
+            offer.AddToClassList("shop-card");
+            offer.AddToClassList("booster-pack-card");
+
+            var category = new Label("BOOSTER");
+            category.AddToClassList("shop-rarity");
+            offer.Add(category);
+
+            var icon = new Label("🎁");
+            icon.AddToClassList("shop-icon");
+            offer.Add(icon);
+
+            var name = new Label(pack.Name);
+            name.AddToClassList("shop-name");
+            offer.Add(name);
+
+            var description = new Label(pack.Description);
+            description.AddToClassList("shop-description");
+            offer.Add(description);
+
+            var buyButton = new Button(() =>
+                GameEvent.Send(EventDefine.CarnivalBuyBoosterPack))
+            {
+                text = $"打开  ${_state.BoosterPackCost}",
+            };
+            buyButton.AddToClassList("shop-buy-button");
+            offer.Add(buyButton);
+            _shopOffers.Add(offer);
+        }
+
+        private void RenderOpenedBoosterPack()
+        {
+            foreach (CarnivalConsumable consumable in _state.BoosterChoices)
+            {
+                CarnivalConsumable captured = consumable;
+                var choice = new VisualElement();
+                choice.AddToClassList("shop-card");
+                choice.AddToClassList("booster-choice-card");
+
+                var category = new Label(captured.Family.ToString().ToUpperInvariant());
+                category.AddToClassList("shop-rarity");
+                choice.Add(category);
+
+                var icon = new Label(GetConsumableIcon(captured.Family));
+                icon.AddToClassList("shop-icon");
+                choice.Add(icon);
+
+                var name = new Label(captured.Name);
+                name.AddToClassList("shop-name");
+                choice.Add(name);
+
+                var description = new Label(captured.Description);
+                description.AddToClassList("shop-description");
+                choice.Add(description);
+
+                var chooseButton = new Button(() =>
+                    GameEvent.Send(EventDefine.CarnivalChooseBoosterReward, captured.Id))
+                {
+                    text = "选择这张牌",
+                };
+                chooseButton.AddToClassList("shop-buy-button");
+                chooseButton.SetEnabled(_state.Consumables.Count < 2);
+                choice.Add(chooseButton);
+                _shopOffers.Add(choice);
+            }
+
+            var skipCard = new VisualElement();
+            skipCard.AddToClassList("shop-card");
+            skipCard.AddToClassList("booster-skip-card");
+            skipCard.Add(new Label("跳过补充包")
+            {
+                tooltip = "不选择奖励。持有红牌时永久获得 +3 倍率。",
+            });
+            var skipButton = new Button(() =>
+                GameEvent.Send(EventDefine.CarnivalSkipBoosterPack))
+            {
+                text = "跳过",
+            };
+            skipButton.AddToClassList("shop-buy-button");
+            skipCard.Add(skipButton);
+            _shopOffers.Add(skipCard);
+
+            _nextRoundButton.style.display = DisplayStyle.None;
+            _rerollShopButton.style.display = DisplayStyle.None;
         }
 
         private void RenderEndState()
@@ -407,7 +559,7 @@ namespace GameLogic
             _endKicker.text = victory ? "巡演完成" : "演出中止";
             _endTitle.text = victory ? "满堂喝彩！" : "灯光熄灭";
             _endDescription.text = victory
-                ? $"你以 {_state.Performers.Count} 位表演者完成了 3 个底注、全部 9 场盲注。"
+                ? $"你以 {_state.Performers.Count} 张小丑牌完成了 8 个底注、全部 24 场盲注。"
                 : _state.StatusMessage;
         }
 

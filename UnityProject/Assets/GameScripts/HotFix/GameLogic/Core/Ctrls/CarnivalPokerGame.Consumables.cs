@@ -17,6 +17,11 @@ namespace GameLogic.Core
             if (!ApplyConsumable(consumable))
                 return false;
 
+            if (consumable.Family == CarnivalConsumableFamily.Tarot)
+                _tarotCardsUsedThisRun++;
+            else if (consumable.Family == CarnivalConsumableFamily.Planet && consumable.HandKind.HasValue)
+                _usedPlanetKinds.Add(consumable.HandKind.Value);
+
             _consumables.Remove(consumable);
             return true;
         }
@@ -293,7 +298,7 @@ namespace GameLogic.Core
 
         private bool AddRandomLegendaryPerformer(CarnivalConsumable consumable)
         {
-            if (_performers.Count >= MaxPerformers)
+            if (_performers.Count >= MaxPerformerSlots)
             {
                 StatusMessage = "表演者席位已满，无法召来新成员。";
                 return false;
@@ -302,7 +307,7 @@ namespace GameLogic.Core
             var candidates = new List<CarnivalPerformer>();
             foreach (CarnivalPerformer performer in _contentModel.Performers)
             {
-                if (performer.Rarity == "传说" && !_performers.Contains(performer))
+                if (performer.Rarity == "传说" && !HasJoker(performer.Id))
                     candidates.Add(performer);
             }
 
@@ -310,7 +315,7 @@ namespace GameLogic.Core
                 return false;
 
             CarnivalPerformer selected = candidates[_random.Next(candidates.Count)];
-            _performers.Add(selected);
+            AddOwnedPerformer(selected);
             StatusMessage = $"{consumable.Name}召来了「{selected.Name}」。";
             return true;
         }

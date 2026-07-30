@@ -9,7 +9,7 @@ namespace GameLogic.Tests
     public sealed class CarnivalPokerGameTests
     {
         [Test]
-        public void StartNewRun_CreatesSmallBlindAndStartingBuild()
+        public void StartNewRun_CreatesSmallBlindWithNoStartingJokers()
         {
             CarnivalPokerGame game = CreateGame(17);
 
@@ -19,7 +19,7 @@ namespace GameLogic.Tests
             Assert.That(game.Ante, Is.EqualTo(1));
             Assert.That(game.CurrentBlind.Tier, Is.EqualTo(CarnivalBlindTier.Small));
             Assert.That(game.Hand, Has.Count.EqualTo(8));
-            Assert.That(game.Performers, Has.Count.EqualTo(2));
+            Assert.That(game.Performers, Is.Empty);
             Assert.That(game.HandLevels[CarnivalHandKind.Pair].Level, Is.EqualTo(1));
         }
 
@@ -115,6 +115,61 @@ namespace GameLogic.Tests
             Assert.That(kinds, Does.Contain(CarnivalHandKind.FlushFive));
         }
 
+        [Test]
+        public void Hallucination_CreatesTarotWhenBoosterPackOpens()
+        {
+            CarnivalContentModel baseContent = CreateContent();
+            var performers = new List<CarnivalPerformer>
+            {
+                CreateStartingJoker("hallucination", "幻觉"),
+                CreateStartingJoker("oops", "六六大顺"),
+                new CarnivalPerformer(
+                    "test_score",
+                    "测试计分",
+                    "测试计分",
+                    "确保一手击破盲注。",
+                    0,
+                    "普通",
+                    "🃏",
+                    true,
+                    CarnivalPerformerEffect.FlatChips,
+                    1000f),
+            };
+            var game = new CarnivalPokerGame(
+                new TestContentModel(baseContent, performers),
+                73);
+            game.StartNewRun();
+            game.ToggleCard(game.Hand[0].Id);
+
+            game.PlaySelected();
+
+            Assert.That(game.Phase, Is.EqualTo(CarnivalRunPhase.Shop));
+            Assert.That(game.BuyBoosterPack(), Is.True);
+            Assert.That(game.IsBoosterOpen, Is.True);
+            Assert.That(game.Consumables, Has.Count.EqualTo(1));
+            Assert.That(game.Consumables[0].Family, Is.EqualTo(CarnivalConsumableFamily.Tarot));
+        }
+
+        [Test]
+        public void DietCola_DoublesNextBlindTagAndIsConsumed()
+        {
+            CarnivalContentModel baseContent = CreateContent();
+            var performers = new List<CarnivalPerformer>
+            {
+                CreateStartingJoker("diet_cola", "饮料可乐"),
+            };
+            var game = new CarnivalPokerGame(
+                new TestContentModel(baseContent, performers),
+                97);
+            game.StartNewRun();
+
+            Assert.That(game.SellPerformer(0), Is.True);
+            Assert.That(game.DoubleTagCount, Is.EqualTo(1));
+            Assert.That(game.SkipBlind(), Is.True);
+            Assert.That(game.DoubleTagCount, Is.Zero);
+            Assert.That(game.TagsCollectedThisRun, Is.EqualTo(2));
+        }
+
         private static CarnivalPokerGame CreateGame(int seed)
         {
             return new CarnivalPokerGame(CreateContent(), seed);
@@ -125,6 +180,54 @@ namespace GameLogic.Tests
             string configDirectory = Path.Combine(Application.dataPath, "AssetRaw/Configs/bytes");
             return CarnivalContentModel.LoadFromBytes(file =>
                 File.ReadAllBytes(Path.Combine(configDirectory, $"{file}.bytes")));
+        }
+
+        private static CarnivalPerformer CreateStartingJoker(string id, string name)
+        {
+            return new CarnivalPerformer(
+                id,
+                name,
+                name,
+                string.Empty,
+                4,
+                "普通",
+                "🃏",
+                true,
+                CarnivalPerformerEffect.BalatroOriginal);
+        }
+
+        private sealed class TestContentModel : ICarnivalContentModel
+        {
+            private readonly ICarnivalContentModel _baseContent;
+
+            public TestContentModel(
+                ICarnivalContentModel baseContent,
+                IReadOnlyList<CarnivalPerformer> performers)
+            {
+                _baseContent = baseContent;
+                Performers = performers;
+            }
+
+            public IReadOnlyList<CarnivalPerformer> Performers { get; }
+            public IReadOnlyList<CarnivalConsumable> Consumables => _baseContent.Consumables;
+            public IReadOnlyDictionary<CarnivalCardEnhancement, CarnivalCardEnhancementContent> Enhancements =>
+                _baseContent.Enhancements;
+
+            public CarnivalPerformer FindPerformer(string performerId)
+            {
+                foreach (CarnivalPerformer performer in Performers)
+                {
+                    if (performer.Id == performerId)
+                        return performer;
+                }
+
+                return null;
+            }
+
+            public CarnivalCardEnhancementContent FindEnhancement(CarnivalCardEnhancement enhancement)
+            {
+                return _baseContent.FindEnhancement(enhancement);
+            }
         }
     }
 }

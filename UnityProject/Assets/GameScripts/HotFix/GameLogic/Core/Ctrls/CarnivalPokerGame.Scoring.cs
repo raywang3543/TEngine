@@ -7,13 +7,23 @@ namespace GameLogic.Core
     {
         private CarnivalScoreResult Evaluate(List<CarnivalCard> cards)
         {
+            foreach (CarnivalPerformer performer in _performers)
+                GetJokerState(performer).Active = false;
+
             Dictionary<int, List<CarnivalCard>> rankGroups = BuildRankGroups(cards);
-            bool isFlush = cards.Count == 5 && AllSameSuit(cards);
-            bool isStraight = cards.Count == 5 && IsStraight(cards);
+            int sequenceSize = HasJoker("four_fingers") ? 4 : 5;
+            bool isFlush = HasFlush(cards, sequenceSize);
+            bool isStraight = HasStraight(cards, sequenceSize, HasJoker("shortcut"));
             CarnivalHandKind kind = ResolveHandKind(cards.Count, rankGroups, isFlush, isStraight);
             CarnivalScoreResult result = CreateBaseResult(kind);
+            _currentEvaluatedHand = kind;
+            _roundHandPlayCounts.TryGetValue(kind, out int previousRoundPlays);
+            _currentHandWasPlayedThisRound = previousRoundPlays > 0;
+            IncrementCount(_roundHandPlayCounts, kind);
+            IncrementCount(_handPlayCounts, kind);
+            _handsPlayedThisRound++;
 
-            if (CurrentBlind.BossRule == CarnivalBossRule.HalveBaseScore)
+            if (!_bossBlindDisabled && CurrentBlind.BossRule == CarnivalBossRule.HalveBaseScore)
             {
                 result.Chips = Math.Max(1, result.Chips / 2);
                 result.Multiplier = Math.Max(1f, result.Multiplier / 2f);
@@ -21,21 +31,32 @@ namespace GameLogic.Core
             }
 
             AddScoringCards(result, cards, rankGroups);
+            if (HasJoker("splash"))
+            {
+                result.ScoringCardIds.Clear();
+                AddCardIds(result, cards);
+            }
+
+            bool pareidolia = HasJoker("pareidolia");
             foreach (CarnivalCard card in cards)
             {
                 if (!result.ScoringCardIds.Contains(card.Id))
                     continue;
 
-                if (CurrentBlind.BossRule == CarnivalBossRule.DebuffFaceCards && card.IsFace)
+                if (!_bossBlindDisabled &&
+                    CurrentBlind.BossRule == CarnivalBossRule.DebuffFaceCards &&
+                    IsFaceCard(card, pareidolia))
                 {
                     result.Breakdown.Add($"{card.RankText}{card.SuitText} 被 Boss 盲注削弱");
                     continue;
                 }
 
-                result.Chips += card.ChipValue;
-                ApplyCardEnhancement(card, result);
+                int triggerCount = GetScoringCardTriggerCount(card, result, pareidolia);
+                for (int trigger = 0; trigger < triggerCount; trigger++)
+                    ApplyScoringCardTrigger(card, cards, result, pareidolia);
             }
 
+            ApplyHeldCardEffects(cards, result, pareidolia);
             result.Breakdown.Add($"基础 {result.Chips} 筹码 × {result.Multiplier:0.#} 倍率");
 
             foreach (CarnivalPerformer performer in _performers)
@@ -62,6 +83,9 @@ namespace GameLogic.Core
             int matchingCount;
             switch (performer.Effect)
             {
+                case CarnivalPerformerEffect.BalatroOriginal:
+                    ApplyBalatroIndependentJoker(performer, playedCards, result);
+                    return;
                 case CarnivalPerformerEffect.FlatChips:
                     result.Chips += (int)performer.EffectValue;
                     break;
@@ -443,6 +467,9 @@ namespace GameLogic.Core
                 _selectedCardIds.Remove(card.Id);
                 _hand.RemoveAll(item => item.Id == card.Id);
                 result.Breakdown.Add($"{card.RankText}{card.SuitText} {content.Name}碎裂");
+                CarnivalPerformer glassJoker = FindOwnedJoker("glass");
+                if (glassJoker != null)
+                    GetJokerState(glassJoker).Value += 0.75f;
             }
         }
     }

@@ -39,6 +39,13 @@ namespace GameLogic.Core
             GameEvent.AddEventListener(EventDefine.CarnivalDiscardSelected, OnDiscardSelected);
             GameEvent.AddEventListener<string>(EventDefine.CarnivalBuyPerformer, OnBuyPerformer);
             GameEvent.AddEventListener<string>(EventDefine.CarnivalBuyConsumable, OnBuyConsumable);
+            GameEvent.AddEventListener(EventDefine.CarnivalBuyBoosterPack, OnBuyBoosterPack);
+            GameEvent.AddEventListener<string>(EventDefine.CarnivalChooseBoosterReward, OnChooseBoosterReward);
+            GameEvent.AddEventListener(EventDefine.CarnivalSkipBoosterPack, OnSkipBoosterPack);
+            GameEvent.AddEventListener(EventDefine.CarnivalRerollShop, OnRerollShop);
+            GameEvent.AddEventListener<int>(EventDefine.CarnivalSellPerformer, OnSellPerformer);
+            GameEvent.AddEventListener<int>(EventDefine.CarnivalMovePerformerLeft, OnMovePerformerLeft);
+            GameEvent.AddEventListener<int>(EventDefine.CarnivalMovePerformerRight, OnMovePerformerRight);
             GameEvent.AddEventListener<string>(EventDefine.CarnivalUseConsumable, OnUseConsumable);
             GameEvent.AddEventListener(EventDefine.CarnivalContinueFromShop, OnContinueFromShop);
             GameEvent.AddEventListener(EventDefine.CarnivalSkipBlind, OnSkipBlind);
@@ -55,6 +62,13 @@ namespace GameLogic.Core
             GameEvent.RemoveEventListener(EventDefine.CarnivalDiscardSelected, OnDiscardSelected);
             GameEvent.RemoveEventListener<string>(EventDefine.CarnivalBuyPerformer, OnBuyPerformer);
             GameEvent.RemoveEventListener<string>(EventDefine.CarnivalBuyConsumable, OnBuyConsumable);
+            GameEvent.RemoveEventListener(EventDefine.CarnivalBuyBoosterPack, OnBuyBoosterPack);
+            GameEvent.RemoveEventListener<string>(EventDefine.CarnivalChooseBoosterReward, OnChooseBoosterReward);
+            GameEvent.RemoveEventListener(EventDefine.CarnivalSkipBoosterPack, OnSkipBoosterPack);
+            GameEvent.RemoveEventListener(EventDefine.CarnivalRerollShop, OnRerollShop);
+            GameEvent.RemoveEventListener<int>(EventDefine.CarnivalSellPerformer, OnSellPerformer);
+            GameEvent.RemoveEventListener<int>(EventDefine.CarnivalMovePerformerLeft, OnMovePerformerLeft);
+            GameEvent.RemoveEventListener<int>(EventDefine.CarnivalMovePerformerRight, OnMovePerformerRight);
             GameEvent.RemoveEventListener<string>(EventDefine.CarnivalUseConsumable, OnUseConsumable);
             GameEvent.RemoveEventListener(EventDefine.CarnivalContinueFromShop, OnContinueFromShop);
             GameEvent.RemoveEventListener(EventDefine.CarnivalSkipBlind, OnSkipBlind);
@@ -95,6 +109,48 @@ namespace GameLogic.Core
         private void OnBuyConsumable(string consumableId)
         {
             _pokerCtrl.BuyConsumable(consumableId);
+            PublishState();
+        }
+
+        private void OnBuyBoosterPack()
+        {
+            _pokerCtrl.BuyBoosterPack();
+            PublishState();
+        }
+
+        private void OnChooseBoosterReward(string consumableId)
+        {
+            _pokerCtrl.ChooseBoosterReward(consumableId);
+            PublishState();
+        }
+
+        private void OnSkipBoosterPack()
+        {
+            _pokerCtrl.SkipBoosterPack();
+            PublishState();
+        }
+
+        private void OnRerollShop()
+        {
+            _pokerCtrl.RerollShop();
+            PublishState();
+        }
+
+        private void OnSellPerformer(int performerIndex)
+        {
+            _pokerCtrl.SellPerformer(performerIndex);
+            PublishState();
+        }
+
+        private void OnMovePerformerLeft(int performerIndex)
+        {
+            _pokerCtrl.MovePerformer(performerIndex, -1);
+            PublishState();
+        }
+
+        private void OnMovePerformerRight(int performerIndex)
+        {
+            _pokerCtrl.MovePerformer(performerIndex, 1);
             PublishState();
         }
 

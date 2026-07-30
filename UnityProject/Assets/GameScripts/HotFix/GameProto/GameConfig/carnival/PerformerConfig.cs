@@ -29,6 +29,18 @@ public sealed partial class PerformerConfig : Luban.BeanBase
         ConditionValue = _buf.ReadInt();
         HandKind = _buf.ReadString();
         Suit = _buf.ReadString();
+        OriginalOrder = _buf.ReadInt();
+        NameEn = _buf.ReadString();
+        DescEn = _buf.ReadString();
+        UnlockRequirement = _buf.ReadString();
+        UnlockedByDefault = _buf.ReadBool();
+        Activation = _buf.ReadString();
+        JokerType = _buf.ReadString();
+        BlueprintCompatible = _buf.ReadBool();
+        PerishableCompatible = _buf.ReadBool();
+        EternalCompatible = _buf.ReadBool();
+        Parameters = _buf.ReadString();
+        SourceUrl = _buf.ReadString();
     }
 
     public static PerformerConfig DeserializePerformerConfig(ByteBuf _buf)
@@ -37,57 +49,105 @@ public sealed partial class PerformerConfig : Luban.BeanBase
     }
 
     /// <summary>
-    /// 唯一ID
+    /// 卡牌内部 ID
     /// </summary>
     public readonly string Id;
     /// <summary>
-    /// 完整名称
+    /// 简体中文名称
     /// </summary>
     public readonly string Name;
     /// <summary>
-    /// 卡面短名称
+    /// 简短名称
     /// </summary>
     public readonly string ShortName;
     /// <summary>
-    /// 卡面图标
+    /// 界面图标
     /// </summary>
     public readonly string Icon;
     /// <summary>
-    /// 作用说明
+    /// 简体中文原版效果
     /// </summary>
     public readonly string Desc;
     /// <summary>
-    /// 商店售价
+    /// 原版基础价格
     /// </summary>
     public readonly int Cost;
     /// <summary>
-    /// 稀有度
+    /// 原版稀有度
     /// </summary>
     public readonly string Rarity;
     /// <summary>
-    /// 是否为开局表演者
+    /// 是否开局直接持有
     /// </summary>
     public readonly bool IsStarting;
     /// <summary>
-    /// 效果执行器
+    /// 运行时效果执行器
     /// </summary>
     public readonly string Effect;
     /// <summary>
-    /// 主要效果数值
+    /// 通用效果参数
     /// </summary>
     public readonly float EffectValue;
     /// <summary>
-    /// 条件参数
+    /// 通用条件参数
     /// </summary>
     public readonly int ConditionValue;
     /// <summary>
-    /// 目标牌型，None表示无
+    /// 关联牌型；None 表示无
     /// </summary>
     public readonly string HandKind;
     /// <summary>
-    /// 目标花色，None表示无
+    /// 关联花色；None 表示无
     /// </summary>
     public readonly string Suit;
+    /// <summary>
+    /// 原版收藏顺序
+    /// </summary>
+    public readonly int OriginalOrder;
+    /// <summary>
+    /// 英文原名
+    /// </summary>
+    public readonly string NameEn;
+    /// <summary>
+    /// 英文原版效果
+    /// </summary>
+    public readonly string DescEn;
+    /// <summary>
+    /// 原版解锁条件
+    /// </summary>
+    public readonly string UnlockRequirement;
+    /// <summary>
+    /// 原版是否默认解锁
+    /// </summary>
+    public readonly bool UnlockedByDefault;
+    /// <summary>
+    /// 原版触发阶段
+    /// </summary>
+    public readonly string Activation;
+    /// <summary>
+    /// 原版效果类别
+    /// </summary>
+    public readonly string JokerType;
+    /// <summary>
+    /// 是否可被蓝图或头脑风暴复制
+    /// </summary>
+    public readonly bool BlueprintCompatible;
+    /// <summary>
+    /// 是否兼容易腐贴纸
+    /// </summary>
+    public readonly bool PerishableCompatible;
+    /// <summary>
+    /// 是否兼容永恒贴纸
+    /// </summary>
+    public readonly bool EternalCompatible;
+    /// <summary>
+    /// 从原版 game.lua 提取的效果参数
+    /// </summary>
+    public readonly string Parameters;
+    /// <summary>
+    /// 数据来源
+    /// </summary>
+    public readonly string SourceUrl;
    
     public const int __ID__ = -1343140140;
     public override int GetTypeId() => __ID__;
@@ -112,6 +172,18 @@ public sealed partial class PerformerConfig : Luban.BeanBase
         + "conditionValue:" + ConditionValue + ","
         + "handKind:" + HandKind + ","
         + "suit:" + Suit + ","
+        + "originalOrder:" + OriginalOrder + ","
+        + "nameEn:" + NameEn + ","
+        + "descEn:" + DescEn + ","
+        + "unlockRequirement:" + UnlockRequirement + ","
+        + "unlockedByDefault:" + UnlockedByDefault + ","
+        + "activation:" + Activation + ","
+        + "jokerType:" + JokerType + ","
+        + "blueprintCompatible:" + BlueprintCompatible + ","
+        + "perishableCompatible:" + PerishableCompatible + ","
+        + "eternalCompatible:" + EternalCompatible + ","
+        + "parameters:" + Parameters + ","
+        + "sourceUrl:" + SourceUrl + ","
         + "}";
     }
 }

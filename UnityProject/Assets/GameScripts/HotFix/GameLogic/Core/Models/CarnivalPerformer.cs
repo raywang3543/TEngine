@@ -18,7 +18,18 @@ namespace GameLogic.Core
             float effectValue = 0f,
             int conditionValue = 0,
             CarnivalHandKind? handKind = null,
-            CarnivalSuit? suit = null)
+            CarnivalSuit? suit = null,
+            int originalOrder = 0,
+            string nameEn = "",
+            string descriptionEn = "",
+            string unlockRequirement = "",
+            bool unlockedByDefault = true,
+            string activation = "",
+            string jokerType = "",
+            bool blueprintCompatible = true,
+            bool perishableCompatible = true,
+            bool eternalCompatible = true,
+            string parameters = "")
         {
             Id = id;
             Name = name;
@@ -33,6 +44,17 @@ namespace GameLogic.Core
             ConditionValue = conditionValue;
             HandKind = handKind;
             Suit = suit;
+            OriginalOrder = originalOrder;
+            NameEn = nameEn;
+            DescriptionEn = descriptionEn;
+            UnlockRequirement = unlockRequirement;
+            UnlockedByDefault = unlockedByDefault;
+            Activation = activation;
+            JokerType = jokerType;
+            BlueprintCompatible = blueprintCompatible;
+            PerishableCompatible = perishableCompatible;
+            EternalCompatible = eternalCompatible;
+            Parameters = parameters;
         }
 
         public string Id { get; }
@@ -48,5 +70,45 @@ namespace GameLogic.Core
         public int ConditionValue { get; }
         public CarnivalHandKind? HandKind { get; }
         public CarnivalSuit? Suit { get; }
+        public int OriginalOrder { get; }
+        public string NameEn { get; }
+        public string DescriptionEn { get; }
+        public string UnlockRequirement { get; }
+        public bool UnlockedByDefault { get; }
+        public string Activation { get; }
+        public string JokerType { get; }
+        public bool BlueprintCompatible { get; }
+        public bool PerishableCompatible { get; }
+        public bool EternalCompatible { get; }
+        public string Parameters { get; }
+
+        public CarnivalPerformer CreateRuntimeCopy()
+        {
+            return new CarnivalPerformer(
+                Id,
+                Name,
+                ShortName,
+                Description,
+                Cost,
+                Rarity,
+                Icon,
+                IsStarting,
+                Effect,
+                EffectValue,
+                ConditionValue,
+                HandKind,
+                Suit,
+                OriginalOrder,
+                NameEn,
+                DescriptionEn,
+                UnlockRequirement,
+                UnlockedByDefault,
+                Activation,
+                JokerType,
+                BlueprintCompatible,
+                PerishableCompatible,
+                EternalCompatible,
+                Parameters);
+        }
     }
 }

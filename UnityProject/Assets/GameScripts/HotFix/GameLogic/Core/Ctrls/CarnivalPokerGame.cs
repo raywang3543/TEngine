@@ -14,7 +14,17 @@ namespace GameLogic.Core
         private const int FinalRound = CarnivalDefine.FinalRound;
         private const int MaxConsumables = CarnivalDefine.MaxConsumables;
 
-        private static readonly int[] AnteBaseTargets = { 300, 900, 2600 };
+        private static readonly int[] AnteBaseTargets =
+        {
+            300,
+            800,
+            2000,
+            5000,
+            11000,
+            20000,
+            35000,
+            50000,
+        };
 
         private readonly Random _random;
         private readonly ICarnivalContentModel _contentModel;
@@ -25,10 +35,41 @@ namespace GameLogic.Core
         private readonly List<CarnivalPerformer> _performers = new List<CarnivalPerformer>(MaxPerformers);
         private readonly List<CarnivalShopOffer> _shopOffers = new List<CarnivalShopOffer>(4);
         private readonly List<CarnivalConsumable> _consumables = new List<CarnivalConsumable>(MaxConsumables);
+        private readonly List<CarnivalConsumable> _boosterChoices = new List<CarnivalConsumable>(3);
+        private readonly Dictionary<CarnivalPerformer, CarnivalJokerState> _jokerStates =
+            new Dictionary<CarnivalPerformer, CarnivalJokerState>();
         private readonly Dictionary<CarnivalHandKind, CarnivalHandLevel> _handLevels =
             new Dictionary<CarnivalHandKind, CarnivalHandLevel>();
+        private readonly Dictionary<CarnivalHandKind, int> _handPlayCounts =
+            new Dictionary<CarnivalHandKind, int>();
+        private readonly Dictionary<CarnivalHandKind, int> _roundHandPlayCounts =
+            new Dictionary<CarnivalHandKind, int>();
+        private readonly HashSet<CarnivalHandKind> _usedPlanetKinds = new HashSet<CarnivalHandKind>();
 
         private int _runnerBonus;
+        private int _nextCardId;
+        private int _startingDeckSize;
+        private int _handsPlayedThisRound;
+        private int _discardsUsedThisRound;
+        private int _cardsDiscardedThisRun;
+        private int _blindsSkippedThisRun;
+        private int _shopRerollsThisRun;
+        private int _tarotCardsUsedThisRun;
+        private int _freeRerolls;
+        private int _doubleTagCount;
+        private int _tagsCollectedThisRun;
+        private int _investmentTagCount;
+        private bool _firstDiscardUsedThisRound;
+        private bool _bossBlindDisabled;
+        private bool _grosMichelExtinct;
+        private bool _couponShopPending;
+        private bool _couponShopActive;
+        private bool _d6TagPending;
+        private bool _currentHandWasPlayedThisRound;
+        private CarnivalHandKind _currentEvaluatedHand;
+        private CarnivalBoosterPack _currentBoosterPack;
+        private CarnivalBoosterPack _openedBoosterPack;
+        private CarnivalBlindTag _currentBlindTag;
 
         public CarnivalPokerGame(int seed = 0)
             : this(new CarnivalContentModel(), seed)
@@ -45,6 +86,7 @@ namespace GameLogic.Core
         public IReadOnlyList<CarnivalPerformer> Performers => _performers;
         public IReadOnlyList<CarnivalShopOffer> ShopOffers => _shopOffers;
         public IReadOnlyList<CarnivalConsumable> Consumables => _consumables;
+        public IReadOnlyList<CarnivalConsumable> BoosterChoices => _boosterChoices;
         public IReadOnlyDictionary<CarnivalHandKind, CarnivalHandLevel> HandLevels => _handLevels;
         public CarnivalBlind CurrentBlind { get; private set; }
         public CarnivalRunPhase Phase { get; private set; }
@@ -57,6 +99,14 @@ namespace GameLogic.Core
         public int DiscardsRemaining { get; private set; }
         public int Money { get; private set; }
         public int CardsInDeck => _deck.Count;
+        public int PerformerSlotLimit => MaxPerformerSlots;
+        public int RerollCost => _freeRerolls > 0 ? 0 : 5;
+        public CarnivalBoosterPack CurrentBoosterPack => _currentBoosterPack;
+        public CarnivalBoosterPack OpenedBoosterPack => _openedBoosterPack;
+        public CarnivalBlindTag CurrentBlindTag => _currentBlindTag;
+        public bool IsBoosterOpen => _openedBoosterPack != null;
+        public int DoubleTagCount => _doubleTagCount;
+        public int TagsCollectedThisRun => _tagsCollectedThisRun;
         public string StatusMessage { get; private set; }
 
         public string GetEnhancementDescription(CarnivalCardEnhancement enhancement)
@@ -110,11 +160,13 @@ namespace GameLogic.Core
             HandsRemaining--;
             LastResult = Evaluate(playedCards);
             RoundScore += LastResult.Score;
+            ApplyAfterHandPlayedJokers(playedCards, LastResult);
             ResolveBreakingCards(playedCards, LastResult);
             RemoveSelectedCards();
 
             if (RoundScore >= TargetScore)
             {
+                ApplyEndOfRoundJokers();
                 int reward = CurrentBlind.Reward + HandsRemaining;
                 Money += reward;
                 StatusMessage = $"{CurrentBlind.Name}击破！获得 ${reward}，进入巡演商店。";
@@ -126,6 +178,21 @@ namespace GameLogic.Core
 
             if (HandsRemaining <= 0)
             {
+                CarnivalPerformer mrBones = FindOwnedJoker("mr_bones");
+                if (mrBones != null && RoundScore >= Math.Ceiling(TargetScore * 0.25f))
+                {
+                    RemoveOwnedPerformer(mrBones);
+                    RoundScore = TargetScore;
+                    ApplyEndOfRoundJokers();
+                    int reward = CurrentBlind.Reward;
+                    Money += reward;
+                    StatusMessage = $"骷髅先生避免了失败；进入商店并获得 ${reward}。";
+                    Phase = Round == FinalRound ? CarnivalRunPhase.Victory : CarnivalRunPhase.Shop;
+                    if (Phase == CarnivalRunPhase.Shop)
+                        GenerateShop();
+                    return LastResult;
+                }
+
                 Phase = CarnivalRunPhase.GameOver;
                 StatusMessage = $"演出散场：还差 {TargetScore - RoundScore} 分。";
                 return LastResult;
@@ -154,7 +221,9 @@ namespace GameLogic.Core
             }
 
             int count = _selectedCardIds.Count;
+            List<CarnivalCard> discardedCards = GetSelectedCards();
             DiscardsRemaining--;
+            ApplyDiscardJokers(discardedCards);
             RemoveSelectedCards();
             DrawToHandSize();
             StatusMessage = $"弃掉 {count} 张牌，重新整理手牌。";
@@ -170,9 +239,14 @@ namespace GameLogic.Core
             _performers.Clear();
             _shopOffers.Clear();
             _consumables.Clear();
+            _boosterChoices.Clear();
+            _jokerStates.Clear();
             _handLevels.Clear();
             LastResult = null;
             CurrentBlind = null;
+            _currentBoosterPack = null;
+            _openedBoosterPack = null;
+            _currentBlindTag = null;
             StatusMessage = string.Empty;
         }
 

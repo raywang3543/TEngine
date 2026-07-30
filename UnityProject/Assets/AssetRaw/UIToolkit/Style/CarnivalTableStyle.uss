@@ -776,7 +776,7 @@
 }
 
 .shop-card {
-    width: 480px;
+    width: 390px;
     margin: 0 12px 0 12px;
     padding: 24px;
     align-items: center;
@@ -786,6 +786,19 @@
     border-radius: 18px;
     transition-property: filter, translate;
     transition-duration: 140ms, 140ms;
+}
+
+.booster-pack-card {
+    background-color: #eee5ff;
+}
+
+.booster-choice-card {
+    width: 480px;
+}
+
+.booster-skip-card {
+    width: 300px;
+    justify-content: center;
 }
 
 .shop-card:hover {
@@ -850,6 +863,32 @@
 .shop-hint {
     color: rgba(23, 19, 31, 0.55);
     font-size: 18px;
+}
+
+.shop-reroll-button {
+    min-width: 180px;
+    background-color: var(--paper);
+    color: var(--ink);
+    border-width: 3px;
+    border-color: var(--ink);
+}
+
+.performer-actions {
+    margin-top: 5px;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.performer-mini-button {
+    min-width: 24px;
+    height: 24px;
+    margin: 0 2px;
+    padding: 0;
+    font-size: 11px;
+    border-width: 1px;
+    border-color: var(--ink);
+    border-radius: 4px;
+    background-color: rgba(255, 255, 255, 0.7);
 }
 
 .end-window {

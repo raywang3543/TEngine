@@ -58,6 +58,30 @@ namespace GameLogic.Core
     }
 
     /// <summary>
+    /// 扑克牌封蜡。
+    /// </summary>
+    public enum CarnivalCardSeal
+    {
+        None,
+        Gold,
+        Red,
+        Blue,
+        Purple,
+    }
+
+    /// <summary>
+    /// 卡牌版本。
+    /// </summary>
+    public enum CarnivalCardEdition
+    {
+        Base,
+        Foil,
+        Holographic,
+        Polychrome,
+        Negative,
+    }
+
+    /// <summary>
     /// 盲注阶段。
     /// </summary>
     public enum CarnivalBlindTier
@@ -95,6 +119,7 @@ namespace GameLogic.Core
     public enum CarnivalPerformerEffect
     {
         Custom,
+        BalatroOriginal,
         FlatChips,
         FlatMultiplier,
         MultiplyMultiplier,
@@ -153,6 +178,28 @@ namespace GameLogic.Core
     }
 
     /// <summary>
+    /// 补充包类型。
+    /// </summary>
+    public enum CarnivalBoosterPackKind
+    {
+        Arcana,
+        Celestial,
+        Spectral,
+    }
+
+    /// <summary>
+    /// 跳过盲注时可以获得的标签。
+    /// </summary>
+    public enum CarnivalBlindTagKind
+    {
+        Economy,
+        Handy,
+        Investment,
+        Coupon,
+        D6,
+    }
+
+    /// <summary>
     /// 牌局规则常量。
     /// </summary>
     public static class CarnivalDefine
@@ -160,7 +207,7 @@ namespace GameLogic.Core
         public const int HandSize = 8;
         public const int MaxSelectedCards = 5;
         public const int MaxPerformers = 5;
-        public const int FinalRound = 9;
+        public const int FinalRound = 24;
         public const int MaxConsumables = 2;
     }
 }

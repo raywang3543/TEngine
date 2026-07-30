@@ -103,6 +103,7 @@
                 <ui:Label text="购买表演者牌，或囤积秘仪、星球与幽影消耗牌。效果与风险会共同改变构筑方向。" class="overlay-copy" />
                 <ui:VisualElement name="shop-offers" class="shop-offers" />
                 <ui:VisualElement class="overlay-actions">
+                    <ui:Button name="reroll-shop-button" text="重掷商店  $5" class="action-button shop-reroll-button" />
                     <ui:Label text="未消费的现金会保留到下一场" class="shop-hint" />
                     <ui:Button name="next-round-button" text="前往巡演 2  →" class="action-button action-primary" />
                 </ui:VisualElement>
