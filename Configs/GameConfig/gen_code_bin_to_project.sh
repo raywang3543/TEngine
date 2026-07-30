@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Unity 编辑器(GUI 启动)的 PATH 不包含 dotnet 安装目录，需手动补充
+export PATH="$PATH:/usr/local/share/dotnet"
+
 cd "$(dirname "$0")"
 echo "当前目录: $(pwd)"
 
