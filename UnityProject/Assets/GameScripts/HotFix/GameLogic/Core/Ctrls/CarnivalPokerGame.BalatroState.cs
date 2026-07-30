@@ -92,6 +92,7 @@ namespace GameLogic.Core
             _tarotCardsUsedThisRun = 0;
             _freeRerolls = 0;
             _doubleTagCount = 0;
+            _handSizeModifier = 0;
             _tagsCollectedThisRun = 0;
             _investmentTagCount = 0;
             _firstDiscardUsedThisRound = false;
@@ -104,6 +105,7 @@ namespace GameLogic.Core
             _currentBoosterPack = null;
             _openedBoosterPack = null;
             _currentBlindTag = null;
+            _lastUsedConsumable = null;
             _boosterChoices.Clear();
         }
 

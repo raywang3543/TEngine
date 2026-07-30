@@ -148,6 +148,213 @@ namespace GameLogic.Tests
         }
 
         [Test]
+        public void BalatroDatabaseCatalog_UsesOriginalConsumablesAndEnhancementValues()
+        {
+            CarnivalContentModel content = CreateContent();
+
+            Assert.That(FindConsumable(content, "tarot-fool").Name, Is.EqualTo("愚者"));
+            Assert.That(FindConsumable(content, "spectral-black-hole").Name, Is.EqualTo("黑洞"));
+            Assert.That(
+                FindConsumable(content, "spectral-talisman").Seal,
+                Is.EqualTo(CarnivalCardSeal.Gold));
+
+            CarnivalCardEnhancementContent gold =
+                content.FindEnhancement(CarnivalCardEnhancement.Gold);
+            CarnivalCardEnhancementContent lucky =
+                content.FindEnhancement(CarnivalCardEnhancement.Lucky);
+            Assert.That(gold.Chips, Is.Zero);
+            Assert.That(gold.HeldMoney, Is.EqualTo(3));
+            Assert.That(lucky.ChanceAdditiveMultiplier, Is.EqualTo(20f));
+            Assert.That(lucky.AdditiveMultiplierChance, Is.EqualTo(0.2f).Within(0.0001f));
+            Assert.That(lucky.ChanceMoney, Is.EqualTo(20));
+            Assert.That(lucky.MoneyChance, Is.EqualTo(1f / 15f).Within(0.0001f));
+        }
+
+        [Test]
+        public void TarotEnhancementAndDeath_ApplyOriginalSelectedCardRules()
+        {
+            CarnivalContentModel content = CreateContent();
+            CarnivalPokerGame game = CreateGame(167);
+            game.StartNewRun();
+            GiveConsumable(game, FindConsumable(content, "tarot-magician"));
+            CarnivalCard first = game.Hand[0];
+            CarnivalCard second = game.Hand[1];
+            game.ToggleCard(first.Id);
+            game.ToggleCard(second.Id);
+
+            Assert.That(game.UseConsumable("tarot-magician"), Is.True);
+            Assert.That(game.Hand[0].Enhancement, Is.EqualTo(CarnivalCardEnhancement.Lucky));
+            Assert.That(game.Hand[1].Enhancement, Is.EqualTo(CarnivalCardEnhancement.Lucky));
+
+            List<CarnivalCard> hand = GetPrivateField<List<CarnivalCard>>(game, "_hand");
+            hand[0] = hand[0].WithSuit(CarnivalSuit.Clubs).WithRank(2);
+            hand[1] = new CarnivalCard(
+                hand[1].Id,
+                CarnivalSuit.Hearts,
+                14,
+                CarnivalCardEnhancement.Glass,
+                CarnivalCardSeal.Red,
+                CarnivalCardEdition.Polychrome,
+                7);
+            GiveConsumable(game, FindConsumable(content, "tarot-death"));
+            game.ToggleCard(hand[0].Id);
+            game.ToggleCard(hand[1].Id);
+
+            Assert.That(game.UseConsumable("tarot-death"), Is.True);
+            CarnivalCard copied = game.Hand[0];
+            Assert.That(copied.Suit, Is.EqualTo(CarnivalSuit.Hearts));
+            Assert.That(copied.Rank, Is.EqualTo(14));
+            Assert.That(copied.Enhancement, Is.EqualTo(CarnivalCardEnhancement.Glass));
+            Assert.That(copied.Seal, Is.EqualTo(CarnivalCardSeal.Red));
+            Assert.That(copied.Edition, Is.EqualTo(CarnivalCardEdition.Polychrome));
+            Assert.That(copied.PermanentChips, Is.EqualTo(7));
+        }
+
+        [Test]
+        public void FoolAndHighPriestess_CreateExpectedConsumablesWithinSlots()
+        {
+            CarnivalContentModel content = CreateContent();
+            CarnivalPokerGame game = CreateGame(173);
+            game.StartNewRun();
+            GiveConsumable(game, FindConsumable(content, "planet-mercury"));
+            GiveConsumable(game, FindConsumable(content, "tarot-fool"));
+
+            Assert.That(game.UseConsumable("planet-mercury"), Is.True);
+            Assert.That(game.UseConsumable("tarot-fool"), Is.True);
+            Assert.That(game.Consumables, Has.Count.EqualTo(1));
+            Assert.That(game.Consumables[0].Id, Is.EqualTo("planet-mercury"));
+
+            GetPrivateField<List<CarnivalConsumableState>>(game, "_consumables").Clear();
+            GiveConsumable(game, FindConsumable(content, "tarot-high-priestess"));
+            Assert.That(game.UseConsumable("tarot-high-priestess"), Is.True);
+            Assert.That(game.Consumables, Has.Count.EqualTo(2));
+            Assert.That(
+                game.Consumables,
+                Has.All.Matches<CarnivalConsumableState>(
+                    item => item.Family == CarnivalConsumableFamily.Planet));
+        }
+
+        [Test]
+        public void SpectralCardCreationAndImmolate_ModifyThePersistentDeck()
+        {
+            CarnivalContentModel content = CreateContent();
+            CarnivalPokerGame familiarGame = CreateGame(179);
+            familiarGame.StartNewRun();
+            GiveConsumable(familiarGame, FindConsumable(content, "spectral-familiar"));
+
+            Assert.That(familiarGame.UseConsumable("spectral-familiar"), Is.True);
+            Assert.That(CountAllPlayingCards(familiarGame), Is.EqualTo(54));
+            int enhancedFaces = 0;
+            foreach (CarnivalCard card in familiarGame.Hand)
+            {
+                if (card.Id >= 52 &&
+                    card.IsFace &&
+                    card.Enhancement != CarnivalCardEnhancement.None)
+                {
+                    enhancedFaces++;
+                }
+            }
+            Assert.That(enhancedFaces, Is.EqualTo(3));
+
+            CarnivalPokerGame immolateGame = CreateGame(181);
+            immolateGame.StartNewRun();
+            GiveConsumable(immolateGame, FindConsumable(content, "spectral-immolate"));
+            Assert.That(immolateGame.UseConsumable("spectral-immolate"), Is.True);
+            Assert.That(CountAllPlayingCards(immolateGame), Is.EqualTo(47));
+            Assert.That(immolateGame.Money, Is.EqualTo(24));
+        }
+
+        [Test]
+        public void OuijaAndEctoplasm_ReduceHandSizeAndApplyTheirState()
+        {
+            CarnivalContentModel content = CreateContent();
+            CarnivalPokerGame ouijaGame = CreateGame(191);
+            ouijaGame.StartNewRun();
+            GiveConsumable(ouijaGame, FindConsumable(content, "spectral-ouija"));
+
+            Assert.That(ouijaGame.UseConsumable("spectral-ouija"), Is.True);
+            Assert.That(GetPrivateProperty<int>(ouijaGame, "CurrentHandSize"), Is.EqualTo(7));
+            Assert.That(ouijaGame.Hand, Has.Count.EqualTo(7));
+            int rank = ouijaGame.Hand[0].Rank;
+            Assert.That(ouijaGame.Hand, Has.All.Matches<CarnivalCard>(card => card.Rank == rank));
+
+            CarnivalPokerGame ectoplasmGame = new CarnivalPokerGame(
+                new TestContentModel(
+                    content,
+                    new[] { CreateStartingJoker("j_joker", "小丑") }),
+                193);
+            ectoplasmGame.StartNewRun();
+            GiveConsumable(ectoplasmGame, FindConsumable(content, "spectral-ectoplasm"));
+            Assert.That(ectoplasmGame.UseConsumable("spectral-ectoplasm"), Is.True);
+            Assert.That(
+                GetJokerState(ectoplasmGame, "j_joker").Edition,
+                Is.EqualTo(CarnivalCardEdition.Negative));
+            Assert.That(GetPrivateProperty<int>(ectoplasmGame, "CurrentHandSize"), Is.EqualTo(7));
+            Assert.That(ectoplasmGame.PerformerSlotLimit, Is.EqualTo(6));
+        }
+
+        [Test]
+        public void AnkhAndHex_ResolveJokerCopyAndDestruction()
+        {
+            CarnivalContentModel content = CreateContent();
+            CarnivalPerformer first = CreateStartingJoker("j_joker", "小丑");
+            CarnivalPerformer second = CreateStartingJoker("greedy_joker", "贪婪小丑");
+
+            CarnivalPokerGame ankhGame = new CarnivalPokerGame(
+                new TestContentModel(content, new[] { first, second }),
+                197);
+            ankhGame.StartNewRun();
+            GiveConsumable(ankhGame, FindConsumable(content, "spectral-ankh"));
+            Assert.That(ankhGame.UseConsumable("spectral-ankh"), Is.True);
+            Assert.That(ankhGame.Performers, Has.Count.EqualTo(2));
+            Assert.That(ankhGame.Performers[0].Id, Is.EqualTo(ankhGame.Performers[1].Id));
+
+            CarnivalPokerGame hexGame = new CarnivalPokerGame(
+                new TestContentModel(content, new[] { first, second }),
+                199);
+            hexGame.StartNewRun();
+            GiveConsumable(hexGame, FindConsumable(content, "spectral-hex"));
+            Assert.That(hexGame.UseConsumable("spectral-hex"), Is.True);
+            Assert.That(hexGame.Performers, Has.Count.EqualTo(1));
+            Assert.That(
+                GetJokerState(hexGame, hexGame.Performers[0].Id).Edition,
+                Is.EqualTo(CarnivalCardEdition.Polychrome));
+        }
+
+        [Test]
+        public void PlayingCardSeals_ApplyGoldPurpleAndMatchingBluePlanetEffects()
+        {
+            CarnivalPokerGame goldGame = CreateGame(211);
+            goldGame.StartNewRun();
+            List<CarnivalCard> goldHand = GetPrivateField<List<CarnivalCard>>(goldGame, "_hand");
+            goldHand[0] = goldHand[0].WithSeal(CarnivalCardSeal.Gold);
+            goldGame.ToggleCard(goldHand[0].Id);
+            goldGame.PlaySelected();
+            Assert.That(goldGame.Money, Is.EqualTo(7));
+
+            CarnivalPokerGame purpleGame = CreateGame(223);
+            purpleGame.StartNewRun();
+            List<CarnivalCard> purpleHand = GetPrivateField<List<CarnivalCard>>(purpleGame, "_hand");
+            purpleHand[0] = purpleHand[0].WithSeal(CarnivalCardSeal.Purple);
+            purpleGame.ToggleCard(purpleHand[0].Id);
+            Assert.That(purpleGame.DiscardSelected(), Is.True);
+            Assert.That(purpleGame.Consumables, Has.Count.EqualTo(1));
+            Assert.That(
+                purpleGame.Consumables[0].Family,
+                Is.EqualTo(CarnivalConsumableFamily.Tarot));
+
+            CarnivalPokerGame blueGame = CreateGame(227);
+            blueGame.StartNewRun();
+            List<CarnivalCard> blueHand = GetPrivateField<List<CarnivalCard>>(blueGame, "_hand");
+            blueHand[1] = blueHand[1].WithSeal(CarnivalCardSeal.Blue);
+            SetProperty(blueGame, "HandsRemaining", 1);
+            blueGame.ToggleCard(blueHand[0].Id);
+            CarnivalScoreResult result = blueGame.PlaySelected();
+            Assert.That(blueGame.Consumables, Has.Count.EqualTo(1));
+            Assert.That(blueGame.Consumables[0].Content.HandKind, Is.EqualTo(result.Kind));
+        }
+
+        [Test]
         public void Hallucination_CreatesTarotWhenBoosterPackOpens()
         {
             CarnivalContentModel baseContent = CreateContent();
@@ -562,6 +769,36 @@ namespace GameLogic.Tests
             return null;
         }
 
+        private static CarnivalConsumable FindConsumable(
+            ICarnivalContentModel content,
+            string consumableId)
+        {
+            foreach (CarnivalConsumable consumable in content.Consumables)
+            {
+                if (consumable.Id == consumableId)
+                    return consumable;
+            }
+
+            Assert.Fail($"No consumable with id {consumableId}.");
+            return null;
+        }
+
+        private static void GiveConsumable(
+            CarnivalPokerGame game,
+            CarnivalConsumable consumable)
+        {
+            GetPrivateField<List<CarnivalConsumableState>>(game, "_consumables")
+                .Add(new CarnivalConsumableState(consumable));
+        }
+
+        private static int CountAllPlayingCards(CarnivalPokerGame game)
+        {
+            return
+                GetPrivateField<List<CarnivalCard>>(game, "_deck").Count +
+                GetPrivateField<List<CarnivalCard>>(game, "_hand").Count +
+                GetPrivateField<List<CarnivalCard>>(game, "_discardPile").Count;
+        }
+
         private static CarnivalCard FindCard(
             CarnivalPokerGame game,
             Predicate<CarnivalCard> predicate)
@@ -603,6 +840,26 @@ namespace GameLogic.Tests
                 BindingFlags.Instance | BindingFlags.NonPublic);
             Assert.That(field, Is.Not.Null, $"Missing private field {fieldName}.");
             return (TField)field.GetValue(target);
+        }
+
+        private static TProperty GetPrivateProperty<TProperty>(
+            object target,
+            string propertyName)
+        {
+            PropertyInfo property = target.GetType().GetProperty(
+                propertyName,
+                BindingFlags.Instance | BindingFlags.NonPublic);
+            Assert.That(property, Is.Not.Null, $"Missing private property {propertyName}.");
+            return (TProperty)property.GetValue(target);
+        }
+
+        private static void SetProperty(object target, string propertyName, object value)
+        {
+            PropertyInfo property = target.GetType().GetProperty(
+                propertyName,
+                BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            Assert.That(property, Is.Not.Null, $"Missing property {propertyName}.");
+            property.SetValue(target, value);
         }
 
         private static TResult InvokePrivate<TResult>(

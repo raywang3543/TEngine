@@ -101,6 +101,8 @@ namespace GameLogic.Core
 
             ApplyPlayingCardEdition(card, result);
             ApplyOriginalCardEnhancement(card, result);
+            if (card.Seal == CarnivalCardSeal.Gold)
+                Money += 3;
             ApplyOnScoredJokers(card, playedCards, result, pareidolia);
         }
 
@@ -122,42 +124,42 @@ namespace GameLogic.Core
 
         private void ApplyOriginalCardEnhancement(CarnivalCard card, CarnivalScoreResult result)
         {
-            switch (card.Enhancement)
+            if (card.Enhancement == CarnivalCardEnhancement.None)
+                return;
+
+            CarnivalCardEnhancementContent content = _contentModel.FindEnhancement(card.Enhancement);
+            result.Chips += content.Chips;
+            if (content.IgnoresRankSuit)
+                result.Chips += card.PermanentChips;
+            result.Multiplier += content.AdditiveMultiplier;
+            result.Multiplier *= content.MultiplierFactor;
+
+            bool triggered = false;
+            if (content.AdditiveMultiplierChance > 0f &&
+                RollChance(ChanceDenominator(content.AdditiveMultiplierChance)))
             {
-                case CarnivalCardEnhancement.Bonus:
-                    result.Chips += 30;
-                    break;
-                case CarnivalCardEnhancement.Mult:
-                    result.Multiplier += 4f;
-                    break;
-                case CarnivalCardEnhancement.Glass:
-                    result.Multiplier *= 2f;
-                    break;
-                case CarnivalCardEnhancement.Lucky:
-                    bool triggered = false;
-                    if (RollChance(5))
-                    {
-                        result.Multiplier += 20f;
-                        triggered = true;
-                    }
-
-                    if (RollChance(15))
-                    {
-                        Money += 20;
-                        triggered = true;
-                    }
-
-                    if (triggered)
-                    {
-                        CarnivalPerformer luckyCat = FindOwnedJoker("lucky_cat");
-                        if (luckyCat != null)
-                            GetJokerState(luckyCat).Value += 0.25f;
-                    }
-                    break;
-                case CarnivalCardEnhancement.Stone:
-                    result.Chips += 50 + card.PermanentChips;
-                    break;
+                result.Multiplier += content.ChanceAdditiveMultiplier;
+                triggered = true;
             }
+
+            if (content.MoneyChance > 0f &&
+                RollChance(ChanceDenominator(content.MoneyChance)))
+            {
+                Money += content.ChanceMoney;
+                triggered = true;
+            }
+
+            if (triggered)
+            {
+                CarnivalPerformer luckyCat = FindOwnedJoker("lucky_cat");
+                if (luckyCat != null)
+                    GetJokerState(luckyCat).Value += 0.25f;
+            }
+        }
+
+        private static int ChanceDenominator(float probability)
+        {
+            return Math.Max(1, (int)Math.Round(1f / probability));
         }
 
         private void ApplyOnScoredJokers(
@@ -357,8 +359,12 @@ namespace GameLogic.Core
             {
                 foreach (CarnivalCard card in held)
                 {
-                    if (card.Enhancement == CarnivalCardEnhancement.Steel)
-                        result.Multiplier *= 1.5f;
+                    if (card.Enhancement != CarnivalCardEnhancement.None)
+                    {
+                        CarnivalCardEnhancementContent enhancement =
+                            _contentModel.FindEnhancement(card.Enhancement);
+                        result.Multiplier *= enhancement.HeldMultiplierFactor;
+                    }
                     if (card.Rank == 13)
                     {
                         for (int index = 0; index < baronCount; index++)
@@ -376,7 +382,7 @@ namespace GameLogic.Core
                         }
                     }
                     if (card.Seal == CarnivalCardSeal.Blue && HandsRemaining == 0)
-                        TryCreateConsumable(CarnivalConsumableFamily.Planet);
+                        TryCreateConsumable(CarnivalConsumableFamily.Planet, result.Kind);
                 }
             }
 

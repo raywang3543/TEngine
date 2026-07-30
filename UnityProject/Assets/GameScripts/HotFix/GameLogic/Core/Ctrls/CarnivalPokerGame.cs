@@ -61,6 +61,7 @@ namespace GameLogic.Core
         private int _tarotCardsUsedThisRun;
         private int _freeRerolls;
         private int _doubleTagCount;
+        private int _handSizeModifier;
         private int _tagsCollectedThisRun;
         private int _investmentTagCount;
         private bool _firstDiscardUsedThisRound;
@@ -75,6 +76,7 @@ namespace GameLogic.Core
         private CarnivalBoosterPack _currentBoosterPack;
         private CarnivalBoosterPack _openedBoosterPack;
         private CarnivalBlindTag _currentBlindTag;
+        private CarnivalConsumable _lastUsedConsumable;
 
         public CarnivalPokerGame(int seed = 0)
             : this(new CarnivalContentModel(), seed)

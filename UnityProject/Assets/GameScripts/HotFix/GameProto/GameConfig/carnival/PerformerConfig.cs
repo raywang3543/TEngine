@@ -18,6 +18,7 @@ public sealed partial class PerformerConfig : Luban.BeanBase
     {
         Id = _buf.ReadString();
         Name = _buf.ReadString();
+        MythicName = _buf.ReadString();
         ShortName = _buf.ReadString();
         Icon = _buf.ReadString();
         Desc = _buf.ReadString();
@@ -56,6 +57,10 @@ public sealed partial class PerformerConfig : Luban.BeanBase
     /// 简体中文名称
     /// </summary>
     public readonly string Name;
+    /// <summary>
+    /// 中国神话仙侠题材神器或法宝名称（按卡牌功能与原版稀有度匹配，且全表唯一）
+    /// </summary>
+    public readonly string MythicName;
     /// <summary>
     /// 简短名称
     /// </summary>
@@ -161,6 +166,7 @@ public sealed partial class PerformerConfig : Luban.BeanBase
         return "{ "
         + "id:" + Id + ","
         + "name:" + Name + ","
+        + "mythicName:" + MythicName + ","
         + "shortName:" + ShortName + ","
         + "icon:" + Icon + ","
         + "desc:" + Desc + ","

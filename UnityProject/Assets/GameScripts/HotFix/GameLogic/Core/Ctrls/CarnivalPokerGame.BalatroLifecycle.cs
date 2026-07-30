@@ -9,7 +9,7 @@ namespace GameLogic.Core
         {
             get
             {
-                int size = HandSize;
+                int size = HandSize + _handSizeModifier;
                 foreach (CarnivalPerformer performer in _performers)
                 {
                     CarnivalJokerState state = GetJokerState(performer);
@@ -110,7 +110,11 @@ namespace GameLogic.Core
             foreach (CarnivalCard card in _hand)
             {
                 if (card.Enhancement == CarnivalCardEnhancement.Gold)
-                    Money += 3 * heldGoldTriggers;
+                {
+                    CarnivalCardEnhancementContent enhancement =
+                        _contentModel.FindEnhancement(card.Enhancement);
+                    Money += enhancement.HeldMoney * heldGoldTriggers;
+                }
             }
 
             ApplyJokers(
@@ -150,7 +154,9 @@ namespace GameLogic.Core
                 });
         }
 
-        private bool TryCreateConsumable(CarnivalConsumableFamily family)
+        private bool TryCreateConsumable(
+            CarnivalConsumableFamily family,
+            CarnivalHandKind? handKind = null)
         {
             if (!HasConsumableSlot())
                 return false;
@@ -158,7 +164,8 @@ namespace GameLogic.Core
             var candidates = new List<CarnivalConsumable>();
             foreach (CarnivalConsumable consumable in _contentModel.Consumables)
             {
-                if (consumable.Family == family)
+                if (consumable.Family == family &&
+                    (!handKind.HasValue || consumable.HandKind == handKind))
                     candidates.Add(consumable);
             }
 

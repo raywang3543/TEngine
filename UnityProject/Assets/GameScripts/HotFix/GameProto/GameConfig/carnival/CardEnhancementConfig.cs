@@ -17,12 +17,24 @@ public sealed partial class CardEnhancementConfig : Luban.BeanBase
     public CardEnhancementConfig(ByteBuf _buf) 
     {
         Id = _buf.ReadString();
+        Kind = _buf.ReadString();
         Name = _buf.ReadString();
+        Rarity = _buf.ReadString();
         Desc = _buf.ReadString();
+        Source = _buf.ReadString();
+        SourceDesc = _buf.ReadString();
         Chips = _buf.ReadInt();
         AdditiveMultiplier = _buf.ReadFloat();
         MultiplierFactor = _buf.ReadFloat();
         BreakChance = _buf.ReadFloat();
+        HeldMultiplierFactor = _buf.ReadFloat();
+        HeldMoney = _buf.ReadInt();
+        ChanceAdditiveMultiplier = _buf.ReadFloat();
+        AdditiveMultiplierChance = _buf.ReadFloat();
+        ChanceMoney = _buf.ReadInt();
+        MoneyChance = _buf.ReadFloat();
+        AlwaysScores = _buf.ReadBool();
+        IgnoresRankSuit = _buf.ReadBool();
     }
 
     public static CardEnhancementConfig DeserializeCardEnhancementConfig(ByteBuf _buf)
@@ -31,33 +43,81 @@ public sealed partial class CardEnhancementConfig : Luban.BeanBase
     }
 
     /// <summary>
-    /// 对应CarnivalCardEnhancement枚举
+    /// 唯一ID；Enhancement 行对应 CarnivalCardEnhancement
     /// </summary>
     public readonly string Id;
+    /// <summary>
+    /// Enhancement/Edition/Seal
+    /// </summary>
+    public readonly string Kind;
     /// <summary>
     /// 显示名称
     /// </summary>
     public readonly string Name;
     /// <summary>
+    /// 原版品质
+    /// </summary>
+    public readonly string Rarity;
+    /// <summary>
     /// 作用说明
     /// </summary>
     public readonly string Desc;
     /// <summary>
-    /// 额外筹码
+    /// 施加来源
+    /// </summary>
+    public readonly string Source;
+    /// <summary>
+    /// 施加来源说明
+    /// </summary>
+    public readonly string SourceDesc;
+    /// <summary>
+    /// 计分额外筹码
     /// </summary>
     public readonly int Chips;
     /// <summary>
-    /// 额外加法倍率
+    /// 计分额外加法倍率
     /// </summary>
     public readonly float AdditiveMultiplier;
     /// <summary>
-    /// 最终倍率乘数
+    /// 计分倍率乘数
     /// </summary>
     public readonly float MultiplierFactor;
     /// <summary>
     /// 结算后碎裂概率
     /// </summary>
     public readonly float BreakChance;
+    /// <summary>
+    /// 留手倍率乘数
+    /// </summary>
+    public readonly float HeldMultiplierFactor;
+    /// <summary>
+    /// 回合结束留手金币
+    /// </summary>
+    public readonly int HeldMoney;
+    /// <summary>
+    /// 概率触发加法倍率
+    /// </summary>
+    public readonly float ChanceAdditiveMultiplier;
+    /// <summary>
+    /// 加法倍率触发概率
+    /// </summary>
+    public readonly float AdditiveMultiplierChance;
+    /// <summary>
+    /// 概率触发金币
+    /// </summary>
+    public readonly int ChanceMoney;
+    /// <summary>
+    /// 金币触发概率
+    /// </summary>
+    public readonly float MoneyChance;
+    /// <summary>
+    /// 是否始终计分
+    /// </summary>
+    public readonly bool AlwaysScores;
+    /// <summary>
+    /// 是否无点数与花色
+    /// </summary>
+    public readonly bool IgnoresRankSuit;
    
     public const int __ID__ = 1744385378;
     public override int GetTypeId() => __ID__;
@@ -70,12 +130,24 @@ public sealed partial class CardEnhancementConfig : Luban.BeanBase
     {
         return "{ "
         + "id:" + Id + ","
+        + "kind:" + Kind + ","
         + "name:" + Name + ","
+        + "rarity:" + Rarity + ","
         + "desc:" + Desc + ","
+        + "source:" + Source + ","
+        + "sourceDesc:" + SourceDesc + ","
         + "chips:" + Chips + ","
         + "additiveMultiplier:" + AdditiveMultiplier + ","
         + "multiplierFactor:" + MultiplierFactor + ","
         + "breakChance:" + BreakChance + ","
+        + "heldMultiplierFactor:" + HeldMultiplierFactor + ","
+        + "heldMoney:" + HeldMoney + ","
+        + "chanceAdditiveMultiplier:" + ChanceAdditiveMultiplier + ","
+        + "additiveMultiplierChance:" + AdditiveMultiplierChance + ","
+        + "chanceMoney:" + ChanceMoney + ","
+        + "moneyChance:" + MoneyChance + ","
+        + "alwaysScores:" + AlwaysScores + ","
+        + "ignoresRankSuit:" + IgnoresRankSuit + ","
         + "}";
     }
 }

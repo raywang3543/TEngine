@@ -13,109 +13,36 @@ namespace GameConfig
 {
 public partial class Tables
 {
-    #region The Tables
-
-    private item.TbItem m_TbItem;
-    public item.TbItem TbItem 
-    {
-        get
-        {
-            if (m_TbItem == null)
-            {
-                m_TbItem = new item.TbItem(defaultLoader("item_tbitem"));
-                m_TbItem.ResolveRef(this);
-            }
-            return m_TbItem;
-        }
-        set
-        {
-            m_TbItem = value;
-            m_TbItem.ResolveRef(this);
-        }
-    }
+    public item.TbItem TbItem {get; }
     /// <summary>
     /// 马戏牌局表演者牌
     /// </summary>
-    private carnival.TbPerformer m_TbPerformer;
-    public carnival.TbPerformer TbPerformer 
-    {
-        get
-        {
-            if (m_TbPerformer == null)
-            {
-                m_TbPerformer = new carnival.TbPerformer(defaultLoader("carnival_tbperformer"));
-                m_TbPerformer.ResolveRef(this);
-            }
-            return m_TbPerformer;
-        }
-        set
-        {
-            m_TbPerformer = value;
-            m_TbPerformer.ResolveRef(this);
-        }
-    }
+    public carnival.TbPerformer TbPerformer {get; }
     /// <summary>
     /// 马戏牌局消耗牌
     /// </summary>
-    private carnival.TbConsumable m_TbConsumable;
-    public carnival.TbConsumable TbConsumable 
-    {
-        get
-        {
-            if (m_TbConsumable == null)
-            {
-                m_TbConsumable = new carnival.TbConsumable(defaultLoader("carnival_tbconsumable"));
-                m_TbConsumable.ResolveRef(this);
-            }
-            return m_TbConsumable;
-        }
-        set
-        {
-            m_TbConsumable = value;
-            m_TbConsumable.ResolveRef(this);
-        }
-    }
+    public carnival.TbConsumable TbConsumable {get; }
     /// <summary>
     /// 扑克牌强化效果
     /// </summary>
-    private carnival.TbCardEnhancement m_TbCardEnhancement;
-    public carnival.TbCardEnhancement TbCardEnhancement 
-    {
-        get
-        {
-            if (m_TbCardEnhancement == null)
-            {
-                m_TbCardEnhancement = new carnival.TbCardEnhancement(defaultLoader("carnival_tbcardenhancement"));
-                m_TbCardEnhancement.ResolveRef(this);
-            }
-            return m_TbCardEnhancement;
-        }
-        set
-        {
-            m_TbCardEnhancement = value;
-            m_TbCardEnhancement.ResolveRef(this);
-        }
-    }
-
-    #endregion
-
-    System.Func<string, ByteBuf> defaultLoader;
+    public carnival.TbCardEnhancement TbCardEnhancement {get; }
 
     public Tables(System.Func<string, ByteBuf> loader)
     {
-        SetDefaultLoader(loader);
-        Init();
+        TbItem = new item.TbItem(loader("item_tbitem"));
+        TbPerformer = new carnival.TbPerformer(loader("carnival_tbperformer"));
+        TbConsumable = new carnival.TbConsumable(loader("carnival_tbconsumable"));
+        TbCardEnhancement = new carnival.TbCardEnhancement(loader("carnival_tbcardenhancement"));
+        ResolveRef();
     }
     
-    public void SetDefaultLoader(System.Func<string, ByteBuf> loader)
+    private void ResolveRef()
     {
-        defaultLoader = null;
-        defaultLoader = loader;
+        TbItem.ResolveRef(this);
+        TbPerformer.ResolveRef(this);
+        TbConsumable.ResolveRef(this);
+        TbCardEnhancement.ResolveRef(this);
     }
-
-    //public partial void Init();
-
-    public void Init(){}
 }
 
 }

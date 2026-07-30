@@ -11,7 +11,9 @@ namespace GameLogic.Core
             var stoneCardIds = new List<int>();
             foreach (CarnivalCard card in playedCards)
             {
-                if (card.Enhancement == CarnivalCardEnhancement.Stone)
+                CarnivalCardEnhancementContent enhancement =
+                    _contentModel.FindEnhancement(card.Enhancement);
+                if (enhancement.IgnoresRankSuit)
                     stoneCardIds.Add(card.Id);
                 else
                     eligibleCards.Add(card);

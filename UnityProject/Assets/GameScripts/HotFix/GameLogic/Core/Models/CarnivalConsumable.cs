@@ -14,8 +14,12 @@ namespace GameLogic.Core
             CarnivalConsumableAction action,
             int maxSelected,
             CarnivalCardEnhancement enhancement,
+            CarnivalCardSeal seal,
+            CarnivalCardEdition edition,
             CarnivalHandKind? handKind,
             CarnivalSuit? suit,
+            CarnivalConsumableFamily? createdFamily,
+            string rarity,
             int amount,
             int secondaryAmount,
             bool boolValue)
@@ -28,8 +32,12 @@ namespace GameLogic.Core
             Action = action;
             MaxSelected = maxSelected;
             Enhancement = enhancement;
+            Seal = seal;
+            Edition = edition;
             HandKind = handKind;
             Suit = suit;
+            CreatedFamily = createdFamily;
+            Rarity = rarity;
             Amount = amount;
             SecondaryAmount = secondaryAmount;
             BoolValue = boolValue;
@@ -43,8 +51,12 @@ namespace GameLogic.Core
         public CarnivalConsumableAction Action { get; }
         public int MaxSelected { get; }
         public CarnivalCardEnhancement Enhancement { get; }
+        public CarnivalCardSeal Seal { get; }
+        public CarnivalCardEdition Edition { get; }
         public CarnivalHandKind? HandKind { get; }
         public CarnivalSuit? Suit { get; }
+        public CarnivalConsumableFamily? CreatedFamily { get; }
+        public string Rarity { get; }
         public int Amount { get; }
         public int SecondaryAmount { get; }
         public bool BoolValue { get; }

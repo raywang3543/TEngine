@@ -12,7 +12,15 @@ namespace GameLogic.Core
             int chips,
             float additiveMultiplier,
             float multiplierFactor,
-            float breakChance)
+            float breakChance,
+            float heldMultiplierFactor,
+            int heldMoney,
+            float chanceAdditiveMultiplier,
+            float additiveMultiplierChance,
+            int chanceMoney,
+            float moneyChance,
+            bool alwaysScores,
+            bool ignoresRankSuit)
         {
             Id = id;
             Name = name;
@@ -21,6 +29,14 @@ namespace GameLogic.Core
             AdditiveMultiplier = additiveMultiplier;
             MultiplierFactor = multiplierFactor;
             BreakChance = breakChance;
+            HeldMultiplierFactor = heldMultiplierFactor;
+            HeldMoney = heldMoney;
+            ChanceAdditiveMultiplier = chanceAdditiveMultiplier;
+            AdditiveMultiplierChance = additiveMultiplierChance;
+            ChanceMoney = chanceMoney;
+            MoneyChance = moneyChance;
+            AlwaysScores = alwaysScores;
+            IgnoresRankSuit = ignoresRankSuit;
         }
 
         public CarnivalCardEnhancement Id { get; }
@@ -30,5 +46,13 @@ namespace GameLogic.Core
         public float AdditiveMultiplier { get; }
         public float MultiplierFactor { get; }
         public float BreakChance { get; }
+        public float HeldMultiplierFactor { get; }
+        public int HeldMoney { get; }
+        public float ChanceAdditiveMultiplier { get; }
+        public float AdditiveMultiplierChance { get; }
+        public int ChanceMoney { get; }
+        public float MoneyChance { get; }
+        public bool AlwaysScores { get; }
+        public bool IgnoresRankSuit { get; }
     }
 }

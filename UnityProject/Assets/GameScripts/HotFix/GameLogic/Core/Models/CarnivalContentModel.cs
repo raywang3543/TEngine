@@ -126,8 +126,15 @@ namespace GameLogic.Core
                         config.Enhancement,
                         nameof(config.Enhancement),
                         config.Id),
+                    ParseEnum<CarnivalCardSeal>(config.Seal, nameof(config.Seal), config.Id),
+                    ParseEnum<CarnivalCardEdition>(config.Edition, nameof(config.Edition), config.Id),
                     ParseOptionalEnum<CarnivalHandKind>(config.HandKind, nameof(config.HandKind), config.Id),
                     ParseOptionalEnum<CarnivalSuit>(config.Suit, nameof(config.Suit), config.Id),
+                    ParseOptionalEnum<CarnivalConsumableFamily>(
+                        config.CreatedFamily,
+                        nameof(config.CreatedFamily),
+                        config.Id),
+                    config.Rarity,
                     config.Amount,
                     config.SecondaryAmount,
                     config.BoolValue);
@@ -143,6 +150,9 @@ namespace GameLogic.Core
                 new Dictionary<CarnivalCardEnhancement, CarnivalCardEnhancementContent>(configs.Count);
             foreach (GameConfig.carnival.CardEnhancementConfig config in configs)
             {
+                if (config.Kind != "Enhancement")
+                    continue;
+
                 CarnivalCardEnhancement id =
                     ParseEnum<CarnivalCardEnhancement>(config.Id, nameof(config.Id), config.Id);
                 enhancements.Add(id, new CarnivalCardEnhancementContent(
@@ -152,7 +162,15 @@ namespace GameLogic.Core
                     config.Chips,
                     config.AdditiveMultiplier,
                     config.MultiplierFactor,
-                    config.BreakChance));
+                    config.BreakChance,
+                    config.HeldMultiplierFactor,
+                    config.HeldMoney,
+                    config.ChanceAdditiveMultiplier,
+                    config.AdditiveMultiplierChance,
+                    config.ChanceMoney,
+                    config.MoneyChance,
+                    config.AlwaysScores,
+                    config.IgnoresRankSuit));
             }
 
             return enhancements;

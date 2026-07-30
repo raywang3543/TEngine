@@ -24,8 +24,12 @@ public sealed partial class ConsumableConfig : Luban.BeanBase
         Action = _buf.ReadString();
         MaxSelected = _buf.ReadInt();
         Enhancement = _buf.ReadString();
+        Seal = _buf.ReadString();
+        Edition = _buf.ReadString();
         HandKind = _buf.ReadString();
         Suit = _buf.ReadString();
+        CreatedFamily = _buf.ReadString();
+        Rarity = _buf.ReadString();
         Amount = _buf.ReadInt();
         SecondaryAmount = _buf.ReadInt();
         BoolValue = _buf.ReadBool();
@@ -41,7 +45,7 @@ public sealed partial class ConsumableConfig : Luban.BeanBase
     /// </summary>
     public readonly string Id;
     /// <summary>
-    /// 名称
+    /// 原版中文名称
     /// </summary>
     public readonly string Name;
     /// <summary>
@@ -49,7 +53,7 @@ public sealed partial class ConsumableConfig : Luban.BeanBase
     /// </summary>
     public readonly string Family;
     /// <summary>
-    /// 作用说明
+    /// 原版作用说明
     /// </summary>
     public readonly string Desc;
     /// <summary>
@@ -65,17 +69,33 @@ public sealed partial class ConsumableConfig : Luban.BeanBase
     /// </summary>
     public readonly int MaxSelected;
     /// <summary>
-    /// 目标强化，None表示无
+    /// 目标强化
     /// </summary>
     public readonly string Enhancement;
     /// <summary>
-    /// 目标牌型，None表示无
+    /// 目标蜡封
+    /// </summary>
+    public readonly string Seal;
+    /// <summary>
+    /// 目标版本
+    /// </summary>
+    public readonly string Edition;
+    /// <summary>
+    /// 目标牌型
     /// </summary>
     public readonly string HandKind;
     /// <summary>
-    /// 目标花色，None表示无
+    /// 目标花色
     /// </summary>
     public readonly string Suit;
+    /// <summary>
+    /// 生成的消耗牌家族
+    /// </summary>
+    public readonly string CreatedFamily;
+    /// <summary>
+    /// 目标小丑牌稀有度或生成牌类型
+    /// </summary>
+    public readonly string Rarity;
     /// <summary>
     /// 主要整数参数
     /// </summary>
@@ -107,8 +127,12 @@ public sealed partial class ConsumableConfig : Luban.BeanBase
         + "action:" + Action + ","
         + "maxSelected:" + MaxSelected + ","
         + "enhancement:" + Enhancement + ","
+        + "seal:" + Seal + ","
+        + "edition:" + Edition + ","
         + "handKind:" + HandKind + ","
         + "suit:" + Suit + ","
+        + "createdFamily:" + CreatedFamily + ","
+        + "rarity:" + Rarity + ","
         + "amount:" + Amount + ","
         + "secondaryAmount:" + SecondaryAmount + ","
         + "boolValue:" + BoolValue + ","
