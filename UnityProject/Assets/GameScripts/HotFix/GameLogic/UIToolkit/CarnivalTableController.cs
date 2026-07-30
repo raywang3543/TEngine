@@ -216,7 +216,7 @@ namespace GameLogic
             _deckLabel.text = _state.CardsInDeck.ToString();
             _statusLabel.text = _state.StatusMessage;
             _performerCountLabel.text = $"{_state.Performers.Count} / {_state.PerformerSlotLimit}";
-            _consumableCountLabel.text = $"{_state.Consumables.Count} / 2";
+            _consumableCountLabel.text = $"{CountOccupiedConsumableSlots()} / 2";
 
             float progress = _state.TargetScore == 0
                 ? 0f
@@ -256,20 +256,32 @@ namespace GameLogic
         private void RenderConsumables()
         {
             _consumableRow.Clear();
-            foreach (CarnivalConsumable consumable in _state.Consumables)
+            foreach (CarnivalConsumableState consumable in _state.Consumables)
             {
-                CarnivalConsumable capturedConsumable = consumable;
-                var button = new Button(() =>
+                CarnivalConsumableState capturedConsumable = consumable;
+                var container = new VisualElement();
+                container.AddToClassList("consumable-item");
+                var useButton = new Button(() =>
                 {
-                    GameEvent.Send(EventDefine.CarnivalUseConsumable, capturedConsumable.Id);
+                    GameEvent.Send(EventDefine.CarnivalUseConsumable, capturedConsumable.RuntimeId);
                 })
                 {
-                    text = $"{GetConsumableIcon(consumable.Family)}  {consumable.Name}",
+                    text = $"{GetConsumableIcon(consumable.Family)}  {consumable.Name}" +
+                           (consumable.Edition == CarnivalCardEdition.Negative ? "  [负片]" : string.Empty),
                     tooltip = consumable.Description,
                 };
-                button.AddToClassList("consumable-button");
-                button.AddToClassList($"consumable-{consumable.Family.ToString().ToLowerInvariant()}");
-                _consumableRow.Add(button);
+                useButton.AddToClassList("consumable-button");
+                useButton.AddToClassList($"consumable-{consumable.Family.ToString().ToLowerInvariant()}");
+                container.Add(useButton);
+
+                var sellButton = new Button(() =>
+                    GameEvent.Send(EventDefine.CarnivalSellConsumable, capturedConsumable.RuntimeId))
+                {
+                    text = $"出售 ${consumable.SellValue}",
+                };
+                sellButton.AddToClassList("consumable-sell-button");
+                container.Add(sellButton);
+                _consumableRow.Add(container);
             }
 
             if (_state.Consumables.Count == 0)
@@ -442,7 +454,7 @@ namespace GameLogic
                 buyButton.AddToClassList("shop-buy-button");
                 bool hasSpace = shopOffer.Kind == CarnivalShopOfferKind.Performer
                     ? _state.Performers.Count < _state.PerformerSlotLimit
-                    : _state.Consumables.Count < 2;
+                    : CountOccupiedConsumableSlots() < 2;
                 buyButton.SetEnabled(hasSpace);
                 offer.Add(buyButton);
                 _shopOffers.Add(offer);
@@ -522,7 +534,7 @@ namespace GameLogic
                     text = "选择这张牌",
                 };
                 chooseButton.AddToClassList("shop-buy-button");
-                chooseButton.SetEnabled(_state.Consumables.Count < 2);
+                chooseButton.SetEnabled(CountOccupiedConsumableSlots() < 2);
                 choice.Add(chooseButton);
                 _shopOffers.Add(choice);
             }
@@ -545,6 +557,18 @@ namespace GameLogic
 
             _nextRoundButton.style.display = DisplayStyle.None;
             _rerollShopButton.style.display = DisplayStyle.None;
+        }
+
+        private int CountOccupiedConsumableSlots()
+        {
+            int count = 0;
+            foreach (CarnivalConsumableState consumable in _state.Consumables)
+            {
+                if (consumable.OccupiesSlot)
+                    count++;
+            }
+
+            return count;
         }
 
         private void RenderEndState()

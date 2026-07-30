@@ -24,18 +24,16 @@ namespace GameLogic.Core
             _openedBoosterPack = _currentBoosterPack;
             _currentBoosterPack = null;
             GenerateBoosterChoices(_openedBoosterPack);
-
-            if (HasJoker("hallucination") && RollChance(2))
-            {
-                if (TryCreateConsumable(CarnivalConsumableFamily.Tarot))
-                    StatusMessage = "幻觉触发：打开补充包时生成了 1 张塔罗牌。";
-                else
-                    StatusMessage = "幻觉触发，但消耗牌栏没有空位。";
-            }
-            else
-            {
-                StatusMessage = $"打开了「{_openedBoosterPack.Name}」，选择 1 张牌或跳过。";
-            }
+            int consumableCount = _consumables.Count;
+            ApplyJokers(
+                CarnivalJokerTrigger.BoosterOpened,
+                new CarnivalJokerContext
+                {
+                    Trigger = CarnivalJokerTrigger.BoosterOpened,
+                });
+            StatusMessage = _consumables.Count > consumableCount
+                ? "幻觉触发：打开补充包时生成了 1 张塔罗牌。"
+                : $"打开了「{_openedBoosterPack.Name}」，选择 1 张牌或跳过。";
 
             return true;
         }
@@ -44,7 +42,7 @@ namespace GameLogic.Core
         {
             if (!IsBoosterOpen)
                 return false;
-            if (_consumables.Count >= MaxConsumables)
+            if (!HasConsumableSlot())
             {
                 StatusMessage = $"消耗牌栏已满（最多 {MaxConsumables} 张）。";
                 return false;
@@ -63,7 +61,7 @@ namespace GameLogic.Core
             if (selected == null)
                 return false;
 
-            _consumables.Add(selected);
+            AddOwnedConsumable(selected);
             string packName = _openedBoosterPack.Name;
             CloseBoosterPack();
             StatusMessage = $"从「{packName}」中获得了「{selected.Name}」。";
@@ -75,13 +73,16 @@ namespace GameLogic.Core
             if (!IsBoosterOpen)
                 return false;
 
-            CarnivalPerformer redCard = FindOwnedJoker("red_card");
-            if (redCard != null)
-                GetJokerState(redCard).Value += 3f;
-
             string packName = _openedBoosterPack.Name;
+            bool hadRedCard = HasJoker("red_card");
+            ApplyJokers(
+                CarnivalJokerTrigger.BoosterSkipped,
+                new CarnivalJokerContext
+                {
+                    Trigger = CarnivalJokerTrigger.BoosterSkipped,
+                });
             CloseBoosterPack();
-            StatusMessage = redCard == null
+            StatusMessage = !hadRedCard
                 ? $"跳过了「{packName}」。"
                 : $"跳过了「{packName}」，红牌永久获得 +3 倍率。";
             return true;

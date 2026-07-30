@@ -10,7 +10,7 @@ namespace GameLogic.Core
         IReadOnlyList<CarnivalCard> Hand { get; }
         IReadOnlyList<CarnivalPerformer> Performers { get; }
         IReadOnlyList<CarnivalShopOffer> ShopOffers { get; }
-        IReadOnlyList<CarnivalConsumable> Consumables { get; }
+        IReadOnlyList<CarnivalConsumableState> Consumables { get; }
         IReadOnlyList<CarnivalConsumable> BoosterChoices { get; }
         IReadOnlyDictionary<CarnivalHandKind, CarnivalHandLevel> HandLevels { get; }
         CarnivalBlind CurrentBlind { get; }
@@ -48,6 +48,7 @@ namespace GameLogic.Core
         int GetBoosterPackCost();
         bool RerollShop();
         bool SellPerformer(int performerIndex);
+        bool SellConsumable(string consumableId);
         bool MovePerformer(int performerIndex, int direction);
         int GetPerformerSellValue(int performerIndex);
         int GetOfferCost(string offerId);

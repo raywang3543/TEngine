@@ -45,7 +45,7 @@ namespace GameLogic.Core
             if (consumable == null)
                 return false;
 
-            if (_consumables.Count >= MaxConsumables)
+            if (!HasConsumableSlot())
             {
                 StatusMessage = $"消耗牌栏已满（最多 {MaxConsumables} 张）。";
                 return false;
@@ -59,9 +59,31 @@ namespace GameLogic.Core
             }
 
             Money -= cost;
-            _consumables.Add(consumable);
+            AddOwnedConsumable(consumable);
             _shopOffers.Remove(offer);
             StatusMessage = $"获得「{consumable.Name}」。可在盲注中使用。";
+            return true;
+        }
+
+        public bool SellConsumable(string consumableId)
+        {
+            CarnivalConsumableState consumable = _consumables.Find(item =>
+                item.RuntimeId == consumableId || item.Id == consumableId);
+            if (consumable == null)
+                return false;
+
+            _consumables.Remove(consumable);
+            Money += consumable.SellValue;
+            RecordCardSoldForUnlocks(false);
+            ApplyJokers(
+                CarnivalJokerTrigger.CardSold,
+                new CarnivalJokerContext
+                {
+                    Trigger = CarnivalJokerTrigger.CardSold,
+                    Consumable = consumable,
+                    SoldCardKind = CarnivalSoldCardKind.Consumable,
+                });
+            StatusMessage = $"出售「{consumable.Name}」，获得 ${consumable.SellValue}。";
             return true;
         }
 
@@ -121,13 +143,19 @@ namespace GameLogic.Core
             bool createsDoubleTag = performer.Id == "diet_cola";
             RemoveOwnedPerformer(performer);
             Money += sellValue;
+            RecordCardSoldForUnlocks(true);
 
             if (createsDoubleTag)
                 _doubleTagCount++;
 
-            CarnivalPerformer campfire = FindOwnedJoker("campfire");
-            if (campfire != null)
-                GetJokerState(campfire).Value += 0.25f;
+            ApplyJokers(
+                CarnivalJokerTrigger.CardSold,
+                new CarnivalJokerContext
+                {
+                    Trigger = CarnivalJokerTrigger.CardSold,
+                    SoldJoker = performer,
+                    SoldCardKind = CarnivalSoldCardKind.Joker,
+                });
 
             if (performer.Id == "luchador" &&
                 CurrentBlind != null &&
@@ -201,7 +229,7 @@ namespace GameLogic.Core
             bool allowDuplicates = HasJoker("ring_master");
             foreach (CarnivalPerformer performer in _contentModel.Performers)
             {
-                if (!performer.UnlockedByDefault)
+                if (!performer.UnlockedByDefault && !_unlockModel.IsJokerUnlocked(performer.Id))
                     continue;
                 if (performer.Rarity == "传说")
                     continue;
@@ -218,13 +246,26 @@ namespace GameLogic.Core
                 if (performer == null)
                     break;
                 _shopOffers.Add(new CarnivalShopOffer(performer));
-                candidates.Remove(performer);
+                if (!allowDuplicates)
+                    candidates.Remove(performer);
             }
 
-            var consumableCandidates = new List<CarnivalConsumable>(_contentModel.Consumables);
+            bool showman = HasJoker("ring_master");
+            var consumableCandidates = new List<CarnivalConsumable>();
+            foreach (CarnivalConsumable consumable in _contentModel.Consumables)
+            {
+                if (showman || !HasConsumable(consumable.Id))
+                    consumableCandidates.Add(consumable);
+            }
             Shuffle(consumableCandidates);
-            for (int i = 0; i < 2; i++)
-                _shopOffers.Add(new CarnivalShopOffer(consumableCandidates[i]));
+            int consumableOfferCount = Math.Min(2, consumableCandidates.Count);
+            for (int i = 0; i < consumableOfferCount; i++)
+            {
+                CarnivalConsumable consumable = showman
+                    ? consumableCandidates[_random.Next(consumableCandidates.Count)]
+                    : consumableCandidates[i];
+                _shopOffers.Add(new CarnivalShopOffer(consumable));
+            }
 
             if (resetFreeRerolls)
             {

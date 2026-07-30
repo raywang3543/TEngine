@@ -29,6 +29,8 @@ namespace GameLogic.Core
             _performers.Add(performer);
             var state = new CarnivalJokerState(performer);
             _jokerStates.Add(performer, state);
+            if (_performers.Count > 4)
+                _neverExceededFourJokers = false;
             InitializeJokerRoundTarget(performer, state);
             return performer;
         }
@@ -80,6 +82,8 @@ namespace GameLogic.Core
             _handPlayCounts.Clear();
             _roundHandPlayCounts.Clear();
             _usedPlanetKinds.Clear();
+            _playedHandKindsThisRun.Clear();
+            _heartCardsPlayedThisRound.Clear();
             _handsPlayedThisRound = 0;
             _discardsUsedThisRound = 0;
             _cardsDiscardedThisRun = 0;
@@ -96,6 +100,7 @@ namespace GameLogic.Core
             _couponShopPending = false;
             _couponShopActive = false;
             _d6TagPending = false;
+            _neverExceededFourJokers = true;
             _currentBoosterPack = null;
             _openedBoosterPack = null;
             _currentBlindTag = null;
@@ -109,6 +114,7 @@ namespace GameLogic.Core
             _discardsUsedThisRound = 0;
             _firstDiscardUsedThisRound = false;
             _bossBlindDisabled = false;
+            _heartCardsPlayedThisRound.Clear();
 
             foreach (CarnivalPerformer performer in _performers)
             {
@@ -131,8 +137,11 @@ namespace GameLogic.Core
                     state.Suit = (CarnivalSuit)_random.Next(0, 4);
                     break;
                 case "idol":
-                    state.Suit = (CarnivalSuit)_random.Next(0, 4);
-                    state.Rank = _random.Next(2, 15);
+                    if (TryChooseExistingPlayingCard(out CarnivalCard idolTarget))
+                    {
+                        state.Suit = idolTarget.Suit;
+                        state.Rank = idolTarget.Rank;
+                    }
                     break;
                 case "mail":
                     state.Rank = _random.Next(2, 15);
@@ -158,6 +167,33 @@ namespace GameLogic.Core
 
             bool targetRed = suit == CarnivalSuit.Hearts || suit == CarnivalSuit.Diamonds;
             return card.IsRed == targetRed;
+        }
+
+        private bool TryChooseExistingPlayingCard(out CarnivalCard card)
+        {
+            int total = _deck.Count + _hand.Count + _discardPile.Count;
+            if (total == 0)
+            {
+                card = default;
+                return false;
+            }
+
+            int index = _random.Next(total);
+            if (index < _deck.Count)
+            {
+                card = _deck[index];
+                return true;
+            }
+
+            index -= _deck.Count;
+            if (index < _hand.Count)
+            {
+                card = _hand[index];
+                return true;
+            }
+
+            card = _discardPile[index - _hand.Count];
+            return true;
         }
 
         private static int IncrementCount(

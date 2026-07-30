@@ -104,6 +104,48 @@ namespace GameLogic.Core
     }
 
     /// <summary>
+    /// 小丑牌统一生命周期触发阶段。
+    /// </summary>
+    public enum CarnivalJokerTrigger
+    {
+        BlindSelected,
+        InitialHandDrawn,
+        BeforeHandScored,
+        CardScored,
+        CardHeld,
+        AfterHandScored,
+        CardDiscarded,
+        CardDestroyed,
+        PlayingCardAdded,
+        ConsumableUsed,
+        CardSold,
+        BoosterOpened,
+        BoosterSkipped,
+        RoundEnded,
+        ShopEnded,
+    }
+
+    /// <summary>
+    /// 扑克牌离开本局牌组的原因。
+    /// </summary>
+    public enum CarnivalDestroyReason
+    {
+        Consumable,
+        Joker,
+        GlassBreak,
+        DiscardEffect,
+    }
+
+    /// <summary>
+    /// 被出售卡牌的类型。
+    /// </summary>
+    public enum CarnivalSoldCardKind
+    {
+        Joker,
+        Consumable,
+    }
+
+    /// <summary>
     /// 消耗牌家族。
     /// </summary>
     public enum CarnivalConsumableFamily

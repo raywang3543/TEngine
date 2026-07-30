@@ -12,7 +12,7 @@ namespace GameLogic.Core
             Hand = Copy(source.Hand);
             Performers = Copy(source.Performers);
             ShopOffers = Copy(source.ShopOffers);
-            Consumables = Copy(source.Consumables);
+            Consumables = CopyConsumables(source.Consumables);
             BoosterChoices = Copy(source.BoosterChoices);
             CurrentBlind = source.CurrentBlind;
             CurrentBoosterPack = source.CurrentBoosterPack;
@@ -74,7 +74,7 @@ namespace GameLogic.Core
         public IReadOnlyList<CarnivalCard> Hand { get; }
         public IReadOnlyList<CarnivalPerformer> Performers { get; }
         public IReadOnlyList<CarnivalShopOffer> ShopOffers { get; }
-        public IReadOnlyList<CarnivalConsumable> Consumables { get; }
+        public IReadOnlyList<CarnivalConsumableState> Consumables { get; }
         public IReadOnlyList<CarnivalConsumable> BoosterChoices { get; }
         public CarnivalBlind CurrentBlind { get; }
         public CarnivalBoosterPack CurrentBoosterPack { get; }
@@ -123,6 +123,22 @@ namespace GameLogic.Core
             var copy = new List<T>(source.Count);
             for (int i = 0; i < source.Count; i++)
                 copy.Add(source[i]);
+            return copy.AsReadOnly();
+        }
+
+        private static IReadOnlyList<CarnivalConsumableState> CopyConsumables(
+            IReadOnlyList<CarnivalConsumableState> source)
+        {
+            var copy = new List<CarnivalConsumableState>(source.Count);
+            foreach (CarnivalConsumableState consumable in source)
+            {
+                copy.Add(new CarnivalConsumableState(
+                    consumable.Content,
+                    consumable.Edition,
+                    consumable.SellValue,
+                    consumable.RuntimeId));
+            }
+
             return copy.AsReadOnly();
         }
     }

@@ -10,32 +10,39 @@ namespace GameLogic.Core
             foreach (CarnivalPerformer performer in _performers)
                 GetJokerState(performer).Active = false;
 
-            Dictionary<int, List<CarnivalCard>> rankGroups = BuildRankGroups(cards);
-            int sequenceSize = HasJoker("four_fingers") ? 4 : 5;
-            bool isFlush = HasFlush(cards, sequenceSize);
-            bool isStraight = HasStraight(cards, sequenceSize, HasJoker("shortcut"));
-            CarnivalHandKind kind = ResolveHandKind(cards.Count, rankGroups, isFlush, isStraight);
+            CarnivalHandEvaluation evaluation = EvaluateHand(cards);
+            CarnivalHandKind kind = evaluation.Kind;
             CarnivalScoreResult result = CreateBaseResult(kind);
             _currentEvaluatedHand = kind;
             _roundHandPlayCounts.TryGetValue(kind, out int previousRoundPlays);
             _currentHandWasPlayedThisRound = previousRoundPlays > 0;
-            IncrementCount(_roundHandPlayCounts, kind);
-            IncrementCount(_handPlayCounts, kind);
-            _handsPlayedThisRound++;
 
-            if (!_bossBlindDisabled && CurrentBlind.BossRule == CarnivalBossRule.HalveBaseScore)
+            if (IsBossRuleActive(CarnivalBossRule.HalveBaseScore))
             {
                 result.Chips = Math.Max(1, result.Chips / 2);
                 result.Multiplier = Math.Max(1f, result.Multiplier / 2f);
                 result.Breakdown.Add("Boss 盲注：基础筹码与倍率减半");
             }
 
-            AddScoringCards(result, cards, rankGroups);
+            result.ScoringCardIds.AddRange(evaluation.ScoringCardIds);
             if (HasJoker("splash"))
             {
                 result.ScoringCardIds.Clear();
                 AddCardIds(result, cards);
             }
+
+            ApplyJokers(
+                CarnivalJokerTrigger.BeforeHandScored,
+                new CarnivalJokerContext
+                {
+                    Trigger = CarnivalJokerTrigger.BeforeHandScored,
+                    ScoreResult = result,
+                    PlayedCards = cards,
+                    HandKind = kind,
+                });
+            IncrementCount(_roundHandPlayCounts, kind);
+            IncrementCount(_handPlayCounts, kind);
+            _handsPlayedThisRound++;
 
             bool pareidolia = HasJoker("pareidolia");
             foreach (CarnivalCard card in cards)
@@ -43,8 +50,7 @@ namespace GameLogic.Core
                 if (!result.ScoringCardIds.Contains(card.Id))
                     continue;
 
-                if (!_bossBlindDisabled &&
-                    CurrentBlind.BossRule == CarnivalBossRule.DebuffFaceCards &&
+                if (IsBossRuleActive(CarnivalBossRule.DebuffFaceCards) &&
                     IsFaceCard(card, pareidolia))
                 {
                     result.Breakdown.Add($"{card.RankText}{card.SuitText} 被 Boss 盲注削弱");
@@ -53,7 +59,12 @@ namespace GameLogic.Core
 
                 int triggerCount = GetScoringCardTriggerCount(card, result, pareidolia);
                 for (int trigger = 0; trigger < triggerCount; trigger++)
-                    ApplyScoringCardTrigger(card, cards, result, pareidolia);
+                {
+                    CarnivalCard currentCard = TryGetCard(card.Id, out CarnivalCard latestCard)
+                        ? latestCard
+                        : card;
+                    ApplyScoringCardTrigger(currentCard, cards, result, pareidolia);
+                }
             }
 
             ApplyHeldCardEffects(cards, result, pareidolia);
@@ -64,6 +75,7 @@ namespace GameLogic.Core
 
             result.Score = Math.Max(1, (int)Math.Round(result.Chips * result.Multiplier));
             result.Breakdown.Add($"最终得分 {result.Score:N0}");
+            RecordHandForUnlocks(cards, result);
             return result;
         }
 
@@ -461,15 +473,12 @@ namespace GameLogic.Core
                     continue;
 
                 CarnivalCardEnhancementContent content = _contentModel.FindEnhancement(card.Enhancement);
-                if (content.BreakChance <= 0f || _random.NextDouble() >= content.BreakChance)
+                if (content.BreakChance <= 0f ||
+                    !RollChance(Math.Max(1, (int)Math.Round(1f / content.BreakChance))))
                     continue;
 
-                _selectedCardIds.Remove(card.Id);
-                _hand.RemoveAll(item => item.Id == card.Id);
-                result.Breakdown.Add($"{card.RankText}{card.SuitText} {content.Name}碎裂");
-                CarnivalPerformer glassJoker = FindOwnedJoker("glass");
-                if (glassJoker != null)
-                    GetJokerState(glassJoker).Value += 0.75f;
+                if (DestroyPlayingCard(card.Id, CarnivalDestroyReason.GlassBreak))
+                    result.Breakdown.Add($"{card.RankText}{card.SuitText} {content.Name}碎裂");
             }
         }
     }

@@ -70,23 +70,23 @@ namespace GameLogic.Core
             int triggers = 1;
             if (card.Seal == CarnivalCardSeal.Red)
                 triggers++;
-            if (HandsRemaining == 0 && HasJoker("dusk"))
-                triggers++;
-            if (card.Rank >= 2 && card.Rank <= 5 && HasJoker("hack"))
-                triggers++;
-            if (IsFaceCard(card, pareidolia) && HasJoker("sock_and_buskin"))
-                triggers++;
+            if (HandsRemaining == 0)
+                triggers += CountJokerAbilityOccurrences("dusk");
+            if (card.Rank >= 2 && card.Rank <= 5)
+                triggers += CountJokerAbilityOccurrences("hack");
+            if (IsFaceCard(card, pareidolia))
+                triggers += CountJokerAbilityOccurrences("sock_and_buskin");
 
             if (result.ScoringCardIds.Count > 0 &&
                 card.Id == result.ScoringCardIds[0] &&
-                HasJoker("hanging_chad"))
+                CountJokerAbilityOccurrences("hanging_chad") > 0)
             {
-                triggers += 2;
+                triggers += 2 * CountJokerAbilityOccurrences("hanging_chad");
             }
 
             CarnivalPerformer seltzer = FindOwnedJoker("selzer");
             if (seltzer != null && GetJokerState(seltzer).Counter > 0)
-                triggers++;
+                triggers += CountJokerAbilityOccurrences("selzer");
             return triggers;
         }
 
@@ -166,10 +166,52 @@ namespace GameLogic.Core
             CarnivalScoreResult result,
             bool pareidolia)
         {
-            foreach (CarnivalPerformer performer in _performers)
+            var snapshot = new List<CarnivalPerformer>(_performers);
+            foreach (CarnivalPerformer performer in snapshot)
             {
-                switch (performer.Id)
+                ApplyOnScoredJoker(
+                    performer,
+                    card,
+                    playedCards,
+                    result,
+                    pareidolia,
+                    0,
+                    new HashSet<CarnivalPerformer>());
+            }
+        }
+
+        private void ApplyOnScoredJoker(
+            CarnivalPerformer performer,
+            CarnivalCard card,
+            List<CarnivalCard> playedCards,
+            CarnivalScoreResult result,
+            bool pareidolia,
+            int copyDepth,
+            HashSet<CarnivalPerformer> copyChain)
+        {
+            if (performer == null || copyDepth > _performers.Count || !copyChain.Add(performer))
+                return;
+
+            if (performer.Id == "blueprint" || performer.Id == "brainstorm")
+            {
+                CarnivalPerformer target = ResolveCopyTarget(performer);
+                if (target != null && target.BlueprintCompatible)
                 {
+                    ApplyOnScoredJoker(
+                        target,
+                        card,
+                        playedCards,
+                        result,
+                        pareidolia,
+                        copyDepth + 1,
+                        copyChain);
+                }
+
+                return;
+            }
+
+            switch (performer.Id)
+            {
                     case "greedy_joker":
                         if (IsSuit(card, CarnivalSuit.Diamonds))
                             result.Multiplier += 3f;
@@ -288,7 +330,6 @@ namespace GameLogic.Core
                         if (card.Rank == 12 || card.Rank == 13)
                             result.Multiplier *= 2f;
                         break;
-                }
             }
         }
 
@@ -308,25 +349,39 @@ namespace GameLogic.Core
                     held.Add(card);
             }
 
-            int triggers = HasJoker("mime") ? 2 : 1;
+            int triggers = 1 + CountJokerAbilityOccurrences("mime");
+            int baronCount = CountJokerAbilityOccurrences("baron");
+            int shootTheMoonCount = CountJokerAbilityOccurrences("shoot_the_moon");
+            int reservedParkingCount = CountJokerAbilityOccurrences("reserved_parking");
             for (int repeat = 0; repeat < triggers; repeat++)
             {
                 foreach (CarnivalCard card in held)
                 {
                     if (card.Enhancement == CarnivalCardEnhancement.Steel)
                         result.Multiplier *= 1.5f;
-                    if (card.Rank == 13 && HasJoker("baron"))
-                        result.Multiplier *= 1.5f;
-                    if (card.Rank == 12 && HasJoker("shoot_the_moon"))
-                        result.Multiplier += 13f;
-                    if (IsFaceCard(card, pareidolia) && HasJoker("reserved_parking") && RollChance(2))
-                        Money++;
+                    if (card.Rank == 13)
+                    {
+                        for (int index = 0; index < baronCount; index++)
+                            result.Multiplier *= 1.5f;
+                    }
+
+                    if (card.Rank == 12)
+                        result.Multiplier += 13f * shootTheMoonCount;
+                    if (IsFaceCard(card, pareidolia))
+                    {
+                        for (int index = 0; index < reservedParkingCount; index++)
+                        {
+                            if (RollChance(2))
+                                Money++;
+                        }
+                    }
                     if (card.Seal == CarnivalCardSeal.Blue && HandsRemaining == 0)
                         TryCreateConsumable(CarnivalConsumableFamily.Planet);
                 }
             }
 
-            if (held.Count > 0 && HasJoker("raised_fist"))
+            int raisedFistCount = CountJokerAbilityOccurrences("raised_fist");
+            if (held.Count > 0 && raisedFistCount > 0)
             {
                 CarnivalCard lowest = held[0];
                 foreach (CarnivalCard card in held)
@@ -335,7 +390,9 @@ namespace GameLogic.Core
                         lowest = card;
                 }
 
-                result.Multiplier += 2f * (lowest.Rank == 14 ? 11 : Math.Min(lowest.Rank, 10));
+                result.Multiplier += raisedFistCount *
+                                     2f *
+                                     (lowest.Rank == 14 ? 11 : Math.Min(lowest.Rank, 10));
             }
         }
 
@@ -344,14 +401,15 @@ namespace GameLogic.Core
             List<CarnivalCard> playedCards,
             CarnivalScoreResult result)
         {
-            ApplyBalatroIndependentJoker(performer, playedCards, result, 0);
+            ApplyBalatroIndependentJoker(performer, playedCards, result, 0, true);
         }
 
         private void ApplyBalatroIndependentJoker(
             CarnivalPerformer performer,
             List<CarnivalCard> playedCards,
             CarnivalScoreResult result,
-            int copyDepth)
+            int copyDepth,
+            bool applyEdition)
         {
             if (performer == null || copyDepth > _performers.Count)
                 return;
@@ -362,11 +420,13 @@ namespace GameLogic.Core
             {
                 case "blueprint":
                     ApplyCopiedJoker(performer, 1, playedCards, result, copyDepth);
-                    ApplyJokerEdition(state, result);
+                    if (applyEdition)
+                        ApplyJokerEdition(state, result);
                     return;
                 case "brainstorm":
                     ApplyCopiedJoker(performer, -GetPerformerIndex(performer), playedCards, result, copyDepth);
-                    ApplyJokerEdition(state, result);
+                    if (applyEdition)
+                        ApplyJokerEdition(state, result);
                     return;
                 case "joker":
                     result.Multiplier += 4f;
@@ -572,7 +632,8 @@ namespace GameLogic.Core
             if (!applied)
                 return;
 
-            ApplyJokerEdition(state, result);
+            if (applyEdition)
+                ApplyJokerEdition(state, result);
             if (performer.Rarity == "罕见" && HasJoker("baseball"))
                 result.Multiplier *= 1.5f;
         }
@@ -591,7 +652,7 @@ namespace GameLogic.Core
             CarnivalPerformer target = _performers[targetIndex];
             if (!target.BlueprintCompatible)
                 return;
-            ApplyBalatroIndependentJoker(target, playedCards, result, copyDepth + 1);
+            ApplyBalatroIndependentJoker(target, playedCards, result, copyDepth + 1, false);
         }
 
         private int GetPerformerIndex(CarnivalPerformer performer)
@@ -707,7 +768,9 @@ namespace GameLogic.Core
                 if (!result.ScoringCardIds.Contains(card.Id))
                     continue;
                 club |= IsSuit(card, CarnivalSuit.Clubs);
-                other |= !IsSuit(card, CarnivalSuit.Clubs);
+                other |= IsSuit(card, CarnivalSuit.Spades) ||
+                         IsSuit(card, CarnivalSuit.Hearts) ||
+                         IsSuit(card, CarnivalSuit.Diamonds);
             }
 
             return club && other;
@@ -755,11 +818,11 @@ namespace GameLogic.Core
             List<CarnivalCard> playedCards,
             CarnivalScoreResult result)
         {
-            if (_bossBlindDisabled || CurrentBlind.Tier != CarnivalBlindTier.Boss)
+            if (CurrentBlind == null || CurrentBlind.Tier != CarnivalBlindTier.Boss || _bossBlindDisabled)
                 return false;
-            if (CurrentBlind.BossRule == CarnivalBossRule.HalveBaseScore)
+            if (IsBossRuleActive(CarnivalBossRule.HalveBaseScore))
                 return true;
-            if (CurrentBlind.BossRule != CarnivalBossRule.DebuffFaceCards)
+            if (!IsBossRuleActive(CarnivalBossRule.DebuffFaceCards))
                 return false;
 
             bool pareidolia = HasJoker("pareidolia");

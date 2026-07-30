@@ -10,10 +10,12 @@ namespace GameLogic.Core
             if (Phase != CarnivalRunPhase.Playing)
                 return false;
 
-            CarnivalConsumable consumable = _consumables.Find(item => item.Id == consumableId);
-            if (consumable == null)
+            CarnivalConsumableState state = _consumables.Find(item =>
+                item.RuntimeId == consumableId || item.Id == consumableId);
+            if (state == null)
                 return false;
 
+            CarnivalConsumable consumable = state.Content;
             if (!ApplyConsumable(consumable))
                 return false;
 
@@ -22,7 +24,15 @@ namespace GameLogic.Core
             else if (consumable.Family == CarnivalConsumableFamily.Planet && consumable.HandKind.HasValue)
                 _usedPlanetKinds.Add(consumable.HandKind.Value);
 
-            _consumables.Remove(consumable);
+            ApplyJokers(
+                CarnivalJokerTrigger.ConsumableUsed,
+                new CarnivalJokerContext
+                {
+                    Trigger = CarnivalJokerTrigger.ConsumableUsed,
+                    Consumable = state,
+                    HandKind = consumable.HandKind,
+                });
+            _consumables.Remove(state);
             return true;
         }
 
@@ -213,7 +223,7 @@ namespace GameLogic.Core
             }
 
             foreach (CarnivalCard card in cards)
-                _hand.RemoveAll(item => item.Id == card.Id);
+                DestroyPlayingCard(card.Id, CarnivalDestroyReason.Consumable);
             _selectedCardIds.Clear();
             DrawToHandSize();
             StatusMessage = $"{consumable.Name}摧毁了 {cards.Count} 张牌。";
@@ -262,7 +272,7 @@ namespace GameLogic.Core
 
         private bool CreateRandomConsumable(CarnivalConsumable source)
         {
-            if (_consumables.Count > MaxConsumables)
+            if (!HasConsumableSlot(1))
             {
                 StatusMessage = "消耗牌栏已满，无法生成新牌。";
                 return false;
@@ -270,7 +280,7 @@ namespace GameLogic.Core
 
             var candidates = new List<CarnivalConsumable>(_contentModel.Consumables);
             candidates.RemoveAll(item => item.Id == source.Id);
-            _consumables.Add(candidates[_random.Next(candidates.Count)]);
+            AddOwnedConsumable(candidates[_random.Next(candidates.Count)]);
             StatusMessage = $"{source.Name}生成了 1 张随机消耗牌。";
             return true;
         }

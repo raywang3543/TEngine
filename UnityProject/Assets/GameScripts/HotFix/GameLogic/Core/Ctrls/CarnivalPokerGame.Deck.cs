@@ -28,13 +28,14 @@ namespace GameLogic.Core
             Phase = CarnivalRunPhase.Playing;
             RoundScore = 0;
             CurrentBlind = CreateBlind(Round);
+            EvaluateAnteUnlocks();
             GenerateBlindTag();
             TargetScore = (int)Math.Round(AnteBaseTargets[Ante - 1] * CurrentBlind.ScoreScale);
             HandsRemaining = 4;
             DiscardsRemaining = 3;
             ResetBalatroRoundState();
             ApplyBlindSelectionJokers();
-            if (!_bossBlindDisabled && CurrentBlind.BossRule == CarnivalBossRule.LoseDiscard)
+            if (IsBossRuleActive(CarnivalBossRule.LoseDiscard))
                 DiscardsRemaining--;
             LastResult = null;
             StatusMessage = $"{CurrentBlind.Name}：{CurrentBlind.Description}";

@@ -33,6 +33,8 @@ namespace GameLogic
             RuntimeId.ToRuntimeId("EventDefine.CarnivalRerollShop");
         public static readonly int CarnivalSellPerformer =
             RuntimeId.ToRuntimeId("EventDefine.CarnivalSellPerformer");
+        public static readonly int CarnivalSellConsumable =
+            RuntimeId.ToRuntimeId("EventDefine.CarnivalSellConsumable");
         public static readonly int CarnivalMovePerformerLeft =
             RuntimeId.ToRuntimeId("EventDefine.CarnivalMovePerformerLeft");
         public static readonly int CarnivalMovePerformerRight =
