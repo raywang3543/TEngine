@@ -1,9 +1,0 @@
-{
-  "session_id": "019fa7fd-4901-7700-8444-c8d909b123e1",
-  "turn_id": "019fac4b-cfa5-7163-936d-14e17c49052a",
-  "prompt": "将使用unity6.3的uitoolkit新特性记录到Agents.md中",
-  "git_status": [],
-  "workspace_root": "/Users/ray/projects/TEngine",
-  "updated_at": "2026-07-29T13:15:45.733929+08:00",
-  "logged_turn_id": "019fac4b-cfa5-7163-936d-14e17c49052a"
-}

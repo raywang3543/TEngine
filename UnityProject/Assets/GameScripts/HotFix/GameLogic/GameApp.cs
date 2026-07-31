@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Reflection;
 using Cysharp.Threading.Tasks;
 using GameLogic;
-using GameLogic.Core;
 #if ENABLE_OBFUZ
 using Obfuz;
 #endif
@@ -37,9 +36,6 @@ public partial class GameApp
     
     private static async UniTaskVoid StartGameLogic()
     {
-        CarnivalSystem.Instance.Active();
-        await GameModule.UIToolkit.ShowUIAsync<CarnivalTableController>(
-            UITypes.CarnivalTable);
     }
     
     private static void Release()

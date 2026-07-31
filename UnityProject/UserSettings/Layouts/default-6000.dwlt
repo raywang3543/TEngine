@@ -19,7 +19,7 @@ MonoBehaviour:
     width: 2560
     height: 1298
   m_ShowMode: 4
-  m_Title: Scene
+  m_Title: Console
   m_RootView: {fileID: 6}
   m_MinSize: {x: 875, y: 300}
   m_MaxSize: {x: 10000, y: 10000}
@@ -48,7 +48,7 @@ MonoBehaviour:
   m_MinSize: {x: 300, y: 112}
   m_MaxSize: {x: 24288, y: 16192}
   vertical: 0
-  controlID: 119
+  controlID: 4563
   draggingID: 0
 --- !u!114 &3
 MonoBehaviour:
@@ -60,21 +60,22 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 1
   m_Script: {fileID: 12006, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: 
+  m_Name: TestRunnerWindow
   m_EditorClassIdentifier: 
   m_Children: []
   m_Position:
     serializedVersion: 2
-    x: 1955
+    x: 2024
     y: 0
-    width: 605
+    width: 536
     height: 1242
-  m_MinSize: {x: 276, y: 76}
+  m_MinSize: {x: 51, y: 76}
   m_MaxSize: {x: 4001, y: 4026}
-  m_ActualView: {fileID: 14}
+  m_ActualView: {fileID: 12}
   m_Panes:
-  - {fileID: 14}
-  m_Selected: 0
+  - {fileID: 15}
+  - {fileID: 12}
+  m_Selected: 1
   m_LastSelected: 0
 --- !u!114 &4
 MonoBehaviour:
@@ -93,13 +94,13 @@ MonoBehaviour:
     serializedVersion: 2
     x: 0
     y: 0
-    width: 484
-    height: 736
+    width: 500
+    height: 808
   m_MinSize: {x: 201, y: 226}
   m_MaxSize: {x: 4001, y: 4026}
-  m_ActualView: {fileID: 15}
+  m_ActualView: {fileID: 16}
   m_Panes:
-  - {fileID: 15}
+  - {fileID: 16}
   m_Selected: 0
   m_LastSelected: 0
 --- !u!114 &5
@@ -112,23 +113,23 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 1
   m_Script: {fileID: 12006, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: ProjectBrowser
+  m_Name: ConsoleWindow
   m_EditorClassIdentifier: 
   m_Children: []
   m_Position:
     serializedVersion: 2
     x: 0
-    y: 736
-    width: 1955
-    height: 506
-  m_MinSize: {x: 231, y: 276}
-  m_MaxSize: {x: 10001, y: 10026}
-  m_ActualView: {fileID: 13}
+    y: 808
+    width: 2024
+    height: 434
+  m_MinSize: {x: 101, y: 126}
+  m_MaxSize: {x: 4001, y: 4026}
+  m_ActualView: {fileID: 19}
   m_Panes:
-  - {fileID: 13}
-  - {fileID: 18}
-  m_Selected: 0
-  m_LastSelected: 1
+  - {fileID: 14}
+  - {fileID: 19}
+  m_Selected: 1
+  m_LastSelected: 0
 --- !u!114 &6
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -178,7 +179,7 @@ MonoBehaviour:
     height: 36
   m_MinSize: {x: 50, y: 50}
   m_MaxSize: {x: 4000, y: 4000}
-  m_ActualView: {fileID: 12}
+  m_ActualView: {fileID: 13}
 --- !u!114 &8
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -219,12 +220,12 @@ MonoBehaviour:
     serializedVersion: 2
     x: 0
     y: 0
-    width: 1955
+    width: 2024
     height: 1242
   m_MinSize: {x: 200, y: 112}
   m_MaxSize: {x: 16192, y: 16192}
   vertical: 1
-  controlID: 92
+  controlID: 4564
   draggingID: 0
 --- !u!114 &10
 MonoBehaviour:
@@ -245,12 +246,12 @@ MonoBehaviour:
     serializedVersion: 2
     x: 0
     y: 0
-    width: 1955
-    height: 736
+    width: 2024
+    height: 808
   m_MinSize: {x: 200, y: 56}
   m_MaxSize: {x: 16192, y: 8096}
   vertical: 0
-  controlID: 93
+  controlID: 4565
   draggingID: 0
 --- !u!114 &11
 MonoBehaviour:
@@ -262,24 +263,3427 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 1
   m_Script: {fileID: 12006, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: 
+  m_Name: SceneView
   m_EditorClassIdentifier: 
   m_Children: []
   m_Position:
     serializedVersion: 2
-    x: 484
+    x: 500
     y: 0
-    width: 1471
-    height: 736
+    width: 1524
+    height: 808
   m_MinSize: {x: 202, y: 226}
   m_MaxSize: {x: 4002, y: 4026}
-  m_ActualView: {fileID: 16}
+  m_ActualView: {fileID: 17}
   m_Panes:
-  - {fileID: 16}
   - {fileID: 17}
+  - {fileID: 18}
   m_Selected: 0
   m_LastSelected: 1
 --- !u!114 &12
+MonoBehaviour:
+  m_ObjectHideFlags: 52
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 13401, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEditor.TestRunner.dll::UnityEditor.TestTools.TestRunner.TestRunnerWindow
+  m_MinSize: {x: 50, y: 50}
+  m_MaxSize: {x: 4000, y: 4000}
+  m_TitleContent:
+    m_Text: Test Runner
+    m_Image: {fileID: 0}
+    m_Tooltip: Test framework for running Edit mode and Play mode tests in Unity.
+      Part of the com.unity.test-framework package.
+    m_TextWithWhitespace: "Test Runner\u200B"
+  m_Pos:
+    serializedVersion: 2
+    x: 2025
+    y: 24
+    width: 535
+    height: 1216
+  m_SerializedDataModeController:
+    m_DataMode: 0
+    m_PreferredDataMode: 0
+    m_SupportedDataModes: 
+    isAutomatic: 1
+  m_ViewDataDictionary: {fileID: 0}
+  m_OverlayCanvas:
+    m_LastAppliedPresetName: Default
+    m_SaveData: []
+    m_ContainerData: []
+    m_DynamicPanelContainerData: []
+    m_OverlaysVisible: 1
+    m_DynamicPanelBehavior: 0
+  m_Spl:
+    ID: 7941
+    splitterInitialOffset: 0
+    currentActiveSplitter: -1
+    realSizes:
+    - 859
+    - 287
+    relativeSizes:
+    - 0.75
+    - 0.25
+    minSizes:
+    - 32
+    - 32
+    maxSizes:
+    - 0
+    - 0
+    lastTotalSize: 1146
+    splitSize: 6
+    xOffset: 0
+    m_Version: 1
+    oldRealSizes: 
+    oldMinSizes: 
+    oldMaxSizes: 
+    oldSplitSize: 0
+  m_TestTypeToolbarIndex: 0
+  m_TestListGUIs:
+  - m_Window: {fileID: 12}
+    runProgress:
+      RunGuid: 54359a01-67a6-46dc-a958-a925e5f8eeec
+      ExecutionSettings:
+        m_TargetPlatform: 0
+        m_HasTargetPlatform: 0
+        filter:
+          testMode: 0
+          testNames: []
+          groupNames: []
+          categoryNames: []
+          assemblyNames: []
+        filters:
+        - testMode: 1
+          testNames: []
+          groupNames: []
+          categoryNames: []
+          assemblyNames: []
+        runSynchronously: 0
+        playerHeartbeatTimeout: 600
+        orderedTestNames: []
+        ignoreTests: []
+        featureFlags:
+          fileCleanUpCheck: 0
+          requiresSplashScreen: 0
+          strictDomainReload: 0
+          disableNestedEnumeratorBugfix: 0
+        randomOrderSeed: 0
+      HasFinished: 1
+      Progress: 1.0000002
+      CurrentStepName: Unlock Reload Assemblies
+      CurrentStageName: 
+    m_NewResultList:
+    - id: 1000
+      uniqueId: '[UnityGame][suite]'
+      name: UnityGame
+      fullName: UnityGame
+      resultStatus: 1
+      duration: 0.2793366
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 1
+      categories: []
+      parentId: 
+      parentUniqueId: 
+    - id: 1180
+      uniqueId: '[CarnivalPokerGameTests.dll][suite]'
+      name: CarnivalPokerGameTests.dll
+      fullName: /Users/ray/projects/TEngine/UnityProject/Library/ScriptAssemblies/CarnivalPokerGameTests.dll
+      resultStatus: 1
+      duration: 0.2793366
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 1
+      categories: []
+      parentId: 1000
+      parentUniqueId: '[UnityGame][suite]'
+    - id: 1181
+      uniqueId: 'CarnivalPokerGameTests.dll/[GameLogic][suite]'
+      name: GameLogic
+      fullName: GameLogic
+      resultStatus: 1
+      duration: 0.2793366
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 1
+      categories: []
+      parentId: 1180
+      parentUniqueId: '[CarnivalPokerGameTests.dll][suite]'
+    - id: 1182
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/[CarnivalPokerGameTests][GameLogic.Tests][suite]'
+      name: Tests
+      fullName: GameLogic.Tests
+      resultStatus: 1
+      duration: 0.2793366
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 1
+      categories: []
+      parentId: 1181
+      parentUniqueId: 'CarnivalPokerGameTests.dll/[GameLogic][suite]'
+    - id: 1001
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/[CarnivalPokerGameTests][suite]'
+      name: CarnivalPokerGameTests
+      fullName: GameLogic.Tests.CarnivalPokerGameTests
+      resultStatus: 1
+      duration: 0.2793366
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 1
+      categories: []
+      parentId: 1182
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/[CarnivalPokerGameTests][GameLogic.Tests][suite]'
+    - id: 1164
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.AnkhAndHex_ResolveJokerCopyAndDestruction]'
+      name: AnkhAndHex_ResolveJokerCopyAndDestruction
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.AnkhAndHex_ResolveJokerCopyAndDestruction
+      resultStatus: 1
+      duration: 0.038844
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1001
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/[CarnivalPokerGameTests][suite]'
+    - id: 1159
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.BalatroDatabaseCatalog_UsesOriginalConsumablesAndEnhancementValues]'
+      name: BalatroDatabaseCatalog_UsesOriginalConsumablesAndEnhancementValues
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.BalatroDatabaseCatalog_UsesOriginalConsumablesAndEnhancementValues
+      resultStatus: 1
+      duration: 0.0025587
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1001
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/[CarnivalPokerGameTests][suite]'
+    - id: 1017
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Campfire_SellingConsumableGrowsItsMultiplier]'
+      name: Campfire_SellingConsumableGrowsItsMultiplier
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Campfire_SellingConsumableGrowsItsMultiplier
+      resultStatus: 1
+      duration: 0.0018854
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1001
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/[CarnivalPokerGameTests][suite]'
+    - id: 1014
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Canio_DestroyedFaceCardGrowsExactlyOnce]'
+      name: Canio_DestroyedFaceCardGrowsExactlyOnce
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Canio_DestroyedFaceCardGrowsExactlyOnce
+      resultStatus: 1
+      duration: 0.002581
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1001
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/[CarnivalPokerGameTests][suite]'
+    - id: 1010
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Chicot_DisablesFiveCardBossRuleAtEveryEntryPoint]'
+      name: Chicot_DisablesFiveCardBossRuleAtEveryEntryPoint
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Chicot_DisablesFiveCardBossRuleAtEveryEntryPoint
+      resultStatus: 1
+      duration: 0.0106393
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1001
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/[CarnivalPokerGameTests][suite]'
+    - id: 1013
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Constellation_PlanetUseGrowsBeforeLaterScoring]'
+      name: Constellation_PlanetUseGrowsBeforeLaterScoring
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Constellation_PlanetUseGrowsBeforeLaterScoring
+      resultStatus: 1
+      duration: 0.0015105
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1001
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/[CarnivalPokerGameTests][suite]'
+    - id: 1005
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.ContentCatalog_MatchesBalatro101oCategoryCounts]'
+      name: ContentCatalog_MatchesBalatro101oCategoryCounts
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.ContentCatalog_MatchesBalatro101oCategoryCounts
+      resultStatus: 1
+      duration: 0.0020183
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1001
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/[CarnivalPokerGameTests][suite]'
+    - id: 1009
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.DietCola_DoublesNextBlindTagAndIsConsumed]'
+      name: DietCola_DoublesNextBlindTagAndIsConsumed
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.DietCola_DoublesNextBlindTagAndIsConsumed
+      resultStatus: 1
+      duration: 0.0045138
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1001
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/[CarnivalPokerGameTests][suite]'
+    - id: 1152
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+      name: EveryJoker_CanResolveARealScoringHand
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand
+      resultStatus: 1
+      duration: 0.17525
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 1
+      categories: []
+      parentId: 1001
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/[CarnivalPokerGameTests][suite]'
+    - id: 1002
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_joker_RuntimeSmoke]'
+      name: Joker_joker_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_joker_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0052768
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1003
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_greedy_joker_RuntimeSmoke]'
+      name: Joker_greedy_joker_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_greedy_joker_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.002281
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1004
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_lusty_joker_RuntimeSmoke]'
+      name: Joker_lusty_joker_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_lusty_joker_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0033651
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1005
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_wrathful_joker_RuntimeSmoke]'
+      name: Joker_wrathful_joker_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_wrathful_joker_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0078194
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1006
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_gluttenous_joker_RuntimeSmoke]'
+      name: Joker_gluttenous_joker_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_gluttenous_joker_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0011031
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1007
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_jolly_RuntimeSmoke]'
+      name: Joker_jolly_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_jolly_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0010743
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1008
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_zany_RuntimeSmoke]'
+      name: Joker_zany_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_zany_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0011116
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1009
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_mad_RuntimeSmoke]'
+      name: Joker_mad_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_mad_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0010735
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1010
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_crazy_RuntimeSmoke]'
+      name: Joker_crazy_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_crazy_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.000973
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1011
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_droll_RuntimeSmoke]'
+      name: Joker_droll_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_droll_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0009945
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1012
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_sly_RuntimeSmoke]'
+      name: Joker_sly_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_sly_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.000959
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1013
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_wily_RuntimeSmoke]'
+      name: Joker_wily_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_wily_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0009725
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1014
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_clever_RuntimeSmoke]'
+      name: Joker_clever_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_clever_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0009746
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1015
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_devious_RuntimeSmoke]'
+      name: Joker_devious_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_devious_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0009583
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1016
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_crafty_RuntimeSmoke]'
+      name: Joker_crafty_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_crafty_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0009491
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1017
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_half_RuntimeSmoke]'
+      name: Joker_half_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_half_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0031028
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1018
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_stencil_RuntimeSmoke]'
+      name: Joker_stencil_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_stencil_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0009213
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1019
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_four_fingers_RuntimeSmoke]'
+      name: Joker_four_fingers_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_four_fingers_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0009068
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1020
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_mime_RuntimeSmoke]'
+      name: Joker_mime_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_mime_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0009066
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1021
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_credit_card_RuntimeSmoke]'
+      name: Joker_credit_card_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_credit_card_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0009429
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1022
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_ceremonial_RuntimeSmoke]'
+      name: Joker_ceremonial_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_ceremonial_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0010249
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1023
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_banner_RuntimeSmoke]'
+      name: Joker_banner_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_banner_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0009921
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1024
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_mystic_summit_RuntimeSmoke]'
+      name: Joker_mystic_summit_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_mystic_summit_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0008997
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1025
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_marble_RuntimeSmoke]'
+      name: Joker_marble_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_marble_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0009613
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1026
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_loyalty_card_RuntimeSmoke]'
+      name: Joker_loyalty_card_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_loyalty_card_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0008968
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1027
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_8_ball_RuntimeSmoke]'
+      name: Joker_8_ball_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_8_ball_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0008969
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1028
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_misprint_RuntimeSmoke]'
+      name: Joker_misprint_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_misprint_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0008882
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1029
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_dusk_RuntimeSmoke]'
+      name: Joker_dusk_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_dusk_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0008997
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1030
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_raised_fist_RuntimeSmoke]'
+      name: Joker_raised_fist_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_raised_fist_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.000906
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1031
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_chaos_RuntimeSmoke]'
+      name: Joker_chaos_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_chaos_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0009042
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1032
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_fibonacci_RuntimeSmoke]'
+      name: Joker_fibonacci_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_fibonacci_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0008904
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1033
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_steel_joker_RuntimeSmoke]'
+      name: Joker_steel_joker_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_steel_joker_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0009276
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1034
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_scary_face_RuntimeSmoke]'
+      name: Joker_scary_face_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_scary_face_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0009072
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1035
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_abstract_RuntimeSmoke]'
+      name: Joker_abstract_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_abstract_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0008849
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1036
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_delayed_grat_RuntimeSmoke]'
+      name: Joker_delayed_grat_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_delayed_grat_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0008973
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1037
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_hack_RuntimeSmoke]'
+      name: Joker_hack_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_hack_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0008829
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1038
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_pareidolia_RuntimeSmoke]'
+      name: Joker_pareidolia_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_pareidolia_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0009063
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1039
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_gros_michel_RuntimeSmoke]'
+      name: Joker_gros_michel_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_gros_michel_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0009212
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1040
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_even_steven_RuntimeSmoke]'
+      name: Joker_even_steven_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_even_steven_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0009455
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1041
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_odd_todd_RuntimeSmoke]'
+      name: Joker_odd_todd_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_odd_todd_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0009088
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1042
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_scholar_RuntimeSmoke]'
+      name: Joker_scholar_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_scholar_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0008788
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1043
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_business_RuntimeSmoke]'
+      name: Joker_business_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_business_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0011588
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1044
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_supernova_RuntimeSmoke]'
+      name: Joker_supernova_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_supernova_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0008964
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1045
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_ride_the_bus_RuntimeSmoke]'
+      name: Joker_ride_the_bus_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_ride_the_bus_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0008968
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1046
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_space_RuntimeSmoke]'
+      name: Joker_space_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_space_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0008837
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1047
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_egg_RuntimeSmoke]'
+      name: Joker_egg_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_egg_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.000878
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1048
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_burglar_RuntimeSmoke]'
+      name: Joker_burglar_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_burglar_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0008928
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1049
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_blackboard_RuntimeSmoke]'
+      name: Joker_blackboard_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_blackboard_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.001031
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1050
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_runner_RuntimeSmoke]'
+      name: Joker_runner_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_runner_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0008894
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1051
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_ice_cream_RuntimeSmoke]'
+      name: Joker_ice_cream_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_ice_cream_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0010418
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1052
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_dna_RuntimeSmoke]'
+      name: Joker_dna_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_dna_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.000902
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1053
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_splash_RuntimeSmoke]'
+      name: Joker_splash_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_splash_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.001002
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1054
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_blue_joker_RuntimeSmoke]'
+      name: Joker_blue_joker_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_blue_joker_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0009696
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1055
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_sixth_sense_RuntimeSmoke]'
+      name: Joker_sixth_sense_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_sixth_sense_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0009834
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1056
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_constellation_RuntimeSmoke]'
+      name: Joker_constellation_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_constellation_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0010152
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1057
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_hiker_RuntimeSmoke]'
+      name: Joker_hiker_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_hiker_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0042138
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1058
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_faceless_RuntimeSmoke]'
+      name: Joker_faceless_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_faceless_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0009547
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1059
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_green_joker_RuntimeSmoke]'
+      name: Joker_green_joker_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_green_joker_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0018168
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1060
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_superposition_RuntimeSmoke]'
+      name: Joker_superposition_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_superposition_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0073232
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1061
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_todo_list_RuntimeSmoke]'
+      name: Joker_todo_list_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_todo_list_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0009759
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1062
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_cavendish_RuntimeSmoke]'
+      name: Joker_cavendish_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_cavendish_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0009662
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1063
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_card_sharp_RuntimeSmoke]'
+      name: Joker_card_sharp_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_card_sharp_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0009779
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1064
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_red_card_RuntimeSmoke]'
+      name: Joker_red_card_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_red_card_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0009377
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1065
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_madness_RuntimeSmoke]'
+      name: Joker_madness_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_madness_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0011038
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1066
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_square_RuntimeSmoke]'
+      name: Joker_square_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_square_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0009135
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1067
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_seance_RuntimeSmoke]'
+      name: Joker_seance_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_seance_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0009219
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1068
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_riff_raff_RuntimeSmoke]'
+      name: Joker_riff_raff_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_riff_raff_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0010117
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1069
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_vampire_RuntimeSmoke]'
+      name: Joker_vampire_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_vampire_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0009294
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1070
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_shortcut_RuntimeSmoke]'
+      name: Joker_shortcut_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_shortcut_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0009157
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1071
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_hologram_RuntimeSmoke]'
+      name: Joker_hologram_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_hologram_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0009253
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1072
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_vagabond_RuntimeSmoke]'
+      name: Joker_vagabond_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_vagabond_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0012202
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1073
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_baron_RuntimeSmoke]'
+      name: Joker_baron_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_baron_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.000909
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1074
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_cloud_9_RuntimeSmoke]'
+      name: Joker_cloud_9_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_cloud_9_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.000899
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1075
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_rocket_RuntimeSmoke]'
+      name: Joker_rocket_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_rocket_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0008924
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1076
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_obelisk_RuntimeSmoke]'
+      name: Joker_obelisk_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_obelisk_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0010962
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1077
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_midas_mask_RuntimeSmoke]'
+      name: Joker_midas_mask_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_midas_mask_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0009357
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1078
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_luchador_RuntimeSmoke]'
+      name: Joker_luchador_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_luchador_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0009286
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1079
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_photograph_RuntimeSmoke]'
+      name: Joker_photograph_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_photograph_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0009331
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1080
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_gift_RuntimeSmoke]'
+      name: Joker_gift_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_gift_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0009344
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1081
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_turtle_bean_RuntimeSmoke]'
+      name: Joker_turtle_bean_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_turtle_bean_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0009001
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1082
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_erosion_RuntimeSmoke]'
+      name: Joker_erosion_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_erosion_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0009145
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1083
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_reserved_parking_RuntimeSmoke]'
+      name: Joker_reserved_parking_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_reserved_parking_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0009073
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1084
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_mail_RuntimeSmoke]'
+      name: Joker_mail_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_mail_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0008954
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1085
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_to_the_moon_RuntimeSmoke]'
+      name: Joker_to_the_moon_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_to_the_moon_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0008843
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1086
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_hallucination_RuntimeSmoke]'
+      name: Joker_hallucination_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_hallucination_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0008792
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1087
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_fortune_teller_RuntimeSmoke]'
+      name: Joker_fortune_teller_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_fortune_teller_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0008911
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1088
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_juggler_RuntimeSmoke]'
+      name: Joker_juggler_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_juggler_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0008886
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1089
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_drunkard_RuntimeSmoke]'
+      name: Joker_drunkard_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_drunkard_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0008824
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1090
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_stone_RuntimeSmoke]'
+      name: Joker_stone_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_stone_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0009009
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1091
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_golden_RuntimeSmoke]'
+      name: Joker_golden_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_golden_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0008818
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1092
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_lucky_cat_RuntimeSmoke]'
+      name: Joker_lucky_cat_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_lucky_cat_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0008841
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1093
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_baseball_RuntimeSmoke]'
+      name: Joker_baseball_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_baseball_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0008841
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1094
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_bull_RuntimeSmoke]'
+      name: Joker_bull_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_bull_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0008827
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1095
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_diet_cola_RuntimeSmoke]'
+      name: Joker_diet_cola_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_diet_cola_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.000886
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1096
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_trading_RuntimeSmoke]'
+      name: Joker_trading_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_trading_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0009046
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1097
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_flash_RuntimeSmoke]'
+      name: Joker_flash_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_flash_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0009026
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1098
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_popcorn_RuntimeSmoke]'
+      name: Joker_popcorn_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_popcorn_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0009065
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1099
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_trousers_RuntimeSmoke]'
+      name: Joker_trousers_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_trousers_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0008679
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1100
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_ancient_RuntimeSmoke]'
+      name: Joker_ancient_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_ancient_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0008819
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1101
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_ramen_RuntimeSmoke]'
+      name: Joker_ramen_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_ramen_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0008835
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1102
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_walkie_talkie_RuntimeSmoke]'
+      name: Joker_walkie_talkie_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_walkie_talkie_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0008653
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1103
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_selzer_RuntimeSmoke]'
+      name: Joker_selzer_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_selzer_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0008837
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1104
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_castle_RuntimeSmoke]'
+      name: Joker_castle_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_castle_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.000865
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1105
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_smiley_RuntimeSmoke]'
+      name: Joker_smiley_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_smiley_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0008903
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1106
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_campfire_RuntimeSmoke]'
+      name: Joker_campfire_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_campfire_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0008557
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1107
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_ticket_RuntimeSmoke]'
+      name: Joker_ticket_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_ticket_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.000861
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1108
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_mr_bones_RuntimeSmoke]'
+      name: Joker_mr_bones_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_mr_bones_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0008557
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1109
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_acrobat_RuntimeSmoke]'
+      name: Joker_acrobat_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_acrobat_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.000869
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1110
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_sock_and_buskin_RuntimeSmoke]'
+      name: Joker_sock_and_buskin_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_sock_and_buskin_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0008649
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1111
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_swashbuckler_RuntimeSmoke]'
+      name: Joker_swashbuckler_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_swashbuckler_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0009401
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1112
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_troubadour_RuntimeSmoke]'
+      name: Joker_troubadour_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_troubadour_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0040845
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1113
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_certificate_RuntimeSmoke]'
+      name: Joker_certificate_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_certificate_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0009115
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1114
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_smeared_RuntimeSmoke]'
+      name: Joker_smeared_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_smeared_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0015984
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1115
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_throwback_RuntimeSmoke]'
+      name: Joker_throwback_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_throwback_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0052635
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1116
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_hanging_chad_RuntimeSmoke]'
+      name: Joker_hanging_chad_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_hanging_chad_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0009182
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1117
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_rough_gem_RuntimeSmoke]'
+      name: Joker_rough_gem_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_rough_gem_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0009245
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1118
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_bloodstone_RuntimeSmoke]'
+      name: Joker_bloodstone_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_bloodstone_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0009141
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1119
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_arrowhead_RuntimeSmoke]'
+      name: Joker_arrowhead_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_arrowhead_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0009037
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1120
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_onyx_agate_RuntimeSmoke]'
+      name: Joker_onyx_agate_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_onyx_agate_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.000896
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1121
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_glass_RuntimeSmoke]'
+      name: Joker_glass_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_glass_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0008884
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1122
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_ring_master_RuntimeSmoke]'
+      name: Joker_ring_master_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_ring_master_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0008988
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1123
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_flower_pot_RuntimeSmoke]'
+      name: Joker_flower_pot_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_flower_pot_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0011094
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1124
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_blueprint_RuntimeSmoke]'
+      name: Joker_blueprint_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_blueprint_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0010886
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1125
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_wee_RuntimeSmoke]'
+      name: Joker_wee_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_wee_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0009158
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1126
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_merry_andy_RuntimeSmoke]'
+      name: Joker_merry_andy_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_merry_andy_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0009149
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1127
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_oops_RuntimeSmoke]'
+      name: Joker_oops_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_oops_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0009004
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1128
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_idol_RuntimeSmoke]'
+      name: Joker_idol_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_idol_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0009619
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1129
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_seeing_double_RuntimeSmoke]'
+      name: Joker_seeing_double_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_seeing_double_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0009762
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1130
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_matador_RuntimeSmoke]'
+      name: Joker_matador_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_matador_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0009716
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1131
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_hit_the_road_RuntimeSmoke]'
+      name: Joker_hit_the_road_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_hit_the_road_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0008928
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1132
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_duo_RuntimeSmoke]'
+      name: Joker_duo_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_duo_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0008945
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1133
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_trio_RuntimeSmoke]'
+      name: Joker_trio_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_trio_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0008826
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1134
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_family_RuntimeSmoke]'
+      name: Joker_family_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_family_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0009115
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1135
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_order_RuntimeSmoke]'
+      name: Joker_order_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_order_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0009056
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1136
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_tribe_RuntimeSmoke]'
+      name: Joker_tribe_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_tribe_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0008887
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1137
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_stuntman_RuntimeSmoke]'
+      name: Joker_stuntman_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_stuntman_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0008796
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1138
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_invisible_RuntimeSmoke]'
+      name: Joker_invisible_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_invisible_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0008847
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1139
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_brainstorm_RuntimeSmoke]'
+      name: Joker_brainstorm_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_brainstorm_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0009136
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1140
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_satellite_RuntimeSmoke]'
+      name: Joker_satellite_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_satellite_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0009243
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1141
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_shoot_the_moon_RuntimeSmoke]'
+      name: Joker_shoot_the_moon_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_shoot_the_moon_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0009261
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1142
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_drivers_license_RuntimeSmoke]'
+      name: Joker_drivers_license_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_drivers_license_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0009289
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1143
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_cartomancer_RuntimeSmoke]'
+      name: Joker_cartomancer_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_cartomancer_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0008947
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1144
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_astronomer_RuntimeSmoke]'
+      name: Joker_astronomer_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_astronomer_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0008839
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1145
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_burnt_RuntimeSmoke]'
+      name: Joker_burnt_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_burnt_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0008777
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1146
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_bootstraps_RuntimeSmoke]'
+      name: Joker_bootstraps_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_bootstraps_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0008929
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1147
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_caino_RuntimeSmoke]'
+      name: Joker_caino_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_caino_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0008868
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1148
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_triboulet_RuntimeSmoke]'
+      name: Joker_triboulet_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_triboulet_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0008828
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1149
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_yorick_RuntimeSmoke]'
+      name: Joker_yorick_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_yorick_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0008803
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1150
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_chicot_RuntimeSmoke]'
+      name: Joker_chicot_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_chicot_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.000888
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1151
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/EveryJoker_CanResolveARealScoringHand/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Joker_perkeo_RuntimeSmoke]'
+      name: Joker_perkeo_RuntimeSmoke
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Joker_perkeo_RuntimeSmoke
+      resultStatus: 1
+      duration: 0.0008655
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1152
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.EveryJoker_CanResolveARealScoringHand][suite]'
+    - id: 1004
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.FiveCardBoss_RejectsAHandWithFewerThanFiveCards]'
+      name: FiveCardBoss_RejectsAHandWithFewerThanFiveCards
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.FiveCardBoss_RejectsAHandWithFewerThanFiveCards
+      resultStatus: 1
+      duration: 0.0015061
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1001
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/[CarnivalPokerGameTests][suite]'
+    - id: 1161
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.FoolAndHighPriestess_CreateExpectedConsumablesWithinSlots]'
+      name: FoolAndHighPriestess_CreateExpectedConsumablesWithinSlots
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.FoolAndHighPriestess_CreateExpectedConsumablesWithinSlots
+      resultStatus: 1
+      duration: 0.0024913
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1001
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/[CarnivalPokerGameTests][suite]'
+    - id: 1011
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.FourFingers_StraightScoresOnlyTheFourCardsFormingIt]'
+      name: FourFingers_StraightScoresOnlyTheFourCardsFormingIt
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.FourFingers_StraightScoresOnlyTheFourCardsFormingIt
+      resultStatus: 1
+      duration: 0.0020437
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1001
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/[CarnivalPokerGameTests][suite]'
+    - id: 1166
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.GiftCard_RoundEndRaisesBothOwnedCardSellValues]'
+      name: GiftCard_RoundEndRaisesBothOwnedCardSellValues
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.GiftCard_RoundEndRaisesBothOwnedCardSellValues
+      resultStatus: 1
+      duration: 0.0010706
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1001
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/[CarnivalPokerGameTests][suite]'
+    - id: 1008
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Hallucination_CreatesTarotWhenBoosterPackOpens]'
+      name: Hallucination_CreatesTarotWhenBoosterPackOpens
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Hallucination_CreatesTarotWhenBoosterPackOpens
+      resultStatus: 1
+      duration: 0.0013615
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1001
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/[CarnivalPokerGameTests][suite]'
+    - id: 1170
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Hiker_RetriggerReadsTheLatestPermanentChipState]'
+      name: Hiker_RetriggerReadsTheLatestPermanentChipState
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Hiker_RetriggerReadsTheLatestPermanentChipState
+      resultStatus: 1
+      duration: 0.000999
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1001
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/[CarnivalPokerGameTests][suite]'
+    - id: 1163
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.OuijaAndEctoplasm_ReduceHandSizeAndApplyTheirState]'
+      name: OuijaAndEctoplasm_ReduceHandSizeAndApplyTheirState
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.OuijaAndEctoplasm_ReduceHandSizeAndApplyTheirState
+      resultStatus: 1
+      duration: 0.0024057
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1001
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/[CarnivalPokerGameTests][suite]'
+    - id: 1006
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.PerformerCatalog_UsesOfficialRarityDistribution]'
+      name: PerformerCatalog_UsesOfficialRarityDistribution
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.PerformerCatalog_UsesOfficialRarityDistribution
+      resultStatus: 1
+      duration: 0.0009861
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1001
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/[CarnivalPokerGameTests][suite]'
+    - id: 1016
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Perkeo_ShopEndCreatesIndependentNegativeConsumable]'
+      name: Perkeo_ShopEndCreatesIndependentNegativeConsumable
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Perkeo_ShopEndCreatesIndependentNegativeConsumable
+      resultStatus: 1
+      duration: 0.001095
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1001
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/[CarnivalPokerGameTests][suite]'
+    - id: 1007
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.PlanetCatalog_CoversAllTwelveHandKinds]'
+      name: PlanetCatalog_CoversAllTwelveHandKinds
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.PlanetCatalog_CoversAllTwelveHandKinds
+      resultStatus: 1
+      duration: 0.0012891
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1001
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/[CarnivalPokerGameTests][suite]'
+    - id: 1165
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.PlayingCardSeals_ApplyGoldPurpleAndMatchingBluePlanetEffects]'
+      name: PlayingCardSeals_ApplyGoldPurpleAndMatchingBluePlanetEffects
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.PlayingCardSeals_ApplyGoldPurpleAndMatchingBluePlanetEffects
+      resultStatus: 1
+      duration: 0.0065606
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1001
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/[CarnivalPokerGameTests][suite]'
+    - id: 1169
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Runner_StraightGrowthAppliesToTheCurrentHand]'
+      name: Runner_StraightGrowthAppliesToTheCurrentHand
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Runner_StraightGrowthAppliesToTheCurrentHand
+      resultStatus: 1
+      duration: 0.0012425
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1001
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/[CarnivalPokerGameTests][suite]'
+    - id: 1003
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.SkipBlind_AdvancesToBossAndBossCannotBeSkipped]'
+      name: SkipBlind_AdvancesToBossAndBossCannotBeSkipped
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.SkipBlind_AdvancesToBossAndBossCannotBeSkipped
+      resultStatus: 1
+      duration: 0.0010264
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1001
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/[CarnivalPokerGameTests][suite]'
+    - id: 1162
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.SpectralCardCreationAndImmolate_ModifyThePersistentDeck]'
+      name: SpectralCardCreationAndImmolate_ModifyThePersistentDeck
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.SpectralCardCreationAndImmolate_ModifyThePersistentDeck
+      resultStatus: 1
+      duration: 0.0082392
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1001
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/[CarnivalPokerGameTests][suite]'
+    - id: 1002
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.StartNewRun_CreatesSmallBlindWithNoStartingJokers]'
+      name: StartNewRun_CreatesSmallBlindWithNoStartingJokers
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.StartNewRun_CreatesSmallBlindWithNoStartingJokers
+      resultStatus: 1
+      duration: 0.0011957
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1001
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/[CarnivalPokerGameTests][suite]'
+    - id: 1012
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.StoneCard_DoesNotBuildRankGroupButAlwaysScores]'
+      name: StoneCard_DoesNotBuildRankGroupButAlwaysScores
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.StoneCard_DoesNotBuildRankGroupButAlwaysScores
+      resultStatus: 1
+      duration: 0.0014373
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1001
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/[CarnivalPokerGameTests][suite]'
+    - id: 1160
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.TarotEnhancementAndDeath_ApplyOriginalSelectedCardRules]'
+      name: TarotEnhancementAndDeath_ApplyOriginalSelectedCardRules
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.TarotEnhancementAndDeath_ApplyOriginalSelectedCardRules
+      resultStatus: 1
+      duration: 0.0023667
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1001
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/[CarnivalPokerGameTests][suite]'
+    - id: 1172
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.UnlockModel_ContinueSavedRunUnlocksThrowback]'
+      name: UnlockModel_ContinueSavedRunUnlocksThrowback
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.UnlockModel_ContinueSavedRunUnlocksThrowback
+      resultStatus: 1
+      duration: 0.0010756
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1001
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/[CarnivalPokerGameTests][suite]'
+    - id: 1171
+      uniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/CarnivalPokerGameTests/[CarnivalPokerGameTests][GameLogic.Tests.CarnivalPokerGameTests.Vampire_RetriggerDoesNotConsumeOneEnhancementTwice]'
+      name: Vampire_RetriggerDoesNotConsumeOneEnhancementTwice
+      fullName: GameLogic.Tests.CarnivalPokerGameTests.Vampire_RetriggerDoesNotConsumeOneEnhancementTwice
+      resultStatus: 1
+      duration: 0.0011435
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 0
+      categories:
+      - Uncategorized
+      parentId: 1001
+      parentUniqueId: 'CarnivalPokerGameTests.dll/GameLogic/Tests/[CarnivalPokerGameTests][suite]'
+    m_ResultText: UnityGame (177 tests) (0.279s)
+    m_ResultStacktrace: 
+    m_TestListState:
+      scrollPos: {x: 0, y: 0}
+      m_SelectedIDs: 7b698bcc
+      m_LastClickedID: -863278725
+      m_ExpandedIDs: fc8a958edba945bb7b698bccf02363f4799099ffffffff7f
+      m_RenameOverlay:
+        m_UserAcceptedRename: 0
+        m_Name: 
+        m_OriginalName: 
+        m_EditFieldRect:
+          serializedVersion: 2
+          x: 0
+          y: 0
+          width: 0
+          height: 0
+        m_UserData: 0
+        m_IsWaitingForDelay: 0
+        m_IsRenaming: 0
+        m_OriginalEventType: 11
+        m_IsRenamingFilename: 0
+        m_TrimLeadingAndTrailingWhitespace: 0
+        m_ClientGUIView: {fileID: 0}
+      m_SearchString: 
+    m_TestRunnerUIFilter:
+      PassedHidden: 0
+      FailedHidden: 0
+      NotRunHidden: 0
+      m_SearchString: 
+      selectedCategories: []
+      availableCategories:
+      - Uncategorized
+    m_SelectedOption: 0
+  - m_Window: {fileID: 12}
+    runProgress:
+      RunGuid: 54359a01-67a6-46dc-a958-a925e5f8eeec
+      ExecutionSettings:
+        m_TargetPlatform: 0
+        m_HasTargetPlatform: 0
+        filter:
+          testMode: 0
+          testNames: []
+          groupNames: []
+          categoryNames: []
+          assemblyNames: []
+        filters:
+        - testMode: 1
+          testNames: []
+          groupNames: []
+          categoryNames: []
+          assemblyNames: []
+        runSynchronously: 0
+        playerHeartbeatTimeout: 600
+        orderedTestNames: []
+        ignoreTests: []
+        featureFlags:
+          fileCleanUpCheck: 0
+          requiresSplashScreen: 0
+          strictDomainReload: 0
+          disableNestedEnumeratorBugfix: 0
+        randomOrderSeed: 0
+      HasFinished: 1
+      Progress: 1.0000002
+      CurrentStepName: Unlock Reload Assemblies
+      CurrentStageName: 
+    m_NewResultList:
+    - id: 1181
+      uniqueId: '[UnityGame][suite]'
+      name: UnityGame
+      fullName: UnityGame
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 1
+      categories: []
+      parentId: 
+      parentUniqueId: 
+    m_ResultText: 
+    m_ResultStacktrace: 
+    m_TestListState:
+      scrollPos: {x: 0, y: 0}
+      m_SelectedIDs: 
+      m_LastClickedID: 0
+      m_ExpandedIDs: 7b698bccffffff7f
+      m_RenameOverlay:
+        m_UserAcceptedRename: 0
+        m_Name: 
+        m_OriginalName: 
+        m_EditFieldRect:
+          serializedVersion: 2
+          x: 0
+          y: 0
+          width: 0
+          height: 0
+        m_UserData: 0
+        m_IsWaitingForDelay: 0
+        m_IsRenaming: 0
+        m_OriginalEventType: 11
+        m_IsRenamingFilename: 0
+        m_TrimLeadingAndTrailingWhitespace: 0
+        m_ClientGUIView: {fileID: 0}
+      m_SearchString: 
+    m_TestRunnerUIFilter:
+      PassedHidden: 0
+      FailedHidden: 0
+      NotRunHidden: 0
+      m_SearchString: 
+      selectedCategories: []
+      availableCategories:
+      - Uncategorized
+    m_SelectedOption: 0
+  - m_Window: {fileID: 12}
+    runProgress:
+      RunGuid: 54359a01-67a6-46dc-a958-a925e5f8eeec
+      ExecutionSettings:
+        m_TargetPlatform: 0
+        m_HasTargetPlatform: 0
+        filter:
+          testMode: 0
+          testNames: []
+          groupNames: []
+          categoryNames: []
+          assemblyNames: []
+        filters:
+        - testMode: 1
+          testNames: []
+          groupNames: []
+          categoryNames: []
+          assemblyNames: []
+        runSynchronously: 0
+        playerHeartbeatTimeout: 600
+        orderedTestNames: []
+        ignoreTests: []
+        featureFlags:
+          fileCleanUpCheck: 0
+          requiresSplashScreen: 0
+          strictDomainReload: 0
+          disableNestedEnumeratorBugfix: 0
+        randomOrderSeed: 0
+      HasFinished: 1
+      Progress: 1.0000002
+      CurrentStepName: Unlock Reload Assemblies
+      CurrentStageName: 
+    m_NewResultList:
+    - id: 1000
+      uniqueId: '[UnityGame][suite]'
+      name: UnityGame
+      fullName: UnityGame
+      resultStatus: 0
+      duration: 0
+      messages: 
+      output: 
+      stacktrace: 
+      notRunnable: 0
+      ignoredOrSkipped: 0
+      description: 
+      isSuite: 1
+      categories: []
+      parentId: 
+      parentUniqueId: 
+    m_ResultText: 
+    m_ResultStacktrace: 
+    m_TestListState:
+      scrollPos: {x: 0, y: 0}
+      m_SelectedIDs: 
+      m_LastClickedID: 0
+      m_ExpandedIDs: 7b698bccffffff7f
+      m_RenameOverlay:
+        m_UserAcceptedRename: 0
+        m_Name: 
+        m_OriginalName: 
+        m_EditFieldRect:
+          serializedVersion: 2
+          x: 0
+          y: 0
+          width: 0
+          height: 0
+        m_UserData: 0
+        m_IsWaitingForDelay: 0
+        m_IsRenaming: 0
+        m_OriginalEventType: 11
+        m_IsRenamingFilename: 0
+        m_TrimLeadingAndTrailingWhitespace: 0
+        m_ClientGUIView: {fileID: 0}
+      m_SearchString: 
+    m_TestRunnerUIFilter:
+      PassedHidden: 0
+      FailedHidden: 0
+      NotRunHidden: 0
+      m_SearchString: 
+      selectedCategories: []
+      availableCategories:
+      - Uncategorized
+    m_SelectedOption: 0
+--- !u!114 &13
 MonoBehaviour:
   m_ObjectHideFlags: 52
   m_CorrespondingSourceObject: {fileID: 0}
@@ -601,7 +4005,7 @@ MonoBehaviour:
     m_DynamicPanelContainerData: []
     m_OverlaysVisible: 1
     m_DynamicPanelBehavior: 0
---- !u!114 &13
+--- !u!114 &14
 MonoBehaviour:
   m_ObjectHideFlags: 52
   m_CorrespondingSourceObject: {fileID: 0}
@@ -623,9 +4027,9 @@ MonoBehaviour:
   m_Pos:
     serializedVersion: 2
     x: 0
-    y: 760
-    width: 1954
-    height: 480
+    y: 902
+    width: 2023
+    height: 408
   m_SerializedDataModeController:
     m_DataMode: 0
     m_PreferredDataMode: 0
@@ -650,7 +4054,7 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets
+    - Assets/Settings
     m_Globs: []
     m_ProductIds: 
     m_AnyWithAssetOrigin: 0
@@ -658,24 +4062,21 @@ MonoBehaviour:
     m_ImportLogFlags: 0
     m_FilterByTypeIntersection: 0
   m_ViewMode: 1
-  m_StartGridSize: 64
+  m_StartGridSize: 16
   m_LastFolders:
-  - Assets
-  m_LastFoldersGridSize: -1
-  m_LastProjectPath: U:\layout
+  - Assets/Settings
+  m_LastFoldersGridSize: 16
+  m_LastProjectPath: /Users/ray/projects/TEngine/UnityProject
   m_LockTracker:
     m_IsLocked: 0
   m_LastLocalAssetsSearchArea: 1
   m_FolderTreeState:
     scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: []
+    m_SelectedIDs:
+    - m_Data: 40436
     m_LastClickedID:
-      m_Data: 0
-    m_ExpandedIDs:
-    - m_Data: 0
-    - m_Data: 38226
-    - m_Data: 40298
-    - m_Data: 40300
+      m_Data: 40436
+    m_ExpandedIDs: []
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -706,11 +4107,7 @@ MonoBehaviour:
     m_SelectedIDs: []
     m_LastClickedID:
       m_Data: 0
-    m_ExpandedIDs:
-    - m_Data: 0
-    - m_Data: 38226
-    - m_Data: 40298
-    - m_Data: 40300
+    m_ExpandedIDs: []
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -739,7 +4136,7 @@ MonoBehaviour:
   m_ListAreaState:
     m_SelectedInstanceIDs: []
     m_LastClickedInstanceID: 0
-    m_HadKeyboardFocusLastEvent: 0
+    m_HadKeyboardFocusLastEvent: 1
     m_ExpandedInstanceIDs: []
     m_RenameOverlay:
       m_UserAcceptedRename: 0
@@ -767,10 +4164,10 @@ MonoBehaviour:
       m_ResourceFile: 
     m_NewAssetIndexInList: -1
     m_ScrollPosition: {x: 0, y: 0}
-    m_GridSize: 64
+    m_GridSize: 16
   m_SkipHiddenPackages: 0
-  m_DirectoriesAreaWidth: 207
---- !u!114 &14
+  m_DirectoriesAreaWidth: 376
+--- !u!114 &15
 MonoBehaviour:
   m_ObjectHideFlags: 52
   m_CorrespondingSourceObject: {fileID: 0}
@@ -791,9 +4188,9 @@ MonoBehaviour:
     m_TextWithWhitespace: "Inspector\u200B"
   m_Pos:
     serializedVersion: 2
-    x: 1956
-    y: 24
-    width: 604
+    x: 2024
+    y: 94
+    width: 535
     height: 1216
   m_SerializedDataModeController:
     m_DataMode: 0
@@ -821,7 +4218,7 @@ MonoBehaviour:
   m_LockTracker:
     m_IsLocked: 0
   m_PreviewWindow: {fileID: 0}
---- !u!114 &15
+--- !u!114 &16
 MonoBehaviour:
   m_ObjectHideFlags: 52
   m_CorrespondingSourceObject: {fileID: 0}
@@ -844,8 +4241,8 @@ MonoBehaviour:
     serializedVersion: 2
     x: 0
     y: 24
-    width: 483
-    height: 710
+    width: 499
+    height: 782
   m_SerializedDataModeController:
     m_DataMode: 0
     m_PreferredDataMode: 0
@@ -865,7 +4262,36 @@ MonoBehaviour:
       m_SelectedIDs: []
       m_LastClickedID:
         m_Data: 0
-      m_ExpandedIDs: []
+      m_ExpandedIDs:
+      - m_Data: -248048
+      - m_Data: -247584
+      - m_Data: -244698
+      - m_Data: -244330
+      - m_Data: -243966
+      - m_Data: -243418
+      - m_Data: -243068
+      - m_Data: -242856
+      - m_Data: -242052
+      - m_Data: -237658
+      - m_Data: -237018
+      - m_Data: -189678
+      - m_Data: -187374
+      - m_Data: -187312
+      - m_Data: -186930
+      - m_Data: -186158
+      - m_Data: -150958
+      - m_Data: -150896
+      - m_Data: -150572
+      - m_Data: -150184
+      - m_Data: -148246
+      - m_Data: -148184
+      - m_Data: -147802
+      - m_Data: -147416
+      - m_Data: -126780
+      - m_Data: -126778
+      - m_Data: -12
+      - m_Data: 44742
+      - m_Data: 45622
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -891,7 +4317,7 @@ MonoBehaviour:
       m_IsLocked: 0
     m_CurrentSortingName: TransformSorting
   m_WindowGUID: 4c969a2b90040154d917609493e03593
---- !u!114 &16
+--- !u!114 &17
 MonoBehaviour:
   m_ObjectHideFlags: 52
   m_CorrespondingSourceObject: {fileID: 0}
@@ -912,10 +4338,10 @@ MonoBehaviour:
     m_TextWithWhitespace: "Scene\u200B"
   m_Pos:
     serializedVersion: 2
-    x: 485
+    x: 501
     y: 24
-    width: 1469
-    height: 710
+    width: 1522
+    height: 782
   m_SerializedDataModeController:
     m_DataMode: 0
     m_PreferredDataMode: 0
@@ -1432,20 +4858,20 @@ MonoBehaviour:
       m_Size: {x: 0, y: 0}
     yGrid:
       m_Fade:
+        m_Target: 0
+        speed: 2
+        m_Value: 0
+      m_Color: {r: 0.5, g: 0.5, b: 0.5, a: 0.4}
+      m_Pivot: {x: 0, y: 0, z: 0}
+      m_Size: {x: 1, y: 1}
+    zGrid:
+      m_Fade:
         m_Target: 1
         speed: 2
         m_Value: 1
       m_Color: {r: 0.5, g: 0.5, b: 0.5, a: 0.4}
       m_Pivot: {x: 0, y: 0, z: 0}
       m_Size: {x: 1, y: 1}
-    zGrid:
-      m_Fade:
-        m_Target: 0
-        speed: 2
-        m_Value: 0
-      m_Color: {r: 0.5, g: 0.5, b: 0.5, a: 0.4}
-      m_Pivot: {x: 0, y: 0, z: 0}
-      m_Size: {x: 0, y: 0}
     m_ShowGrid: 1
     m_GridAxis: 1
     m_gridOpacity: 0.5
@@ -1477,7 +4903,7 @@ MonoBehaviour:
   m_LastSceneViewRotation: {x: -0.08717229, y: 0.89959055, z: -0.21045254, w: -0.3726226}
   m_LastSceneViewOrtho: 0
   m_Viewpoint:
-    m_SceneView: {fileID: 16}
+    m_SceneView: {fileID: 17}
     m_CameraOverscanSettings:
       m_Opacity: 50
       m_Scale: 1
@@ -1490,7 +4916,7 @@ MonoBehaviour:
     name: Contributors / Receivers
     section: Lighting
   m_ViewIsLockedToObject: 0
---- !u!114 &17
+--- !u!114 &18
 MonoBehaviour:
   m_ObjectHideFlags: 52
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1511,10 +4937,10 @@ MonoBehaviour:
     m_TextWithWhitespace: "Game\u200B"
   m_Pos:
     serializedVersion: 2
-    x: 507
+    x: 500
     y: 94
-    width: 1532
-    height: 790
+    width: 1522
+    height: 782
   m_SerializedDataModeController:
     m_DataMode: 0
     m_PreferredDataMode: 0
@@ -1534,10 +4960,10 @@ MonoBehaviour:
   m_ShowGizmos: 0
   m_TargetDisplay: 0
   m_ClearColor: {r: 0, g: 0, b: 0, a: 0}
-  m_TargetSize: {x: 1532, y: 769}
+  m_TargetSize: {x: 1522, y: 761}
   m_TextureFilterMode: 0
   m_TextureHideFlags: 61
-  m_RenderIMGUI: 0
+  m_RenderIMGUI: 1
   m_EnterPlayModeBehavior: 0
   m_UseMipMap: 0
   m_VSyncEnabled: 0
@@ -1549,10 +4975,10 @@ MonoBehaviour:
     m_VRangeLocked: 0
     hZoomLockedByDefault: 0
     vZoomLockedByDefault: 0
-    m_HBaseRangeMin: -766
-    m_HBaseRangeMax: 766
-    m_VBaseRangeMin: -384.5
-    m_VBaseRangeMax: 384.5
+    m_HBaseRangeMin: -761
+    m_HBaseRangeMax: 761
+    m_VBaseRangeMin: -380.5
+    m_VBaseRangeMax: 380.5
     m_HAllowExceedBaseRangeMin: 1
     m_HAllowExceedBaseRangeMax: 1
     m_VAllowExceedBaseRangeMin: 1
@@ -1561,7 +4987,7 @@ MonoBehaviour:
     m_HSlider: 0
     m_VSlider: 0
     m_IgnoreScrollWheelUntilClicked: 0
-    m_EnableMouseInput: 1
+    m_EnableMouseInput: 0
     m_EnableSliderZoomHorizontal: 0
     m_EnableSliderZoomVertical: 0
     m_UniformScale: 1
@@ -1570,30 +4996,30 @@ MonoBehaviour:
       serializedVersion: 2
       x: 0
       y: 21
-      width: 1532
-      height: 769
+      width: 1522
+      height: 761
     m_Scale: {x: 1, y: 1}
-    m_Translation: {x: 766, y: 384.5}
+    m_Translation: {x: 761, y: 380.5}
     m_MarginLeft: 0
     m_MarginRight: 0
     m_MarginTop: 0
     m_MarginBottom: 0
     m_LastShownAreaInsideMargins:
       serializedVersion: 2
-      x: -766
-      y: -384.5
-      width: 1532
-      height: 769
+      x: -761
+      y: -380.5
+      width: 1522
+      height: 761
     m_MinimalGUI: 1
   m_defaultScale: 1
-  m_LastWindowPixelSize: {x: 1532, y: 790}
+  m_LastWindowPixelSize: {x: 1522, y: 782}
   m_ClearInEditMode: 1
   m_NoCameraWarning: 1
   m_LowResolutionForAspectRatios: 01000000000000000000
   m_XRRenderMode: 0
   m_RenderTexture: {fileID: 0}
   m_showToolbar: 1
---- !u!114 &18
+--- !u!114 &19
 MonoBehaviour:
   m_ObjectHideFlags: 52
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1614,10 +5040,10 @@ MonoBehaviour:
     m_TextWithWhitespace: "Console\u200B"
   m_Pos:
     serializedVersion: 2
-    x: 2249
-    y: 726.5
-    width: 920
-    height: 250
+    x: 0
+    y: 832
+    width: 2023
+    height: 408
   m_SerializedDataModeController:
     m_DataMode: 0
     m_PreferredDataMode: 0

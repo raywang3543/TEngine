@@ -7,58 +7,6 @@ namespace GameLogic
     /// </summary>
     public static class EventDefine
     {
-        #region Carnival Commands
-
-        public static readonly int CarnivalRequestState =
-            RuntimeId.ToRuntimeId("EventDefine.CarnivalRequestState");
-        public static readonly int CarnivalStartNewRun =
-            RuntimeId.ToRuntimeId("EventDefine.CarnivalStartNewRun");
-        public static readonly int CarnivalToggleCard =
-            RuntimeId.ToRuntimeId("EventDefine.CarnivalToggleCard");
-        public static readonly int CarnivalPlaySelected =
-            RuntimeId.ToRuntimeId("EventDefine.CarnivalPlaySelected");
-        public static readonly int CarnivalDiscardSelected =
-            RuntimeId.ToRuntimeId("EventDefine.CarnivalDiscardSelected");
-        public static readonly int CarnivalBuyPerformer =
-            RuntimeId.ToRuntimeId("EventDefine.CarnivalBuyPerformer");
-        public static readonly int CarnivalBuyConsumable =
-            RuntimeId.ToRuntimeId("EventDefine.CarnivalBuyConsumable");
-        public static readonly int CarnivalBuyBoosterPack =
-            RuntimeId.ToRuntimeId("EventDefine.CarnivalBuyBoosterPack");
-        public static readonly int CarnivalChooseBoosterReward =
-            RuntimeId.ToRuntimeId("EventDefine.CarnivalChooseBoosterReward");
-        public static readonly int CarnivalSkipBoosterPack =
-            RuntimeId.ToRuntimeId("EventDefine.CarnivalSkipBoosterPack");
-        public static readonly int CarnivalRerollShop =
-            RuntimeId.ToRuntimeId("EventDefine.CarnivalRerollShop");
-        public static readonly int CarnivalSellPerformer =
-            RuntimeId.ToRuntimeId("EventDefine.CarnivalSellPerformer");
-        public static readonly int CarnivalSellConsumable =
-            RuntimeId.ToRuntimeId("EventDefine.CarnivalSellConsumable");
-        public static readonly int CarnivalMovePerformerLeft =
-            RuntimeId.ToRuntimeId("EventDefine.CarnivalMovePerformerLeft");
-        public static readonly int CarnivalMovePerformerRight =
-            RuntimeId.ToRuntimeId("EventDefine.CarnivalMovePerformerRight");
-        public static readonly int CarnivalUseConsumable =
-            RuntimeId.ToRuntimeId("EventDefine.CarnivalUseConsumable");
-        public static readonly int CarnivalContinueFromShop =
-            RuntimeId.ToRuntimeId("EventDefine.CarnivalContinueFromShop");
-        public static readonly int CarnivalSkipBlind =
-            RuntimeId.ToRuntimeId("EventDefine.CarnivalSkipBlind");
-        public static readonly int CarnivalSortHandByRank =
-            RuntimeId.ToRuntimeId("EventDefine.CarnivalSortHandByRank");
-        public static readonly int CarnivalSortHandBySuit =
-            RuntimeId.ToRuntimeId("EventDefine.CarnivalSortHandBySuit");
-
-        #endregion
-
-        #region Carnival State
-
-        public static readonly int CarnivalStateChanged =
-            RuntimeId.ToRuntimeId("EventDefine.CarnivalStateChanged");
-
-        #endregion
-
         #region Login UI
 
         public static readonly int ShowLoginUI =
