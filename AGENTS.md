@@ -4,7 +4,7 @@
 
 ## 项目概述
 
-本仓库是 **TEngine**（Unity 客户端框架解决方案）的一个分支，在框架之上开发了一款原创 2D 牌组构筑游戏原型 **《午夜马戏团 / 马戏牌局》**（Carnival Poker，小丑牌式玩法：扑克牌型判定、筹码与倍率计分、表演者效果、渐进关卡/盲注、商店与胜负流程）。
+本仓库是 **TEngine**（Unity 客户端框架解决方案）的一个分支，用于在框架之上开发原创游戏。`GameLogic/Core/` 当前为空，游戏逻辑待按「Core/ 边界约定」重建。
 
 - Unity 版本：**6000.3.20f1**（Unity 6.3，见 `UnityProject/ProjectSettings/ProjectVersion.txt`）。
 - 渲染管线：**Built-in Render Pipeline**（`GraphicsSettings.asset` 中 `m_CustomRenderPipeline` 为空），线性色彩空间。
@@ -40,7 +40,6 @@ Assets/
 ├── AssetArt/              # 打包美术资源（Atlas 图集）
 ├── Editor/                # 工程级编辑器工具（UIScriptGenerator、AssetBundleCollector、AtlasRefWindow 等）
 ├── Scenes/                # 主场景 main.unity
-├── Tests/EditMode/        # EditMode 测试（CarnivalPokerGameTests）
 └── HybridCLRGenerate/     # HybridCLR 生成产物（勿手改）
 ```
 
@@ -51,14 +50,11 @@ GameLogic/
 ├── GameApp.cs             # 热更域入口 GameApp.Entrance
 ├── GameModule.cs          # 模块访问门面（GameModule.Resource/.UI/.UIToolkit/...）
 ├── EventDefine.cs         # 跨模块事件 ID（RuntimeId.ToRuntimeId 字符串转整型）
-├── SingletonSystem.cs     # 单例系统
-├── Core/                  # 游戏核心规则（唯一允许实现具体游戏规则的地方）
-│   ├── CarnivalSystem.cs  # 控制器与模型的统一入口（Singleton<CarnivalSystem>）
-│   ├── Ctrls/             # CarnivalPokerGame 分部类（Deck/Scoring/Blinds/Shop/Consumables）
-│   └── Models/            # CarnivalCard/CarnivalPerformer/CarnivalGameState 等纯 C# 领域模型
+├── SingletonSystem/       # 单例系统（Singleton/SingletonBehaviour/SingletonSystem）
+├── Core/                  # 游戏核心规则（唯一允许实现具体游戏规则的地方；当前为空，待重建）
 ├── Module/                # 自定义 UIModule（uGUI：UIWindow/UIWidget/UIBase）与 UIToolkitModule
 ├── UI/                    # uGUI 界面（LoginUI、BattleMainUI）
-├── UIToolkit/             # UI Toolkit 控制器（CarnivalTableController 等，游戏主界面）
+├── UIToolkit/             # UI Toolkit 控制器（WelcomeScreenController）
 ├── Tool/                  # 通用工具
 ```
 
@@ -66,12 +62,12 @@ GameLogic/
 
 - **热更新：HybridCLR**。所有平台均定义了 `ENABLE_HYBRIDCLR`；热更程序集为 **GameProto + GameLogic**（见 `ProjectSettings/HybridCLRSettings.asset`），编译产物在 `HybridCLRData/HotUpdateDlls`。AOT 层（Launcher、Procedure、TEngine、主程序集）不得直接引用热更类型，热更代码经反射调用 `GameApp.Entrance` 进入。
 - **资源管理：YooAsset**（本地包 `Packages/YooAsset`）。支持 EditorSimulateMode / OfflinePlayMode / HostPlayMode，AssetReference 自动生命周期，LRU/ARC 缓存。收集器配置在 `Assets/Editor/AssetBundleCollector`。
-- **配置表：Luban**。Excel 数据源在 `Configs/GameConfig/Datas`（含 `__tables__.xlsx` 注册表，及 `carnival_performer.xlsx`、`carnival_consumable.xlsx`、`carnival_card_enhancement.xlsx`），生成 C# 代码到 `GameProto/GameConfig/`、二进制到 `AssetRaw/Configs/bytes/`。运行时通过 `ConfigSystem.Instance.Tables` 懒加载访问。
+- **配置表：Luban**。Excel 数据源在 `Configs/GameConfig/Datas`（含 `__tables__.xlsx` 注册表，当前业务表为 `item.xlsx`），生成 C# 代码到 `GameProto/GameConfig/`、二进制到 `AssetRaw/Configs/bytes/`。运行时通过 `ConfigSystem.Instance.Tables` 懒加载访问。
 - **异步：UniTask**（本地包 `Packages/UniTask`）。另有 `Packages/Protobuf`、NuGet Newtonsoft.Json。
 - **模块系统**：框架模块在 `Assets/TEngine/Runtime/Module/`（Resource、Audio、Fsm、Procedure、Scene、Timer、Localization、ObjectPool、Debuger 等），核心设施在 `Runtime/Core/`（GameEvent、MemoryPool、Log、Utility、ModuleSystem）。
 - **启动链路**：`GameEntry.Awake` → 初始化 UpdateDriver/Resource/Fsm 等模块 → `Settings.ProcedureSetting.StartProcedure()` → 流程状态机：`ProcedureLaunch → ProcedureSplash → ProcedureInitPackage → ProcedurePreload → ProcedureInitResources → ProcedureCreateDownloader → ProcedureDownloadFile → ProcedureDownloadOver → ProcedureClearCache → ProcedureLoadAssembly → ProcedureStartGame`（本分支已无 UpdateVersion/UpdateManifest 状态，以 `Assets/GameScripts/Procedure/` 实际文件为准）→ 反射进入热更域 `GameApp.Entrance`。
-- **游戏入口**：`GameApp.Entrance` 激活 `CarnivalSystem.Instance.Active()`，再通过 `GameModule.UIToolkit.ShowUIAsync<CarnivalTableController>(UITypes.CarnivalTable)` 打开主界面（游戏主界面为 UI Toolkit 实现）。
-- **游戏架构（MVE 变体）**：`Core/CarnivalSystem` 是唯一入口——它监听 `EventDefine` 中的命令事件，转发给 `CarnivalPokerGame`（Ctrl）与内容模型（Model），并把只读状态以 `CarnivalStateChanged` 事件发布回表现层。表现层（uGUI 窗口、UI Toolkit 控制器）只发送命令、渲染状态，不得持有 Ctrl/Model 引用。卡牌数据由 Luban 配置表驱动，经 `CarnivalContentModel` 转换为运行时模型（生成代码不直接进入 Core 业务边界）。
+- **游戏入口**：`GameApp.Entrance` 经 `StartGameLogic()` 启动游戏逻辑（当前 `StartGameLogic` 为空，待新游戏逻辑接入）。
+- **游戏架构（MVE 变体）**：`Core/` 内由一个统一入口系统监听 `EventDefine` 中的命令事件，转发给 Ctrl 与内容模型（Model），并把只读状态以事件发布回表现层。表现层（uGUI 窗口、UI Toolkit 控制器）只发送命令、渲染状态，不得持有 Ctrl/Model 引用。数据优先由 Luban 配置表驱动，经内容模型转换为运行时模型（生成代码不直接进入 Core 业务边界）。
 
 ## 构建、生成与测试命令
 
@@ -110,8 +106,8 @@ dotnet build Tools/GameEventSourceGenerator/SourceGenerator.sln
 
 - 所有游戏专属逻辑——规则、运行时状态、Model、Ctrl、内容目录、计分、进程、商店、玩法行为——只能放在 `Assets/GameScripts/HotFix/GameLogic/Core/`。
 - `GameLogic` 的其它相邻目录（`UI/`、`UIToolkit/`、`Module/`、`Tool/`）只放可复用扩展组件、框架适配器、UI 表现/绑定、资源或平台集成、通用工具；不得实现具体游戏规则或直接改游戏状态。
-- UI 与集成层通过事件把命令转发给 `Core/`（经 `CarnivalSystem`），只渲染 `Core/` 模型暴露的只读状态；外部代码**绝不保留** Ctrl 或 Model 引用。
-- 卡牌数值改动优先走 Luban 配置表（见上），不要绕过 `CarnivalContentModel` 直接消费生成类。
+- UI 与集成层通过事件把命令转发给 `Core/`（经 `CoreSystem`），只渲染 `Core/` 模型暴露的只读状态；外部代码**绝不保留** Ctrl 或 Model 引用。
+- 卡牌数值改动优先走 Luban 配置表（见上）。
 
 ## UI Toolkit 规范（Unity 6.3 / Built-in RP）
 
@@ -119,8 +115,6 @@ dotnet build Tools/GameEventSourceGenerator/SourceGenerator.sln
 - 材质用 `-unity-material: url("project://database/Assets/...mat")` 在 USS 中指定；`VisualElement.style.unityMaterial` / `MaterialDefinition` 仅用于运行时选材或逐元素参数覆盖。
 - 子树后期处理用 USS `filter`（`blur`/`grayscale`/`invert`/`opacity`/`sepia`/`tint`/`hue-rotate`/`contrast`）；多个 filter 组合写在同一条声明里（分散规则会互相覆盖而非合并）；做 `filter` 动画时各状态的函数类型与顺序要一致。
 - 材质与 filter 不同：材质直接给 UI 网格着色，filter 会把元素及子树渲染到中间纹理。避免大面积、嵌套、多 pass 或持续动画的 filter。
-- 上述 API 够用就不要用 RenderTexture + Graphics.Blit 自造 UI 特效；静态效果留在 USS，控制器只管游戏状态、交互、动态 class 切换与资源生命周期。
-- 本项目是 **Built-in 管线**：UI Shader Graph 的 UI target 需要 URP，不可直接用；需要自定义 UI 着色器时用 `Assets/AssetRaw/Shaders/CarnivalUIEffects.shader` 这类兼容写法；迁移渲染管线必须先获得明确批准。
 - UXML、USS、材质、shader、图片、字体要一起打包，UI 打开期间保留其 YooAsset 句柄。
 
 ## 代码风格
@@ -133,8 +127,8 @@ dotnet build Tools/GameEventSourceGenerator/SourceGenerator.sln
 
 ## 测试
 
-- 现有测试：`UnityProject/Assets/Tests/EditMode/CarnivalPokerGameTests.cs`（NUnit，覆盖开局、盲注推进、出牌/弃牌、商店等核心规则），测试程序集为 `CarnivalPokerGameTests`。
-- `Core/` 的 Ctrl/Model 是纯 C#、支持注入随机种子，设计上便于 EditMode 直测——新增规则应同步补测试。
+- 当前无 EditMode 测试；重建 `Core/` 时应同步在 `UnityProject/Assets/Tests/EditMode/` 补回 NUnit 测试。
+- `Core/` 的 Ctrl/Model 应保持纯 C#、支持注入随机种子，设计上便于 EditMode 直测——新增规则应同步补测试。
 - 改动后运行相关 EditMode 测试并做一次 Editor 内实际运行；涉及资源/UI 的改动还要验证 bundle 加载链路。
 
 ## 安全与注意事项
