@@ -1,0 +1,41 @@
+.hello-root {
+    flex-grow: 1;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(10, 14, 26, 0.9);
+}
+
+.hello-panel {
+    align-items: center;
+    padding: 40px 60px;
+    background-color: rgb(28, 34, 52);
+    border-radius: 16px;
+    border-width: 2px;
+    border-color: rgb(86, 156, 214);
+}
+
+.hello-title {
+    font-size: 48px;
+    -unity-font-style: bold;
+    color: rgb(86, 156, 214);
+    margin-bottom: 12px;
+}
+
+.hello-subtitle {
+    font-size: 24px;
+    color: rgb(200, 208, 224);
+    margin-bottom: 28px;
+}
+
+.hello-button {
+    font-size: 22px;
+    color: rgb(255, 255, 255);
+    background-color: rgb(46, 92, 170);
+    border-radius: 8px;
+    padding: 10px 32px;
+    border-width: 0;
+}
+
+.hello-button:hover {
+    background-color: rgb(60, 115, 205);
+}

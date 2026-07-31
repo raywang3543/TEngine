@@ -1,0 +1,10 @@
+<UXML xmlns="UnityEngine.UIElements">
+    <Style src="project://database/Assets/AssetRaw/UIToolkit/Style/HelloWorldScreenStyle.uss" />
+    <VisualElement name="hello-root" class="hello-root">
+        <VisualElement class="hello-panel">
+            <Label name="hello-title" text="Hello World" class="hello-title" />
+            <Label name="hello-subtitle" text="UI Toolkit 测试界面" class="hello-subtitle" />
+            <Button name="hello-close-btn" text="关闭" class="hello-button" />
+        </VisualElement>
+    </VisualElement>
+</UXML>

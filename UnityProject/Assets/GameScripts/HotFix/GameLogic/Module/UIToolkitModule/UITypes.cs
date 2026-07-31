@@ -11,6 +11,7 @@ namespace GameLogic
         WelcomeScreen,
         BetDialog,
         CarnivalTable,
+        HelloWorldScreen,
     }
 
     /// <summary>
@@ -32,6 +33,8 @@ namespace GameLogic
                     return "BetDialog";
                 case UITypes.CarnivalTable:
                     return "CarnivalTable";
+                case UITypes.HelloWorldScreen:
+                    return "HelloWorldScreen";
                 default:
                     TEngine.Log.Error($"[UITypes] 未定义的 YooAsset 地址: {type}");
                     return null;

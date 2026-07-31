@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
@@ -29,7 +29,7 @@ namespace UnityEditor.Build.Pipeline.Tasks
             buildTasks.Add(new CalculateAssetDependencyData());
             buildTasks.Add(new StripUnusedSpriteSources());
             if (string.IsNullOrEmpty(builtInShaderBundleName) == false)
-                buildTasks.Add(new CreateBuiltInShadersBundle(builtInShaderBundleName));
+                buildTasks.Add(new CreateBuiltInBundle(builtInShaderBundleName));
             if (string.IsNullOrEmpty(monoScriptsBundleName) == false)
                 buildTasks.Add(new CreateMonoScriptBundle(monoScriptsBundleName));
             buildTasks.Add(new PostDependencyCallback());

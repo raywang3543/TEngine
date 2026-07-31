@@ -36,6 +36,8 @@ public partial class GameApp
     
     private static async UniTaskVoid StartGameLogic()
     {
+        // 测试：显示 Hello World UI Toolkit 界面。
+        await GameModule.UIToolkit.ShowUIAsync<HelloWorldScreenController>(UITypes.HelloWorldScreen);
     }
     
     private static void Release()
