@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using Cysharp.Threading.Tasks;
+using GameLogic.Core;
+using GameLogic.Core.Content;
 using GameLogic;
 #if ENABLE_OBFUZ
 using Obfuz;
@@ -36,12 +38,22 @@ public partial class GameApp
     
     private static async UniTaskVoid StartGameLogic()
     {
+        ContentValidationReport report = StacklandsContentLoader.Validate(ConfigSystem.Instance.Tables);
+        if (report.HasErrors)
+        {
+            throw new InvalidOperationException("Stacklands Original 内容配置校验失败：\n" + report);
+        }
+
+        IStacklandsContentCatalog content = StacklandsContentLoader.Build(ConfigSystem.Instance.Tables);
+        CoreSystem.Initialize(content);
+
         // 测试：显示 Hello World UI Toolkit 界面。
         await GameModule.UIToolkit.ShowUIAsync<HelloWorldScreenController>(UITypes.HelloWorldScreen);
     }
     
     private static void Release()
     {
+        CoreSystem.Release();
         SingletonSystem.Release();
         Log.Warning("======= Release GameApp =======");
     }

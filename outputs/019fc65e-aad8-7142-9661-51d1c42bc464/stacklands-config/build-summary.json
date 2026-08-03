@@ -1,0 +1,79 @@
+{
+  "cards": 121,
+  "ideas": 32,
+  "rumors": 2,
+  "quests": 56,
+  "packs": 10,
+  "slots": 36,
+  "recipes": 36,
+  "lootPools": 48,
+  "lootEntries": 177,
+  "actions": 31,
+  "workbooks": [
+    {
+      "path": "/Users/ray/projects/TEngine/Configs/GameConfig/Datas/stacklands_card.xlsx",
+      "rows": 121,
+      "cols": 18
+    },
+    {
+      "path": "/Users/ray/projects/TEngine/Configs/GameConfig/Datas/stacklands_unit.xlsx",
+      "rows": 19,
+      "cols": 19
+    },
+    {
+      "path": "/Users/ray/projects/TEngine/Configs/GameConfig/Datas/stacklands_equipment.xlsx",
+      "rows": 3,
+      "cols": 14
+    },
+    {
+      "path": "/Users/ray/projects/TEngine/Configs/GameConfig/Datas/stacklands_structure.xlsx",
+      "rows": 28,
+      "cols": 11
+    },
+    {
+      "path": "/Users/ray/projects/TEngine/Configs/GameConfig/Datas/stacklands_recipe.xlsx",
+      "rows": 36,
+      "cols": 13
+    },
+    {
+      "path": "/Users/ray/projects/TEngine/Configs/GameConfig/Datas/stacklands_loot_pool.xlsx",
+      "rows": 48,
+      "cols": 10
+    },
+    {
+      "path": "/Users/ray/projects/TEngine/Configs/GameConfig/Datas/stacklands_loot_entry.xlsx",
+      "rows": 177,
+      "cols": 14
+    },
+    {
+      "path": "/Users/ray/projects/TEngine/Configs/GameConfig/Datas/stacklands_card_action.xlsx",
+      "rows": 31,
+      "cols": 14
+    },
+    {
+      "path": "/Users/ray/projects/TEngine/Configs/GameConfig/Datas/stacklands_milestone.xlsx",
+      "rows": 3,
+      "cols": 12
+    },
+    {
+      "path": "/Users/ray/projects/TEngine/Configs/GameConfig/Datas/stacklands_booster_pack.xlsx",
+      "rows": 10,
+      "cols": 18
+    },
+    {
+      "path": "/Users/ray/projects/TEngine/Configs/GameConfig/Datas/stacklands_booster_slot.xlsx",
+      "rows": 36,
+      "cols": 12
+    },
+    {
+      "path": "/Users/ray/projects/TEngine/Configs/GameConfig/Datas/stacklands_quest.xlsx",
+      "rows": 56,
+      "cols": 15
+    },
+    {
+      "path": "/Users/ray/projects/TEngine/Configs/GameConfig/Datas/stacklands_world_rule.xlsx",
+      "rows": 1,
+      "cols": 22
+    }
+  ]
+}

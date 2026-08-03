@@ -15,22 +15,298 @@ public partial class Tables
 {
     #region The Tables
 
-    private item.TbItem m_TbItem;
-    public item.TbItem TbItem 
+    /// <summary>
+    /// Original 121 张卡牌主数据
+    /// </summary>
+    private stacklands.TbCard m_TbCard;
+    public stacklands.TbCard TbCard 
     {
         get
         {
-            if (m_TbItem == null)
+            if (m_TbCard == null)
             {
-                m_TbItem = new item.TbItem(defaultLoader("item_tbitem"));
-                m_TbItem.ResolveRef(this);
+                m_TbCard = new stacklands.TbCard(defaultLoader("stacklands_tbcard"));
+                m_TbCard.ResolveRef(this);
             }
-            return m_TbItem;
+            return m_TbCard;
         }
         set
         {
-            m_TbItem = value;
-            m_TbItem.ResolveRef(this);
+            m_TbCard = value;
+            m_TbCard.ResolveRef(this);
+        }
+    }
+    /// <summary>
+    /// 村民、友好动物和敌对单位基础属性
+    /// </summary>
+    private stacklands.TbUnit m_TbUnit;
+    public stacklands.TbUnit TbUnit 
+    {
+        get
+        {
+            if (m_TbUnit == null)
+            {
+                m_TbUnit = new stacklands.TbUnit(defaultLoader("stacklands_tbunit"));
+                m_TbUnit.ResolveRef(this);
+            }
+            return m_TbUnit;
+        }
+        set
+        {
+            m_TbUnit = value;
+            m_TbUnit.ResolveRef(this);
+        }
+    }
+    /// <summary>
+    /// Original 三张装备定义
+    /// </summary>
+    private stacklands.TbEquipment m_TbEquipment;
+    public stacklands.TbEquipment TbEquipment 
+    {
+        get
+        {
+            if (m_TbEquipment == null)
+            {
+                m_TbEquipment = new stacklands.TbEquipment(defaultLoader("stacklands_tbequipment"));
+                m_TbEquipment.ResolveRef(this);
+            }
+            return m_TbEquipment;
+        }
+        set
+        {
+            m_TbEquipment = value;
+            m_TbEquipment.ResolveRef(this);
+        }
+    }
+    /// <summary>
+    /// 建筑、资源节点和特殊结构参数
+    /// </summary>
+    private stacklands.TbStructure m_TbStructure;
+    public stacklands.TbStructure TbStructure 
+    {
+        get
+        {
+            if (m_TbStructure == null)
+            {
+                m_TbStructure = new stacklands.TbStructure(defaultLoader("stacklands_tbstructure"));
+                m_TbStructure.ResolveRef(this);
+            }
+            return m_TbStructure;
+        }
+        set
+        {
+            m_TbStructure = value;
+            m_TbStructure.ResolveRef(this);
+        }
+    }
+    /// <summary>
+    /// 32 张 Original 点子及炉灶料理变体
+    /// </summary>
+    private stacklands.TbRecipe m_TbRecipe;
+    public stacklands.TbRecipe TbRecipe 
+    {
+        get
+        {
+            if (m_TbRecipe == null)
+            {
+                m_TbRecipe = new stacklands.TbRecipe(defaultLoader("stacklands_tbrecipe"));
+                m_TbRecipe.ResolveRef(this);
+            }
+            return m_TbRecipe;
+        }
+        set
+        {
+            m_TbRecipe = value;
+            m_TbRecipe.ResolveRef(this);
+        }
+    }
+    /// <summary>
+    /// 卡包、采集、探索和敌人掉落池
+    /// </summary>
+    private stacklands.TbLootPool m_TbLootPool;
+    public stacklands.TbLootPool TbLootPool 
+    {
+        get
+        {
+            if (m_TbLootPool == null)
+            {
+                m_TbLootPool = new stacklands.TbLootPool(defaultLoader("stacklands_tblootpool"));
+                m_TbLootPool.ResolveRef(this);
+            }
+            return m_TbLootPool;
+        }
+        set
+        {
+            m_TbLootPool = value;
+            m_TbLootPool.ResolveRef(this);
+        }
+    }
+    /// <summary>
+    /// 掉落池条目；未知概率不填零
+    /// </summary>
+    private stacklands.TbLootEntry m_TbLootEntry;
+    public stacklands.TbLootEntry TbLootEntry 
+    {
+        get
+        {
+            if (m_TbLootEntry == null)
+            {
+                m_TbLootEntry = new stacklands.TbLootEntry(defaultLoader("stacklands_tblootentry"));
+                m_TbLootEntry.ResolveRef(this);
+            }
+            return m_TbLootEntry;
+        }
+        set
+        {
+            m_TbLootEntry = value;
+            m_TbLootEntry.ResolveRef(this);
+        }
+    }
+    /// <summary>
+    /// 采集、探索、生产、出售和特殊交互入口
+    /// </summary>
+    private stacklands.TbCardAction m_TbCardAction;
+    public stacklands.TbCardAction TbCardAction 
+    {
+        get
+        {
+            if (m_TbCardAction == null)
+            {
+                m_TbCardAction = new stacklands.TbCardAction(defaultLoader("stacklands_tbcardaction"));
+                m_TbCardAction.ResolveRef(this);
+            }
+            return m_TbCardAction;
+        }
+        set
+        {
+            m_TbCardAction = value;
+            m_TbCardAction.ResolveRef(this);
+        }
+    }
+    /// <summary>
+    /// 地下墓穴和旅行商车确定性里程碑
+    /// </summary>
+    private stacklands.TbMilestone m_TbMilestone;
+    public stacklands.TbMilestone TbMilestone 
+    {
+        get
+        {
+            if (m_TbMilestone == null)
+            {
+                m_TbMilestone = new stacklands.TbMilestone(defaultLoader("stacklands_tbmilestone"));
+                m_TbMilestone.ResolveRef(this);
+            }
+            return m_TbMilestone;
+        }
+        set
+        {
+            m_TbMilestone = value;
+            m_TbMilestone.ResolveRef(this);
+        }
+    }
+    /// <summary>
+    /// 主大陆八个购买卡包和两个特殊卡包
+    /// </summary>
+    private stacklands.TbBoosterPack m_TbBoosterPack;
+    public stacklands.TbBoosterPack TbBoosterPack 
+    {
+        get
+        {
+            if (m_TbBoosterPack == null)
+            {
+                m_TbBoosterPack = new stacklands.TbBoosterPack(defaultLoader("stacklands_tbboosterpack"));
+                m_TbBoosterPack.ResolveRef(this);
+            }
+            return m_TbBoosterPack;
+        }
+        set
+        {
+            m_TbBoosterPack = value;
+            m_TbBoosterPack.ResolveRef(this);
+        }
+    }
+    /// <summary>
+    /// 每个卡包的独立卡槽
+    /// </summary>
+    private stacklands.TbBoosterSlot m_TbBoosterSlot;
+    public stacklands.TbBoosterSlot TbBoosterSlot 
+    {
+        get
+        {
+            if (m_TbBoosterSlot == null)
+            {
+                m_TbBoosterSlot = new stacklands.TbBoosterSlot(defaultLoader("stacklands_tbboosterslot"));
+                m_TbBoosterSlot.ResolveRef(this);
+            }
+            return m_TbBoosterSlot;
+        }
+        set
+        {
+            m_TbBoosterSlot = value;
+            m_TbBoosterSlot.ResolveRef(this);
+        }
+    }
+    /// <summary>
+    /// Original 基础版 56 项任务
+    /// </summary>
+    private stacklands.TbQuest m_TbQuest;
+    public stacklands.TbQuest TbQuest 
+    {
+        get
+        {
+            if (m_TbQuest == null)
+            {
+                m_TbQuest = new stacklands.TbQuest(defaultLoader("stacklands_tbquest"));
+                m_TbQuest.ResolveRef(this);
+            }
+            return m_TbQuest;
+        }
+        set
+        {
+            m_TbQuest = value;
+            m_TbQuest.ResolveRef(this);
+        }
+    }
+    /// <summary>
+    /// Original 主大陆全局规则
+    /// </summary>
+    private stacklands.TbWorldRule m_TbWorldRule;
+    public stacklands.TbWorldRule TbWorldRule 
+    {
+        get
+        {
+            if (m_TbWorldRule == null)
+            {
+                m_TbWorldRule = new stacklands.TbWorldRule(defaultLoader("stacklands_tbworldrule"));
+                m_TbWorldRule.ResolveRef(this);
+            }
+            return m_TbWorldRule;
+        }
+        set
+        {
+            m_TbWorldRule = value;
+            m_TbWorldRule.ResolveRef(this);
+        }
+    }
+    /// <summary>
+    /// 卡牌触发式特殊效果与局内限制
+    /// </summary>
+    private stacklands.TbCardEffect m_TbCardEffect;
+    public stacklands.TbCardEffect TbCardEffect 
+    {
+        get
+        {
+            if (m_TbCardEffect == null)
+            {
+                m_TbCardEffect = new stacklands.TbCardEffect(defaultLoader("stacklands_tbcardeffect"));
+                m_TbCardEffect.ResolveRef(this);
+            }
+            return m_TbCardEffect;
+        }
+        set
+        {
+            m_TbCardEffect = value;
+            m_TbCardEffect.ResolveRef(this);
         }
     }
 
