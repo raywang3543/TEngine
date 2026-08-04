@@ -88,8 +88,8 @@ namespace GameLogic.Core.Ctrl
             CardRunData card = Model.GetCard(instanceId);
             if (card == null) return;
             CardDefinition definition = Model.Content.Cards.Get(card.CardId);
-            if (definition.IsSellable != true || definition.SellPrice.GetValueOrDefault() <= 0) return;
-            int value = definition.SellPrice.Value *
+            if (definition.IsSellable != true) return;
+            int value = definition.SellPrice.GetValueOrDefault() *
                         (card.IsFoil ? (int)Model.Content.Boosters.All.First().FoilSellMultiplier : 1);
             float x = card.X; float y = card.Y;
             Model.RemoveCard(card);

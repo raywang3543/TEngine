@@ -325,6 +325,14 @@ namespace GameLogic.Core.View
             var movingIds = new HashSet<string>(moveWholeStack
                 ? _cards.Values.Where(card => card.StackId == draggedStackId).Select(card => card.InstanceId)
                 : new[] { draggedId });
+            bool overSellSlot = _sellSlot != null && _sellSlot.Contains(world);
+            bool canSell = _cardData.TryGetValue(draggedId, out CardSnapshot data) && data.CanSell;
+            if (overSellSlot && !canSell)
+            {
+                // 不可出售：不出售也不移动，拖动的卡牌回到拖动前位置。
+                foreach (KeyValuePair<CardView, Vector3> pair in _draggedOffsets)
+                    if (pair.Key != null) pair.Key.transform.position = _dragStartedPosition + pair.Value;
+            }
             ClearWholeStackFeedback();
             SetDraggedCardsSorting(false);
             HideSlotBorders();
@@ -332,12 +340,13 @@ namespace GameLogic.Core.View
             _draggedOffsets.Clear();
             _dragWholeStack = false;
             _wholeStackHoldEligible = false;
-            if (_sellSlot != null && _sellSlot.Contains(world))
+            if (overSellSlot)
             {
-                CoreSystem.SubmitCommand(new StacklandsCommandDto
-                {
-                    Kind = StacklandsCommandKind.SellCard, InstanceId = draggedId,
-                });
+                if (canSell)
+                    CoreSystem.SubmitCommand(new StacklandsCommandDto
+                    {
+                        Kind = StacklandsCommandKind.SellCard, InstanceId = draggedId,
+                    });
                 return;
             }
             Collider2D target = Physics2D.OverlapPointAll(world)
