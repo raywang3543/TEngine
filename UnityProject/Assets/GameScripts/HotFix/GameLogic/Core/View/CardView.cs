@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using GameLogic.Core;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -19,6 +20,8 @@ namespace GameLogic.Core.View
         private TextMesh _footer;
         private TextMesh _wholeStackBadge;
         private Transform _progress;
+        private Sprite _fallbackSprite;
+        private IReadOnlyDictionary<string, Sprite> _cardSprites;
         private bool _selected;
         private bool _dragSorting;
         private bool _wholeStackDragFeedback;
@@ -27,9 +30,12 @@ namespace GameLogic.Core.View
         public string InstanceId { get; private set; }
         public string StackId { get; private set; }
 
-        public CardView Initialize(string id, Sprite sprite, Font font)
+        public CardView Initialize(string id, Sprite sprite, Font font,
+            IReadOnlyDictionary<string, Sprite> cardSprites)
         {
             InstanceId = id;
+            _fallbackSprite = sprite;
+            _cardSprites = cardSprites;
             _sortingGroup = gameObject.AddComponent<SortingGroup>();
             _outline = AddSprite("Outline", sprite, Color.black, -1,
                 new Vector3(CardWidth + 0.12f, CardHeight + 0.12f));
@@ -57,11 +63,39 @@ namespace GameLogic.Core.View
             _selected = selected;
             transform.position = new Vector3(data.X, data.Y - data.StackOrder * 0.32f, -data.StackOrder * 0.01f);
             RefreshSorting();
-            _body.color = ParseColor(data.Color, data.Category);
+            Sprite body = ResolveBodySprite(data, out Color tint, out Color textColor);
+            if (_body.sprite != body)
+            {
+                _body.sprite = body;
+                Vector2 size = body.bounds.size;
+                _body.transform.localScale = new Vector3(CardWidth / size.x, CardHeight / size.y, 1f);
+            }
+            _body.color = tint;
             RefreshOutline();
             _title.text = BreakName(data.NameZh);
+            _title.color = textColor;
             _footer.text = Footer(data);
+            _footer.color = textColor;
             RenderProgress(data.Progress);
+        }
+
+        /// <summary>
+        /// 按卡牌颜色选取图集牌面底图；底图未加载时回退为纯色染色 sprite。
+        /// </summary>
+        private Sprite ResolveBodySprite(CardSnapshot data, out Color tint, out Color textColor)
+        {
+            if (!string.IsNullOrEmpty(data.Color) && _cardSprites != null &&
+                _cardSprites.TryGetValue(data.Color, out Sprite sprite) && sprite != null)
+            {
+                tint = Color.white;
+                // 黑色资源节点卡底图过暗，文字反白。
+                textColor = data.Color == "BLACK" ? Color.white : Color.black;
+                return sprite;
+            }
+
+            tint = ParseColor(data.Color, data.Category);
+            textColor = Color.black;
+            return _fallbackSprite;
         }
 
         public void RenderProgress(float value)

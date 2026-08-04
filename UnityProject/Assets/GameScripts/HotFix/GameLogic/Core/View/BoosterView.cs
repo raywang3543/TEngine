@@ -9,28 +9,43 @@ namespace GameLogic.Core.View
     /// </summary>
     internal sealed class BoosterView : MonoBehaviour
     {
+        private const float BoosterWidth = 1.6f;
+        private const float BoosterHeight = 2.2f;
         private const int NormalSortingOrder = 20;
         private const int DragSortingOrder = 30000;
         private SortingGroup _sortingGroup;
+        private SpriteRenderer _body;
         private TextMesh _text;
 
         public string InstanceId { get; private set; }
+
+        /// <summary>
+        /// 图集卡包底图；为 null 时保持纯色回退表现。
+        /// </summary>
+        public Sprite Background
+        {
+            set
+            {
+                if (value == null || _body == null || _body.sprite == value) return;
+                _body.sprite = value;
+                _body.color = Color.white;
+                FitToSprite(value);
+            }
+        }
 
         public BoosterView Initialize(string id, Sprite sprite, Font font)
         {
             InstanceId = id;
             _sortingGroup = gameObject.AddComponent<SortingGroup>();
             _sortingGroup.sortingOrder = NormalSortingOrder;
-            var body = gameObject.AddComponent<SpriteRenderer>();
-            body.sprite = sprite;
-            body.color = Color.black;
-            body.sortingOrder = 0;
-            transform.localScale = new Vector3(1.6f, 2.2f, 1f);
+            _body = gameObject.AddComponent<SpriteRenderer>();
+            _body.sprite = sprite;
+            _body.color = Color.black;
+            _body.sortingOrder = 0;
+            transform.localScale = new Vector3(BoosterWidth, BoosterHeight, 1f);
 
             var textObject = new GameObject("Text");
             textObject.transform.SetParent(transform, false);
-            textObject.transform.localScale = new Vector3(0.625f, 0.455f, 1f);
-            textObject.transform.localPosition = new Vector3(0, 0, -0.05f);
             _text = textObject.AddComponent<TextMesh>();
             _text.font = font;
             _text.fontSize = 34;
@@ -40,8 +55,29 @@ namespace GameLogic.Core.View
             _text.color = Color.white;
             if (font != null) _text.GetComponent<MeshRenderer>().sharedMaterial = font.material;
             _text.GetComponent<MeshRenderer>().sortingOrder = 1;
+            FitText();
             gameObject.AddComponent<BoxCollider2D>().size = Vector2.one;
             return this;
+        }
+
+        /// <summary>
+        /// 按底图实际尺寸换算缩放，不依赖贴图 Pixels Per Unit 设置。
+        /// </summary>
+        private void FitToSprite(Sprite sprite)
+        {
+            Vector2 size = sprite.bounds.size;
+            transform.localScale = new Vector3(BoosterWidth / size.x, BoosterHeight / size.y, 1f);
+            FitText();
+        }
+
+        /// <summary>
+        /// 抵消卡包节点缩放，让文字保持 1:1 的世界尺寸。
+        /// </summary>
+        private void FitText()
+        {
+            Vector3 scale = transform.localScale;
+            _text.transform.localScale = new Vector3(1f / scale.x, 1f / scale.y, 1f);
+            _text.transform.localPosition = new Vector3(0, 0, -0.05f);
         }
 
         public void Render(BoosterSnapshot data)

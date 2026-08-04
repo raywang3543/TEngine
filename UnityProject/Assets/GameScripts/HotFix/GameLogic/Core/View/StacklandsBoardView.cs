@@ -1,8 +1,10 @@
 using System.Collections.Generic;
 using System.Linq;
+using Cysharp.Threading.Tasks;
 using GameLogic.Core;
 using UnityEngine;
 using UnityEngine.UIElements;
+using YooAsset;
 
 namespace GameLogic.Core.View
 {
@@ -22,6 +24,9 @@ namespace GameLogic.Core.View
         private readonly Dictionary<string, BoosterView> _boosters = new Dictionary<string, BoosterView>();
         private readonly Dictionary<string, ShopSlotView> _shopSlots = new Dictionary<string, ShopSlotView>();
         private readonly HashSet<CardView> _wholeStackFeedbackCards = new HashSet<CardView>();
+        private readonly Dictionary<string, Sprite> _cardSprites = new Dictionary<string, Sprite>();
+        private readonly List<SubAssetsHandle> _cardSpriteHandles = new List<SubAssetsHandle>();
+        private Sprite _boosterSprite;
         private Camera _camera;
         private Sprite _whiteSprite;
         private Font _font;
@@ -65,6 +70,7 @@ namespace GameLogic.Core.View
             }
             _whiteSprite = CreateWhiteSprite();
             _font = CreateChineseFont();
+            LoadCardBackgroundsAsync().Forget();
             CreateBoardFrame();
             CreateDecorations();
             _sellSlot = CreateSellSlot();
@@ -412,14 +418,16 @@ namespace GameLogic.Core.View
         {
             var go = new GameObject("Card " + id);
             go.transform.SetParent(transform, false);
-            return go.AddComponent<CardView>().Initialize(id, _whiteSprite, _font);
+            return go.AddComponent<CardView>().Initialize(id, _whiteSprite, _font, _cardSprites);
         }
 
         private BoosterView CreateBooster(string id)
         {
             var go = new GameObject("Booster " + id);
             go.transform.SetParent(transform, false);
-            return go.AddComponent<BoosterView>().Initialize(id, _whiteSprite, _font);
+            var view = go.AddComponent<BoosterView>().Initialize(id, _whiteSprite, _font);
+            if (_boosterSprite != null) view.Background = _boosterSprite;
+            return view;
         }
 
         private SellSlotView CreateSellSlot()
@@ -490,6 +498,58 @@ namespace GameLogic.Core.View
             line.startColor = color; line.endColor = color; line.sortingOrder = -90;
             line.material = new Material(Shader.Find("Sprites/Default"));
             for (int i = 0; i < points.Length; i++) line.SetPosition(i, points[i]);
+        }
+
+        /// <summary>
+        /// 从 UIRaw/Atlas/Card 图集加载 14 种颜色的牌面底图；键与 GameConfig.stacklands.ECardColor 名称一致。
+        /// 图集贴图为多精灵导入，需按子资源取唯一的牌面 Sprite；加载未完成前 CardView 回退为纯色染色表现。
+        /// </summary>
+        private async UniTaskVoid LoadCardBackgroundsAsync()
+        {
+            string[] locations =
+            {
+                "card_bg_pink", "card_bg_black", "card_bg_red", "card_bg_gold", "card_bg_yellow",
+                "card_bg_silver", "card_bg_white", "card_bg_green", "card_bg_blue", "card_bg_orange",
+                "card_bg_light_orange", "card_bg_brown", "card_bg_purple", "card_bg_gray",
+            };
+            const string prefix = "card_bg_";
+            await UniTask.WhenAll(locations.Select(async location =>
+            {
+                var handle = YooAssets.LoadSubAssetsAsync<Sprite>(location);
+                bool cancelled = await handle.ToUniTask(cancellationToken: this.GetCancellationTokenOnDestroy())
+                    .SuppressCancellationThrow();
+                Sprite sprite = cancelled ? null : handle.GetSubAssetObjects<Sprite>()?.FirstOrDefault();
+                if (sprite == null)
+                {
+                    handle.Dispose();
+                    return;
+                }
+                _cardSpriteHandles.Add(handle);
+                _cardSprites[location.Substring(prefix.Length).ToUpperInvariant()] = sprite;
+            }));
+
+            // 卡包底图同样走图集子资源加载，加载完成后同步已存在的卡包视图。
+            var boosterHandle = YooAssets.LoadSubAssetsAsync<Sprite>("booster_bg_black");
+            bool boosterCancelled = await boosterHandle
+                .ToUniTask(cancellationToken: this.GetCancellationTokenOnDestroy())
+                .SuppressCancellationThrow();
+            Sprite booster = boosterCancelled ? null : boosterHandle.GetSubAssetObjects<Sprite>()?.FirstOrDefault();
+            if (booster == null)
+            {
+                boosterHandle.Dispose();
+                return;
+            }
+            _cardSpriteHandles.Add(boosterHandle);
+            _boosterSprite = booster;
+            foreach (BoosterView view in _boosters.Values)
+                if (view != null) view.Background = booster;
+        }
+
+        private void OnDestroy()
+        {
+            foreach (SubAssetsHandle handle in _cardSpriteHandles) handle.Dispose();
+            _cardSpriteHandles.Clear();
+            _cardSprites.Clear();
         }
 
         private static Sprite CreateWhiteSprite()
