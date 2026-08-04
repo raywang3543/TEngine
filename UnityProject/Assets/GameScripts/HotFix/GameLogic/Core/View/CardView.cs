@@ -22,6 +22,9 @@ namespace GameLogic.Core.View
         private Transform _progress;
         private Sprite _fallbackSprite;
         private IReadOnlyDictionary<string, Sprite> _cardSprites;
+        private Sprite _borderBlack;
+        private Sprite _borderWhite;
+        private Sprite _borderYellow;
         private bool _selected;
         private bool _dragSorting;
         private bool _wholeStackDragFeedback;
@@ -124,8 +127,35 @@ namespace GameLogic.Core.View
             _sortingGroup.sortingOrder = (_dragSorting ? DragSortingBase : 0) + _stackOrder;
         }
 
+        /// <summary>
+        /// 设置默认/选中/整堆拖动三态边框图集 Sprite；为 null 时回退为代码纯色描边。
+        /// </summary>
+        public void SetBorderSprites(Sprite black, Sprite white, Sprite yellow)
+        {
+            _borderBlack = black;
+            _borderWhite = white;
+            _borderYellow = yellow;
+            RefreshOutline();
+        }
+
         private void RefreshOutline()
         {
+            Sprite border = _wholeStackDragFeedback ? _borderYellow
+                : _selected ? _borderWhite : _borderBlack;
+            if (border != null)
+            {
+                // 边框图与牌面同尺寸、内芯透明，叠在牌面正上方。
+                _outline.sprite = border;
+                _outline.color = Color.white;
+                _outline.sortingOrder = 4;
+                Vector2 size = border.bounds.size;
+                _outline.transform.localScale = new Vector3(CardWidth / size.x, CardHeight / size.y, 1f);
+                return;
+            }
+
+            // 边框图集未加载完成前的回退：纯色 Sprite 放大后垫在牌面底下。
+            _outline.sprite = _fallbackSprite;
+            _outline.sortingOrder = -1;
             _outline.color = _wholeStackDragFeedback
                 ? new Color32(255, 226, 92, 255)
                 : _selected ? Color.white : Color.black;

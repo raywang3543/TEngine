@@ -27,6 +27,9 @@ namespace GameLogic.Core.View
         private readonly Dictionary<string, Sprite> _cardSprites = new Dictionary<string, Sprite>();
         private readonly List<SubAssetsHandle> _cardSpriteHandles = new List<SubAssetsHandle>();
         private Sprite _boosterSprite;
+        private Sprite _borderBlack;
+        private Sprite _borderWhite;
+        private Sprite _borderYellow;
         private Camera _camera;
         private Sprite _whiteSprite;
         private Font _font;
@@ -418,7 +421,9 @@ namespace GameLogic.Core.View
         {
             var go = new GameObject("Card " + id);
             go.transform.SetParent(transform, false);
-            return go.AddComponent<CardView>().Initialize(id, _whiteSprite, _font, _cardSprites);
+            var view = go.AddComponent<CardView>().Initialize(id, _whiteSprite, _font, _cardSprites);
+            view.SetBorderSprites(_borderBlack, _borderWhite, _borderYellow);
+            return view;
         }
 
         private BoosterView CreateBooster(string id)
@@ -528,6 +533,27 @@ namespace GameLogic.Core.View
                 _cardSprites[location.Substring(prefix.Length).ToUpperInvariant()] = sprite;
             }));
 
+            // 默认/选中/整堆拖动三态边框与牌面底图同目录，加载完成后同步已存在的卡牌视图。
+            string[] borderLocations = { "card_border_black", "card_border_white", "card_border_yellow" };
+            await UniTask.WhenAll(borderLocations.Select(async location =>
+            {
+                var handle = YooAssets.LoadSubAssetsAsync<Sprite>(location);
+                bool cancelled = await handle.ToUniTask(cancellationToken: this.GetCancellationTokenOnDestroy())
+                    .SuppressCancellationThrow();
+                Sprite sprite = cancelled ? null : handle.GetSubAssetObjects<Sprite>()?.FirstOrDefault();
+                if (sprite == null)
+                {
+                    handle.Dispose();
+                    return;
+                }
+                _cardSpriteHandles.Add(handle);
+                if (location.EndsWith("black")) _borderBlack = sprite;
+                else if (location.EndsWith("white")) _borderWhite = sprite;
+                else _borderYellow = sprite;
+            }));
+            foreach (CardView view in _cards.Values)
+                if (view != null) view.SetBorderSprites(_borderBlack, _borderWhite, _borderYellow);
+
             // 卡包底图同样走图集子资源加载，加载完成后同步已存在的卡包视图。
             var boosterHandle = YooAssets.LoadSubAssetsAsync<Sprite>("booster_bg_black");
             bool boosterCancelled = await boosterHandle
@@ -550,6 +576,9 @@ namespace GameLogic.Core.View
             foreach (SubAssetsHandle handle in _cardSpriteHandles) handle.Dispose();
             _cardSpriteHandles.Clear();
             _cardSprites.Clear();
+            _borderBlack = null;
+            _borderWhite = null;
+            _borderYellow = null;
         }
 
         private static Sprite CreateWhiteSprite()
