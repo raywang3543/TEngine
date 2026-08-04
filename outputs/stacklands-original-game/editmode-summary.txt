@@ -1,0 +1,4 @@
+Result=Passed
+Pass=6
+Fail=0
+Skip=0

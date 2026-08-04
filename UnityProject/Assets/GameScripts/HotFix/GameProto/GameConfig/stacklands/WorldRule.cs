@@ -38,6 +38,12 @@ public sealed partial class WorldRule : Luban.BeanBase
         SourceUrl = _buf.ReadString();
         SourceRevision = _buf.ReadString();
         SourceNote = _buf.ReadString();
+        MaxStackSize = _buf.ReadInt();
+        SecondVillagerGuaranteePack = _buf.ReadInt();
+        SingleVillagerPackChance = _buf.ReadFloat();
+        PortalBaseThreat = _buf.ReadInt();
+        PortalThreatPerInterval = _buf.ReadInt();
+        RarePortalMultiplier = _buf.ReadFloat();
     }
 
     public static WorldRule DeserializeWorldRule(ByteBuf _buf)
@@ -133,6 +139,30 @@ public sealed partial class WorldRule : Luban.BeanBase
     /// 来源说明
     /// </summary>
     public readonly string SourceNote;
+    /// <summary>
+    /// 牌堆最大卡数
+    /// </summary>
+    public readonly int MaxStackSize;
+    /// <summary>
+    /// 第二村民保底购买次数
+    /// </summary>
+    public readonly int SecondVillagerGuaranteePack;
+    /// <summary>
+    /// 仅一名成人时村民概率
+    /// </summary>
+    public readonly float SingleVillagerPackChance;
+    /// <summary>
+    /// 普通传送门基础威胁
+    /// </summary>
+    public readonly int PortalBaseThreat;
+    /// <summary>
+    /// 每个传送门间隔增加威胁
+    /// </summary>
+    public readonly int PortalThreatPerInterval;
+    /// <summary>
+    /// 稀有传送门威胁倍率
+    /// </summary>
+    public readonly float RarePortalMultiplier;
    
     public const int __ID__ = -1318107264;
     public override int GetTypeId() => __ID__;
@@ -166,6 +196,12 @@ public sealed partial class WorldRule : Luban.BeanBase
         + "sourceUrl:" + SourceUrl + ","
         + "sourceRevision:" + SourceRevision + ","
         + "sourceNote:" + SourceNote + ","
+        + "maxStackSize:" + MaxStackSize + ","
+        + "secondVillagerGuaranteePack:" + SecondVillagerGuaranteePack + ","
+        + "singleVillagerPackChance:" + SingleVillagerPackChance + ","
+        + "portalBaseThreat:" + PortalBaseThreat + ","
+        + "portalThreatPerInterval:" + PortalThreatPerInterval + ","
+        + "rarePortalMultiplier:" + RarePortalMultiplier + ","
         + "}";
     }
 }

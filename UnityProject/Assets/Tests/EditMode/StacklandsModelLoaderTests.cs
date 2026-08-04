@@ -1,14 +1,14 @@
 using System.IO;
 using System.Linq;
 using GameConfig;
-using GameLogic.Core.Content;
+using GameLogic.Core.Model;
 using Luban;
 using NUnit.Framework;
 using UnityEngine;
 
 namespace GameLogic.Tests
 {
-    public sealed class StacklandsContentLoaderTests
+    public sealed class StacklandsModelLoaderTests
     {
         private Tables _tables;
 
@@ -22,7 +22,7 @@ namespace GameLogic.Tests
         [Test]
         public void Build_LoadsExpectedOriginalScope()
         {
-            IStacklandsContentCatalog content = StacklandsContentLoader.Build(_tables);
+            IStacklandsContentModel content = StacklandsModelLoader.Build(_tables);
 
             Assert.That(content.Cards.Count, Is.EqualTo(121));
             Assert.That(content.Cards.All.Count(card => card.Category == "IDEA"), Is.EqualTo(32));
@@ -36,7 +36,7 @@ namespace GameLogic.Tests
         [Test]
         public void Build_CreatesRecipeAndBoosterIndexes()
         {
-            IStacklandsContentCatalog content = StacklandsContentLoader.Build(_tables);
+            IStacklandsContentModel content = StacklandsModelLoader.Build(_tables);
 
             Assert.That(content.Cards.Get("berry").NameEn, Is.EqualTo("Berry"));
             Assert.That(content.Recipes.GetByResult("brick"), Is.Not.Empty);
@@ -49,7 +49,7 @@ namespace GameLogic.Tests
         [Test]
         public void Build_IncludesMarkdownRuntimeRecipesAndSpecialOutputs()
         {
-            IStacklandsContentCatalog content = StacklandsContentLoader.Build(_tables);
+            IStacklandsContentModel content = StacklandsModelLoader.Build(_tables);
 
             Assert.That(content.Recipes.Count, Is.EqualTo(69));
             Assert.That(content.Recipes.Get("behavior_brickyard_brick").Results[0].CardId, Is.EqualTo("brick"));
@@ -65,25 +65,25 @@ namespace GameLogic.Tests
             Assert.That(content.LootPools.Get("pool_old_tome_ideas").FallbackPoolId,
                 Is.EqualTo("pool_old_tome_map"));
 
-            var templeRequirements = (object[])content.Actions.Get("action_temple").Values["requirements"];
-            var chestRequirements = (object[])content.Actions.Get("action_treasure_chest").Values["requirements"];
-            var cartRequirements = (object[])content.Actions.Get("action_travelling_cart").Values["requirements"];
-            Assert.That(templeRequirements, Has.Length.EqualTo(1));
-            Assert.That(chestRequirements, Has.Length.EqualTo(1));
-            Assert.That(cartRequirements, Has.Length.EqualTo(1));
+            var templeRequirements = content.Actions.Get("action_temple").Requirements;
+            var chestRequirements = content.Actions.Get("action_treasure_chest").Requirements;
+            var cartRequirements = content.Actions.Get("action_travelling_cart").Requirements;
+            Assert.That(templeRequirements, Has.Count.EqualTo(1));
+            Assert.That(chestRequirements, Has.Count.EqualTo(1));
+            Assert.That(cartRequirements, Has.Count.EqualTo(1));
 
             Assert.That(content.Effects.Count, Is.EqualTo(6));
-            Assert.That(content.Effects.Get("effect_cow_stun").Values["chance"], Is.EqualTo(0.1f));
-            Assert.That(content.Effects.Get("effect_demon_stun_all").Values["target"], Is.EqualTo("ALL_ENEMIES"));
-            Assert.That(content.Effects.Get("effect_frittata_well_fed").Values["magnitude"], Is.EqualTo(2f));
-            Assert.That(content.Effects.Get("effect_wicked_witch_once").Values["once_scope"], Is.EqualTo("RUN"));
+            Assert.That(content.Effects.Get("effect_cow_stun").Chance, Is.EqualTo(0.1f));
+            Assert.That(content.Effects.Get("effect_demon_stun_all").Target, Is.EqualTo("ALL_ENEMIES"));
+            Assert.That(content.Effects.Get("effect_frittata_well_fed").Magnitude, Is.EqualTo(2f));
+            Assert.That(content.Effects.Get("effect_wicked_witch_once").Once, Is.EqualTo(OnceKind.Run));
         }
 
         [Test]
         public void Validate_AllPoolsAreRunnableAndReportIsClean()
         {
-            ContentValidationReport report = StacklandsContentLoader.Validate(_tables);
-            IStacklandsContentCatalog content = StacklandsContentLoader.Build(_tables);
+            ContentValidationReport report = StacklandsModelLoader.Validate(_tables);
+            IStacklandsContentModel content = StacklandsModelLoader.Build(_tables);
 
             Assert.That(report.HasErrors, Is.False, report.ToString());
             Assert.That(report.Issues, Is.Empty, report.ToString());
@@ -95,7 +95,7 @@ namespace GameLogic.Tests
         [Test]
         public void RequiredRuntimeValuesArePopulated()
         {
-            IStacklandsContentCatalog content = StacklandsContentLoader.Build(_tables);
+            IStacklandsContentModel content = StacklandsModelLoader.Build(_tables);
 
             Assert.That(content.WorldRules.RequireBaseCardCap(), Is.EqualTo(20));
             Assert.That(content.Cards.All.All(card => card.SellPrice.HasValue), Is.True);
@@ -103,6 +103,25 @@ namespace GameLogic.Tests
             Assert.That(content.Cards.All.All(card => card.IsSellable.HasValue), Is.True);
             Assert.That(content.Cards.All.All(card => card.IsFoilEligible.HasValue), Is.True);
             Assert.That(content.Cards.All.All(card => card.IsUnique.HasValue), Is.True);
+            Assert.That(content.WorldRules.MaxStackSize, Is.EqualTo(20));
+            Assert.That(content.WorldRules.SecondVillagerGuaranteePack, Is.EqualTo(7));
+            Assert.That(content.WorldRules.SingleVillagerPackChance, Is.EqualTo(0.5f));
+            Assert.That(content.WorldRules.PortalBaseThreat, Is.EqualTo(6));
+            Assert.That(content.WorldRules.PortalThreatPerInterval, Is.EqualTo(4));
+            Assert.That(content.WorldRules.RarePortalMultiplier, Is.EqualTo(2f));
+        }
+
+        [Test]
+        public void OriginalEnemyPool_PreservesMarkdownFallbackProbability()
+        {
+            IStacklandsContentModel content = StacklandsModelLoader.Build(_tables);
+            LootPoolDefinition pool = content.LootPools.Get("pool_original_pack_enemies");
+
+            Assert.That(pool.NormalizeWeights, Is.False);
+            Assert.That(pool.FallbackPoolId, Is.EqualTo("pool_default_mainland"));
+            Assert.That(pool.Entries, Has.Count.EqualTo(5));
+            Assert.That(pool.Entries.All(entry => entry.Weight == 12.5f), Is.True);
+            Assert.That(pool.Entries.Sum(entry => entry.RequireWeight()), Is.EqualTo(62.5f));
         }
     }
 }

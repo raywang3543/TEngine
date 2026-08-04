@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
-namespace GameLogic.Core.Content
+namespace GameLogic.Core.Model
 {
     /// <summary>
     /// 配置校验问题级别。
@@ -19,30 +19,27 @@ namespace GameLogic.Core.Content
     /// </summary>
     public sealed class ContentValidationIssue
     {
-        public ContentValidationIssue(ContentValidationSeverity severity, string table, string rowId, string message,
-            string sourceUrl)
+        public ContentValidationIssue(ContentValidationSeverity severity, string table, string rowId, string message)
         {
             Severity = severity;
             Table = table;
             RowId = rowId;
             Message = message;
-            SourceUrl = sourceUrl;
         }
 
         public ContentValidationSeverity Severity { get; }
         public string Table { get; }
         public string RowId { get; }
         public string Message { get; }
-        public string SourceUrl { get; }
 
         public override string ToString()
         {
-            return $"[{Severity}] {Table}/{RowId}: {Message} ({SourceUrl})";
+            return $"[{Severity}] {Table}/{RowId}: {Message}";
         }
     }
 
     /// <summary>
-    /// Original 内容配置的完整审计报告。
+    /// Stacklands 运行时配置的可用性校验报告。
     /// </summary>
     public sealed class ContentValidationReport
     {
@@ -51,14 +48,14 @@ namespace GameLogic.Core.Content
         public IReadOnlyList<ContentValidationIssue> Issues => new ReadOnlyCollection<ContentValidationIssue>(_issues);
         public bool HasErrors => _issues.Any(issue => issue.Severity == ContentValidationSeverity.Error);
 
-        internal void Warning(string table, string rowId, string message, string sourceUrl)
+        internal void Warning(string table, string rowId, string message)
         {
-            _issues.Add(new ContentValidationIssue(ContentValidationSeverity.Warning, table, rowId, message, sourceUrl));
+            _issues.Add(new ContentValidationIssue(ContentValidationSeverity.Warning, table, rowId, message));
         }
 
-        internal void Error(string table, string rowId, string message, string sourceUrl)
+        internal void Error(string table, string rowId, string message)
         {
-            _issues.Add(new ContentValidationIssue(ContentValidationSeverity.Error, table, rowId, message, sourceUrl));
+            _issues.Add(new ContentValidationIssue(ContentValidationSeverity.Error, table, rowId, message));
         }
 
         public override string ToString()
@@ -68,22 +65,20 @@ namespace GameLogic.Core.Content
     }
 
     /// <summary>
-    /// 玩法请求了尚未核实的必需数值时抛出的异常。
+    /// 玩法请求了缺失的必需数值时抛出的异常。
     /// </summary>
     public sealed class ContentDataUnavailableException : InvalidOperationException
     {
-        public ContentDataUnavailableException(string table, string rowId, string field, string sourceUrl)
-            : base($"配置 {table}/{rowId} 缺少玩法必需字段 {field}。来源：{sourceUrl}")
+        public ContentDataUnavailableException(string table, string rowId, string field)
+            : base($"配置 {table}/{rowId} 缺少玩法必需字段 {field}。")
         {
             Table = table;
             RowId = rowId;
             Field = field;
-            SourceUrl = sourceUrl;
         }
 
         public string Table { get; }
         public string RowId { get; }
         public string Field { get; }
-        public string SourceUrl { get; }
     }
 }

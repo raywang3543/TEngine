@@ -2,48 +2,17 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-namespace GameLogic.Core.Content
+namespace GameLogic.Core.Model
 {
-    /// <summary>
-    /// 内容来源的核验状态。
-    /// </summary>
-    public enum VerificationStatus
-    {
-        Verified,
-        Partial,
-        Unverified,
-        Conflict,
-    }
-
-    /// <summary>
-    /// 每条运行时定义共有的审计来源。
-    /// </summary>
-    public sealed class ContentSource
-    {
-        public ContentSource(VerificationStatus status, string url, string revision, string note)
-        {
-            Status = status;
-            Url = url;
-            Revision = revision;
-            Note = note;
-        }
-
-        public VerificationStatus Status { get; }
-        public string Url { get; }
-        public string Revision { get; }
-        public string Note { get; }
-    }
-
     public sealed class CardDefinition
     {
         internal CardDefinition(string id, string nameEn, string nameZh, string descriptionEn, string descriptionZh,
             string category, string color, IReadOnlyList<string> tags, int? sellPrice, int? foodValue, int cardCapCost,
-            bool? isSellable, bool? isFoilEligible, bool? isUnique, ContentSource source)
+            bool? isSellable, bool? isFoilEligible, bool? isUnique)
         {
             Id = id; NameEn = nameEn; NameZh = nameZh; DescriptionEn = descriptionEn; DescriptionZh = descriptionZh;
             Category = category; Color = color; Tags = tags; SellPrice = sellPrice; FoodValue = foodValue;
             CardCapCost = cardCapCost; IsSellable = isSellable; IsFoilEligible = isFoilEligible; IsUnique = isUnique;
-            Source = source;
         }
 
         public string Id { get; }
@@ -60,7 +29,6 @@ namespace GameLogic.Core.Content
         public bool? IsSellable { get; }
         public bool? IsFoilEligible { get; }
         public bool? IsUnique { get; }
-        public ContentSource Source { get; }
     }
 
     public sealed class CardRequirementDefinition
@@ -88,11 +56,11 @@ namespace GameLogic.Core.Content
     {
         internal RecipeDefinition(string id, string blueprintId, string ideaCardId, string group, int priority,
             float? durationSeconds, IReadOnlyList<CardRequirementDefinition> requirements,
-            IReadOnlyList<CardAmountDefinition> results, bool allowExtraCards, ContentSource source)
+            IReadOnlyList<CardAmountDefinition> results, bool allowExtraCards)
         {
             Id = id; BlueprintId = blueprintId; IdeaCardId = ideaCardId; Group = group; Priority = priority;
             DurationSeconds = durationSeconds; Requirements = requirements; Results = results;
-            AllowExtraCards = allowExtraCards; Source = source;
+            AllowExtraCards = allowExtraCards;
         }
 
         public string Id { get; }
@@ -104,17 +72,16 @@ namespace GameLogic.Core.Content
         public IReadOnlyList<CardRequirementDefinition> Requirements { get; }
         public IReadOnlyList<CardAmountDefinition> Results { get; }
         public bool AllowExtraCards { get; }
-        public ContentSource Source { get; }
     }
 
     public sealed class LootEntryDefinition
     {
         internal LootEntryDefinition(string id, string poolId, string resultCardId, int minCount, int maxCount,
-            float? weight, string conditionType, string conditionArg, string onceScope, int priority, ContentSource source)
+            float? weight, string conditionType, string conditionArg, string onceScope, int priority)
         {
             Id = id; PoolId = poolId; ResultCardId = resultCardId; MinCount = minCount; MaxCount = maxCount;
             Weight = weight; ConditionType = conditionType; ConditionArg = conditionArg; OnceScope = onceScope;
-            Priority = priority; Source = source;
+            Priority = priority;
         }
 
         public string Id { get; }
@@ -127,13 +94,12 @@ namespace GameLogic.Core.Content
         public string ConditionArg { get; }
         public string OnceScope { get; }
         public int Priority { get; }
-        public ContentSource Source { get; }
 
         public float RequireWeight()
         {
             if (!Weight.HasValue)
             {
-                throw new ContentDataUnavailableException("TbLootEntry", Id, "weight", Source.Url);
+                throw new ContentDataUnavailableException("TbLootEntry", Id, "weight");
             }
 
             return Weight.Value;
@@ -143,11 +109,10 @@ namespace GameLogic.Core.Content
     public sealed class LootPoolDefinition
     {
         internal LootPoolDefinition(string id, int drawMin, int drawMax, bool normalizeWeights,
-            bool withoutReplacement, string fallbackPoolId, IReadOnlyList<LootEntryDefinition> entries,
-            ContentSource source)
+            bool withoutReplacement, string fallbackPoolId, IReadOnlyList<LootEntryDefinition> entries)
         {
             Id = id; DrawMin = drawMin; DrawMax = drawMax; NormalizeWeights = normalizeWeights;
-            WithoutReplacement = withoutReplacement; FallbackPoolId = fallbackPoolId; Entries = entries; Source = source;
+            WithoutReplacement = withoutReplacement; FallbackPoolId = fallbackPoolId; Entries = entries;
         }
 
         public string Id { get; }
@@ -157,7 +122,6 @@ namespace GameLogic.Core.Content
         public bool WithoutReplacement { get; }
         public string FallbackPoolId { get; }
         public IReadOnlyList<LootEntryDefinition> Entries { get; }
-        public ContentSource Source { get; }
         public bool CanRoll => Entries.Count > 0 && Array.TrueForAll(ToArray(Entries), entry => entry.Weight.HasValue);
 
         private static LootEntryDefinition[] ToArray(IReadOnlyList<LootEntryDefinition> entries)
@@ -171,11 +135,11 @@ namespace GameLogic.Core.Content
     public sealed class BoosterSlotDefinition
     {
         internal BoosterSlotDefinition(string id, int slotIndex, string ideaPoolId, string normalPoolId,
-            string peacefulPoolId, string guaranteeCardId, string guaranteeCondition, ContentSource source)
+            string peacefulPoolId, string guaranteeCardId, string guaranteeCondition)
         {
             Id = id; SlotIndex = slotIndex; IdeaPoolId = ideaPoolId; NormalPoolId = normalPoolId;
             PeacefulPoolId = peacefulPoolId; GuaranteeCardId = guaranteeCardId;
-            GuaranteeCondition = guaranteeCondition; Source = source;
+            GuaranteeCondition = guaranteeCondition;
         }
 
         public string Id { get; }
@@ -185,7 +149,6 @@ namespace GameLogic.Core.Content
         public string PeacefulPoolId { get; }
         public string GuaranteeCardId { get; }
         public string GuaranteeCondition { get; }
-        public ContentSource Source { get; }
     }
 
     public sealed class BoosterDefinition
@@ -193,12 +156,12 @@ namespace GameLogic.Core.Content
         internal BoosterDefinition(string id, string nameEn, string nameZh, string descriptionEn, string descriptionZh,
             string priceCardId, int priceAmount, int cardCount, string acquireMode, int unlockQuestCount,
             int purchaseThreshold, bool grantOnce, float foilChance, float foilSellMultiplier,
-            IReadOnlyList<BoosterSlotDefinition> slots, ContentSource source)
+            IReadOnlyList<BoosterSlotDefinition> slots)
         {
             Id = id; NameEn = nameEn; NameZh = nameZh; DescriptionEn = descriptionEn; DescriptionZh = descriptionZh;
             PriceCardId = priceCardId; PriceAmount = priceAmount; CardCount = cardCount; AcquireMode = acquireMode;
             UnlockQuestCount = unlockQuestCount; PurchaseThreshold = purchaseThreshold; GrantOnce = grantOnce;
-            FoilChance = foilChance; FoilSellMultiplier = foilSellMultiplier; Slots = slots; Source = source;
+            FoilChance = foilChance; FoilSellMultiplier = foilSellMultiplier; Slots = slots;
         }
 
         public string Id { get; }
@@ -216,7 +179,6 @@ namespace GameLogic.Core.Content
         public float FoilChance { get; }
         public float FoilSellMultiplier { get; }
         public IReadOnlyList<BoosterSlotDefinition> Slots { get; }
-        public ContentSource Source { get; }
     }
 
     public sealed class WorldRules
@@ -225,14 +187,19 @@ namespace GameLogic.Core.Content
             IReadOnlyList<string> feedingPriority, IReadOnlyList<float> speedOptions, int portalStartMoon,
             int portalInterval, int rarePortalFrequency, int portalDelay, int threatCapMoon, int cartStartMoon,
             float cartChance, int cartGuaranteeMoon, int cartPrice, int cartGobletPurchase,
-            float combatAdvantageMultiplier, ContentSource source)
+            float combatAdvantageMultiplier, int maxStackSize, int secondVillagerGuaranteePack,
+            float singleVillagerPackChance, int portalBaseThreat, int portalThreatPerInterval,
+            float rarePortalMultiplier)
         {
             MoonShortSeconds = moonShortSeconds; MoonNormalSeconds = moonNormalSeconds; MoonLongSeconds = moonLongSeconds;
             BaseCardCap = baseCardCap; FeedingPriority = feedingPriority; SpeedOptions = speedOptions;
             PortalStartMoon = portalStartMoon; PortalInterval = portalInterval; RarePortalFrequency = rarePortalFrequency;
             PortalDelay = portalDelay; ThreatCapMoon = threatCapMoon; CartStartMoon = cartStartMoon;
             CartChance = cartChance; CartGuaranteeMoon = cartGuaranteeMoon; CartPrice = cartPrice;
-            CartGobletPurchase = cartGobletPurchase; CombatAdvantageMultiplier = combatAdvantageMultiplier; Source = source;
+            CartGobletPurchase = cartGobletPurchase; CombatAdvantageMultiplier = combatAdvantageMultiplier;
+            MaxStackSize = maxStackSize; SecondVillagerGuaranteePack = secondVillagerGuaranteePack;
+            SingleVillagerPackChance = singleVillagerPackChance; PortalBaseThreat = portalBaseThreat;
+            PortalThreatPerInterval = portalThreatPerInterval; RarePortalMultiplier = rarePortalMultiplier;
         }
 
         public int MoonShortSeconds { get; }
@@ -252,12 +219,17 @@ namespace GameLogic.Core.Content
         public int CartPrice { get; }
         public int CartGobletPurchase { get; }
         public float CombatAdvantageMultiplier { get; }
-        public ContentSource Source { get; }
+        public int MaxStackSize { get; }
+        public int SecondVillagerGuaranteePack { get; }
+        public float SingleVillagerPackChance { get; }
+        public int PortalBaseThreat { get; }
+        public int PortalThreatPerInterval { get; }
+        public float RarePortalMultiplier { get; }
 
         public int RequireBaseCardCap()
         {
             if (!BaseCardCap.HasValue)
-                throw new ContentDataUnavailableException("TbWorldRule", "original", "base_card_cap", Source.Url);
+                throw new ContentDataUnavailableException("TbWorldRule", "original", "base_card_cap");
             return BaseCardCap.Value;
         }
     }
@@ -267,12 +239,11 @@ namespace GameLogic.Core.Content
     /// </summary>
     public sealed class ContentRecordDefinition
     {
-        internal ContentRecordDefinition(string id, IReadOnlyDictionary<string, object> values, ContentSource source)
+        internal ContentRecordDefinition(string id, IReadOnlyDictionary<string, object> values)
         {
-            Id = id; Values = values; Source = source;
+            Id = id; Values = values;
         }
         public string Id { get; }
         public IReadOnlyDictionary<string, object> Values { get; }
-        public ContentSource Source { get; }
     }
 }

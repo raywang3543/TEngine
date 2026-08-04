@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
-namespace GameLogic.Core.Content
+namespace GameLogic.Core.Model
 {
     internal class ContentIndex<T> : IContentIndex<T>
     {
@@ -64,15 +64,15 @@ namespace GameLogic.Core.Content
         }
     }
 
-    internal sealed class StacklandsContentCatalog : IStacklandsContentCatalog
+    internal sealed class StacklandsContentModel : IStacklandsContentModel
     {
-        internal StacklandsContentCatalog(IContentIndex<CardDefinition> cards,
-            IContentIndex<ContentRecordDefinition> units, IContentIndex<ContentRecordDefinition> equipment,
-            IContentIndex<ContentRecordDefinition> structures, IRecipeIndex recipes,
-            IContentIndex<LootPoolDefinition> lootPools, IContentIndex<ContentRecordDefinition> actions,
-            IContentIndex<ContentRecordDefinition> effects, IContentIndex<ContentRecordDefinition> milestones,
+        internal StacklandsContentModel(IContentIndex<CardDefinition> cards,
+            IContentIndex<UnitDefinition> units, IContentIndex<EquipmentDefinition> equipment,
+            IContentIndex<StructureDefinition> structures, IRecipeIndex recipes,
+            IContentIndex<LootPoolDefinition> lootPools, IContentIndex<CardActionDefinition> actions,
+            IContentIndex<CardEffectDefinition> effects, IContentIndex<MilestoneDefinition> milestones,
             IContentIndex<BoosterDefinition> boosters,
-            IContentIndex<ContentRecordDefinition> quests, WorldRules worldRules, ContentValidationReport validation)
+            IContentIndex<QuestDefinition> quests, WorldRules worldRules, ContentValidationReport validation)
         {
             Cards = cards; Units = units; Equipment = equipment; Structures = structures; Recipes = recipes;
             LootPools = lootPools; Actions = actions; Effects = effects; Milestones = milestones;
@@ -81,16 +81,16 @@ namespace GameLogic.Core.Content
         }
 
         public IContentIndex<CardDefinition> Cards { get; }
-        public IContentIndex<ContentRecordDefinition> Units { get; }
-        public IContentIndex<ContentRecordDefinition> Equipment { get; }
-        public IContentIndex<ContentRecordDefinition> Structures { get; }
+        public IContentIndex<UnitDefinition> Units { get; }
+        public IContentIndex<EquipmentDefinition> Equipment { get; }
+        public IContentIndex<StructureDefinition> Structures { get; }
         public IRecipeIndex Recipes { get; }
         public IContentIndex<LootPoolDefinition> LootPools { get; }
-        public IContentIndex<ContentRecordDefinition> Actions { get; }
-        public IContentIndex<ContentRecordDefinition> Effects { get; }
-        public IContentIndex<ContentRecordDefinition> Milestones { get; }
+        public IContentIndex<CardActionDefinition> Actions { get; }
+        public IContentIndex<CardEffectDefinition> Effects { get; }
+        public IContentIndex<MilestoneDefinition> Milestones { get; }
         public IContentIndex<BoosterDefinition> Boosters { get; }
-        public IContentIndex<ContentRecordDefinition> Quests { get; }
+        public IContentIndex<QuestDefinition> Quests { get; }
         public WorldRules WorldRules { get; }
         public ContentValidationReport Validation { get; }
     }

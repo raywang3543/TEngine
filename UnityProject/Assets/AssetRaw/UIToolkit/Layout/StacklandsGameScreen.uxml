@@ -1,0 +1,58 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <ui:Style src="project://database/Assets/AssetRaw/UIToolkit/Style/StacklandsGameScreenStyle.uss" />
+    <ui:VisualElement name="stacklands-root" class="stacklands-root" picking-mode="Ignore">
+        <ui:VisualElement name="left-sidebar" class="left-sidebar">
+            <ui:VisualElement class="panel-title-row">
+                <ui:Label text="任务" class="panel-title" />
+                <ui:Label name="quest-count" text="0/56" class="panel-count" />
+            </ui:VisualElement>
+            <ui:ScrollView name="quest-list" class="quest-list" />
+            <ui:VisualElement name="card-detail-panel" class="card-detail-panel">
+                <ui:Label name="detail-title" text="选择一张卡牌" class="detail-title" />
+                <ui:Label name="detail-description" text="拖动卡牌进行堆叠。" class="detail-description" />
+                <ui:Label name="detail-stats" text="" class="detail-stats" />
+                <ui:Button name="sell-selected" text="出售选中卡" class="action-button" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <ui:VisualElement name="right-area" class="right-area" picking-mode="Ignore">
+            <ui:VisualElement name="top-shell" class="top-shell">
+                <ui:VisualElement name="sell-zone" class="sell-zone">
+                    <ui:Label text="C" class="coin-glyph" />
+                    <ui:Label name="coin-label" text="0" class="sell-zone-label" />
+                </ui:VisualElement>
+                <ui:ScrollView name="booster-shelf" mode="Horizontal" horizontal-scroller-visibility="Auto"
+                               vertical-scroller-visibility="Hidden" class="booster-shelf" />
+            </ui:VisualElement>
+            <ui:VisualElement name="hud-strip" class="hud-strip">
+                <ui:Label name="moon-label" text="Moon 1" class="hud-label strong" />
+                <ui:Label name="time-label" text="120s" class="hud-label" />
+                <ui:Button name="speed-0" text="0×" class="speed-button" />
+                <ui:Button name="speed-1" text="1×" class="speed-button" />
+                <ui:Button name="speed-5" text="5×" class="speed-button" />
+                <ui:Label name="food-label" text="食物 0" class="hud-label" />
+                <ui:Label name="cap-label" text="卡牌 0/20" class="hud-label" />
+                <ui:Button name="cardopedia-button" text="图鉴" class="small-button" />
+                <ui:Button name="settings-button" text="菜单" class="small-button" />
+            </ui:VisualElement>
+            <ui:VisualElement name="board-input-pass-through" class="board-pass-through" picking-mode="Ignore" />
+        </ui:VisualElement>
+
+        <ui:VisualElement name="toast" class="toast hidden"><ui:Label name="toast-label" /></ui:VisualElement>
+        <ui:VisualElement name="modal-overlay" class="modal-overlay hidden">
+            <ui:VisualElement class="modal-card">
+                <ui:Label name="modal-title" text="堆叠大陆" class="modal-title" />
+                <ui:Label name="modal-message" text="" class="modal-message" />
+                <ui:Toggle name="peaceful-toggle" text="和平模式" class="modal-control" />
+                <ui:DropdownField name="moon-length" label="Moon 长度" class="modal-control" />
+                <ui:ScrollView name="modal-list" class="modal-list hidden" />
+                <ui:VisualElement class="modal-buttons">
+                    <ui:Button name="confirm-flow-button" text="确认" class="primary-button" />
+                    <ui:Button name="continue-button" text="继续游戏" class="primary-button" />
+                    <ui:Button name="new-game-button" text="新游戏" class="primary-button" />
+                    <ui:Button name="close-modal-button" text="返回" class="secondary-button" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

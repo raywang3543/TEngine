@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace GameLogic.Core.Content
+namespace GameLogic.Core.Model
 {
     /// <summary>
     /// 按稳定字符串 ID 查询的只读内容索引。
@@ -22,19 +22,19 @@ namespace GameLogic.Core.Content
     /// <summary>
     /// Stacklands Original 玩法规则可依赖的唯一内容边界。
     /// </summary>
-    public interface IStacklandsContentCatalog
+    public interface IStacklandsContentModel
     {
         IContentIndex<CardDefinition> Cards { get; }
-        IContentIndex<ContentRecordDefinition> Units { get; }
-        IContentIndex<ContentRecordDefinition> Equipment { get; }
-        IContentIndex<ContentRecordDefinition> Structures { get; }
+        IContentIndex<UnitDefinition> Units { get; }
+        IContentIndex<EquipmentDefinition> Equipment { get; }
+        IContentIndex<StructureDefinition> Structures { get; }
         IRecipeIndex Recipes { get; }
         IContentIndex<LootPoolDefinition> LootPools { get; }
-        IContentIndex<ContentRecordDefinition> Actions { get; }
-        IContentIndex<ContentRecordDefinition> Effects { get; }
-        IContentIndex<ContentRecordDefinition> Milestones { get; }
+        IContentIndex<CardActionDefinition> Actions { get; }
+        IContentIndex<CardEffectDefinition> Effects { get; }
+        IContentIndex<MilestoneDefinition> Milestones { get; }
         IContentIndex<BoosterDefinition> Boosters { get; }
-        IContentIndex<ContentRecordDefinition> Quests { get; }
+        IContentIndex<QuestDefinition> Quests { get; }
         WorldRules WorldRules { get; }
         ContentValidationReport Validation { get; }
     }
