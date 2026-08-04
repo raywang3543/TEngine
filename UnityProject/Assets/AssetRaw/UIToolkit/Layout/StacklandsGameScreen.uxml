@@ -16,14 +16,7 @@
         </ui:VisualElement>
 
         <ui:VisualElement name="right-area" class="right-area" picking-mode="Ignore">
-            <ui:VisualElement name="top-shell" class="top-shell">
-                <ui:VisualElement name="sell-zone" class="sell-zone">
-                    <ui:Label text="C" class="coin-glyph" />
-                    <ui:Label name="coin-label" text="0" class="sell-zone-label" />
-                </ui:VisualElement>
-                <ui:ScrollView name="booster-shelf" mode="Horizontal" horizontal-scroller-visibility="Auto"
-                               vertical-scroller-visibility="Hidden" class="booster-shelf" />
-            </ui:VisualElement>
+            <ui:VisualElement name="top-shell" class="top-shell" picking-mode="Ignore" />
             <ui:VisualElement name="hud-strip" class="hud-strip">
                 <ui:Label name="moon-label" text="Moon 1" class="hud-label strong" />
                 <ui:Label name="time-label" text="120s" class="hud-label" />

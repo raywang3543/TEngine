@@ -118,6 +118,16 @@ namespace GameLogic.Core.Ctrl
             Model.Changed();
         }
 
+        internal void MoveBooster(string instanceId, float x, float y)
+        {
+            BoosterRunData booster = Model.Run?.Boosters.FirstOrDefault(item => item.InstanceId == instanceId);
+            if (booster == null) return;
+            booster.X = x;
+            booster.Y = y;
+            Model.Increment("EventCount:drag_booster");
+            Model.Changed();
+        }
+
         private bool Eligible(LootEntryDefinition entry)
         {
             if (entry.OnceScope == "PROFILE" && Model.Profile.GrantedOnce.Contains(entry.Id)) return false;

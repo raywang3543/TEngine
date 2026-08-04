@@ -9,6 +9,8 @@ namespace GameLogic.Core.Model
     /// </summary>
     internal sealed class StacklandsGameModel
     {
+        internal const string CurrencyCardId = "gold";
+
         internal StacklandsGameModel(IStacklandsContentModel content, IStacklandsSaveStore saveStore)
         {
             Content = content ?? throw new ArgumentNullException(nameof(content));

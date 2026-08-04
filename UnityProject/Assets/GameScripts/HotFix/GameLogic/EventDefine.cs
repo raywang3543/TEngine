@@ -7,21 +7,14 @@ namespace GameLogic
     /// </summary>
     public static class EventDefine
     {
-        #region Login UI
-
-        public static readonly int ShowLoginUI =
-            RuntimeId.ToRuntimeId("EventDefine.ShowLoginUI");
-        public static readonly int CloseLoginUI =
-            RuntimeId.ToRuntimeId("EventDefine.CloseLoginUI");
-
-        #endregion
-
         #region Stacklands Original
 
         public static readonly int StacklandsCommand =
             RuntimeId.ToRuntimeId("EventDefine.StacklandsCommand");
         public static readonly int StacklandsBoardChanged =
             RuntimeId.ToRuntimeId("EventDefine.StacklandsBoardChanged");
+        public static readonly int StacklandsCardProgressChanged =
+            RuntimeId.ToRuntimeId("EventDefine.StacklandsCardProgressChanged");
         public static readonly int StacklandsHudChanged =
             RuntimeId.ToRuntimeId("EventDefine.StacklandsHudChanged");
         public static readonly int StacklandsFlowRequested =

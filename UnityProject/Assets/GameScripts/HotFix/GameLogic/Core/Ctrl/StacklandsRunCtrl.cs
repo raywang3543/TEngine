@@ -55,6 +55,8 @@ namespace GameLogic.Core.Ctrl
                     CoreSystem.LootCtrl.BuyBooster(command.ContentId); break;
                 case StacklandsCommandKind.OpenBooster:
                     CoreSystem.LootCtrl.OpenBooster(command.InstanceId); break;
+                case StacklandsCommandKind.MoveBooster:
+                    CoreSystem.LootCtrl.MoveBooster(command.InstanceId, command.X, command.Y); break;
                 case StacklandsCommandKind.SellCard:
                     CoreSystem.BoardCtrl.Sell(command.InstanceId); break;
                 case StacklandsCommandKind.Equip:
@@ -80,6 +82,7 @@ namespace GameLogic.Core.Ctrl
             float delta = unscaledDeltaTime * Model.Run.Speed;
             if (delta <= 0f || Model.Run.AwaitingCardLimit) return;
             CoreSystem.WorkCtrl.Tick(delta);
+            CoreSystem.ViewCtrl.PublishCardProgress();
             CoreSystem.CombatCtrl.Tick(delta);
             CoreSystem.WorldCtrl.TickMovement(delta);
             Model.Run.MoonRemaining -= delta;

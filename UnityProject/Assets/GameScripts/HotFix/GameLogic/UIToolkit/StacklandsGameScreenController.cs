@@ -15,9 +15,7 @@ namespace GameLogic
     {
         private UIDocument _document;
         private ScrollView _quests;
-        private ScrollView _boosters;
         private Label _questCount;
-        private Label _coin;
         private Label _moon;
         private Label _time;
         private Label _food;
@@ -68,8 +66,8 @@ namespace GameLogic
         private void BindVisuals()
         {
             VisualElement root = _document.rootVisualElement;
-            _quests = root.Q<ScrollView>("quest-list"); _boosters = root.Q<ScrollView>("booster-shelf");
-            _questCount = root.Q<Label>("quest-count"); _coin = root.Q<Label>("coin-label");
+            _quests = root.Q<ScrollView>("quest-list");
+            _questCount = root.Q<Label>("quest-count");
             _moon = root.Q<Label>("moon-label"); _time = root.Q<Label>("time-label");
             _food = root.Q<Label>("food-label"); _cap = root.Q<Label>("cap-label");
             _detailTitle = root.Q<Label>("detail-title"); _detailDescription = root.Q<Label>("detail-description");
@@ -133,13 +131,13 @@ namespace GameLogic
         {
             _lastHud = hud;
             _moon.text = "Moon " + hud.Moon; _time.text = Mathf.CeilToInt(hud.MoonRemaining) + "s";
-            _coin.text = hud.Coins.ToString(); _food.text = "食物 " + hud.Food;
+            _food.text = "食物 " + hud.Food;
             _cap.text = $"卡牌 {hud.CardCount}/{hud.CardCap}";
             _questCount.text = hud.CompletedQuestCount + "/56";
             for (int i = 0; i < _speedButtons.Length; i++) _speedButtons[i].RemoveFromClassList("speed-active");
             int active = hud.Speed <= 0f ? 0 : hud.Speed >= 5f ? 2 : 1;
             _speedButtons[active].AddToClassList("speed-active");
-            RenderQuests(hud); RenderBoosters(hud);
+            RenderQuests(hud);
         }
 
         private void RenderQuests(HudSnapshot hud)
@@ -152,23 +150,6 @@ namespace GameLogic
                 if (quest.Completed) label.AddToClassList("quest-complete");
                 if (quest.IsMain) label.AddToClassList("quest-main");
                 _quests.Add(label);
-            }
-        }
-
-        private void RenderBoosters(HudSnapshot hud)
-        {
-            _boosters.Clear();
-            foreach (BoosterShopSnapshot booster in hud.Boosters)
-            {
-                var button = new Button(() => BuyBooster(booster.Id))
-                {
-                    text = booster.NameZh + "\n" + (booster.Unlocked ? booster.Price + " Coin" : booster.LockText),
-                    tooltip = booster.LockText,
-                };
-                button.AddToClassList("booster-button");
-                if (!booster.Unlocked) button.AddToClassList("booster-locked");
-                button.SetEnabled(booster.Unlocked && hud.Coins >= booster.Price);
-                _boosters.Add(button);
             }
         }
 
@@ -240,7 +221,6 @@ namespace GameLogic
                 }
             _modal.RemoveFromClassList("hidden");
         }
-        private void BuyBooster(string id) => Send(new StacklandsCommandDto { Kind = StacklandsCommandKind.BuyBooster, ContentId = id });
         private void SellSelected()
         {
             if (string.IsNullOrEmpty(_selectedId)) return;

@@ -30,15 +30,7 @@
 .action-button { height: 34px; margin-top: 8px; background-color: rgb(58, 61, 55); color: white; border-width: 0; }
 
 .right-area { flex-grow: 1; height: 100%; }
-.top-shell { height: 14%; min-height: 118px; flex-direction: row; padding: 12px 13px; background-color: rgba(163, 210, 168, 0.98); border-bottom-width: 3px; border-bottom-color: rgb(28, 30, 28); }
-.sell-zone { width: 88px; min-width: 88px; margin-right: 10px; background-color: rgb(10, 11, 10); border-radius: 5px; align-items: center; justify-content: center; }
-.coin-glyph { width: 36px; height: 36px; border-radius: 18px; background-color: white; color: black; -unity-text-align: middle-center; font-size: 22px; -unity-font-style: bold; }
-.sell-zone-label { color: white; font-size: 17px; margin-top: 4px; }
-.booster-shelf { flex-grow: 1; }
-.booster-shelf .unity-scroll-view__content-container { flex-direction: row; align-items: stretch; }
-.booster-button { width: 132px; min-width: 132px; margin-right: 9px; padding: 8px; color: white; background-color: rgb(8, 9, 8); border-radius: 4px; border-width: 2px; border-color: rgb(8, 9, 8); white-space: normal; font-size: 15px; }
-.booster-button:hover { border-color: rgb(255, 242, 168); }
-.booster-locked { color: rgb(155, 155, 149); background-color: rgb(38, 39, 36); }
+.top-shell { height: 14%; min-height: 118px; background-color: rgba(0, 0, 0, 0); }
 
 .hud-strip { position: absolute; right: 12px; top: 15%; height: 42px; flex-direction: row; align-items: center; padding: 5px 8px; background-color: rgba(255, 248, 219, 0.94); border-width: 2px; border-color: rgb(31, 32, 29); border-radius: 5px; }
 .hud-label { font-size: 16px; margin: 0 6px; }

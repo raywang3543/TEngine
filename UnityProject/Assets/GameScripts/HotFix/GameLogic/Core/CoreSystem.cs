@@ -73,8 +73,17 @@ namespace GameLogic.Core
             GameEvent.Send(EventDefine.StacklandsBoardChanged, snapshot);
         }
 
-        internal static void PublishHud(HudSnapshot snapshot) =>
+        internal static void PublishCardProgress(CardProgressBatch snapshot)
+        {
+            View?.RenderCardProgress(snapshot);
+            GameEvent.Send(EventDefine.StacklandsCardProgressChanged, snapshot);
+        }
+
+        internal static void PublishHud(HudSnapshot snapshot)
+        {
+            View?.RenderHud(snapshot);
             GameEvent.Send(EventDefine.StacklandsHudChanged, snapshot);
+        }
         internal static void RequestFlow(FlowRequest request) =>
             GameEvent.Send(EventDefine.StacklandsFlowRequested, request);
         internal static void Notify(string message) =>

@@ -4,7 +4,7 @@ namespace GameLogic.Core
 {
     public enum StacklandsCommandKind
     {
-        NewGame, ContinueGame, SetSpeed, MoveCard, MoveStack, SelectCard, BuyBooster, OpenBooster,
+        NewGame, ContinueGame, SetSpeed, MoveCard, MoveStack, SelectCard, BuyBooster, OpenBooster, MoveBooster,
         SellCard, Equip, Unequip, ConfirmSummon, SaveGame,
     }
 
@@ -70,6 +70,23 @@ namespace GameLogic.Core
         public IReadOnlyList<CardSnapshot> Cards { get; internal set; }
         public IReadOnlyList<BoosterSnapshot> Boosters { get; internal set; }
         public string SelectedInstanceId { get; internal set; }
+    }
+
+    /// <summary>
+    /// 单张卡牌的实时工作进度增量，避免计时期间反复复制完整牌桌快照。
+    /// </summary>
+    public sealed class CardProgressSnapshot
+    {
+        public string InstanceId { get; internal set; }
+        public float Progress { get; internal set; }
+    }
+
+    /// <summary>
+    /// 当前帧所有工作中卡牌的进度增量。
+    /// </summary>
+    public sealed class CardProgressBatch
+    {
+        public IReadOnlyList<CardProgressSnapshot> Cards { get; internal set; }
     }
 
     public sealed class QuestSnapshot

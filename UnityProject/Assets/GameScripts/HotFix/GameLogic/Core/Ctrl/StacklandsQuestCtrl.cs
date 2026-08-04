@@ -30,7 +30,7 @@ namespace GameLogic.Core.Ctrl
             {
                 case QuestMetricKind.CardCount: value = Model.CountCard(condition.CardId); break;
                 case QuestMetricKind.TotalFood: value = Model.CurrentFood(); break;
-                case QuestMetricKind.CoinCount: value = Model.CountCard("coin"); break;
+                case QuestMetricKind.CoinCount: value = Model.CountCard(StacklandsGameModel.CurrencyCardId); break;
                 case QuestMetricKind.IdeaDiscoveredCount:
                     value = Model.Profile.DiscoveredCards.Count(id => Model.Content.Cards.Contains(id) &&
                         Model.Content.Cards.Get(id).Category == "IDEA"); break;

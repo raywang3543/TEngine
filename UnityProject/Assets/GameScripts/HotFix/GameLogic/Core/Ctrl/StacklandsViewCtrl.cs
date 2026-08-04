@@ -9,6 +9,7 @@ namespace GameLogic.Core.Ctrl
     /// </summary>
     internal sealed class StacklandsViewCtrl
     {
+        private const string NewWorldBoosterId = "a_new_world";
         private StacklandsGameModel Model => CoreSystem.Model;
 
         internal void PublishAll()
@@ -46,7 +47,7 @@ namespace GameLogic.Core.Ctrl
             {
                 Moon = Model.Run.Moon, MoonRemaining = Math.Max(0f, Model.Run.MoonRemaining),
                 MoonDuration = Model.Run.MoonDuration, Speed = Model.Run.Speed,
-                Coins = Model.CountCard("coin"), Food = Model.CurrentFood(),
+                Coins = Model.CountCard(StacklandsGameModel.CurrencyCardId), Food = Model.CurrentFood(),
                 CardCount = Model.CurrentCardCount(), CardCap = Model.CurrentCardCap(),
                 CompletedQuestCount = Model.Profile.CompletedQuests.Count, Peaceful = Model.Run.Peaceful,
                 Quests = Model.Content.Quests.All.OrderBy(item => item.Series).ThenBy(item => item.Order)
@@ -55,13 +56,23 @@ namespace GameLogic.Core.Ctrl
                         Id = quest.Id, NameZh = quest.NameZh, DescriptionZh = quest.DescriptionZh,
                         Completed = Model.Profile.CompletedQuests.Contains(quest.Id), IsMain = quest.IsMain,
                     }).ToList().AsReadOnly(),
-                Boosters = Model.Content.Boosters.All.OrderBy(item => item.UnlockQuestCount).Select(pack =>
-                    new BoosterShopSnapshot
+                Boosters = Model.Content.Boosters.All
+                    .OrderBy(GetBoosterUnlockGroup)
+                    .ThenBy(GetBoosterUnlockThreshold)
+                    .ThenBy(pack => pack.Id)
+                    .Select(pack =>
                     {
-                        Id = pack.Id, NameZh = pack.NameZh, Price = pack.PriceAmount,
-                        Unlocked = Model.Profile.CompletedQuests.Count >= pack.UnlockQuestCount,
-                        LockText = Model.Profile.CompletedQuests.Count >= pack.UnlockQuestCount
-                            ? string.Empty : $"完成 {pack.UnlockQuestCount} 项任务",
+                        bool purchasable = pack.AcquireMode == "PURCHASE";
+                        bool unlocked = purchasable &&
+                                        Model.Profile.CompletedQuests.Count >= pack.UnlockQuestCount;
+                        return new BoosterShopSnapshot
+                        {
+                            Id = pack.Id, NameZh = pack.NameZh, Price = pack.PriceAmount,
+                            Unlocked = unlocked,
+                            LockText = !purchasable
+                                ? "特殊奖励"
+                                : unlocked ? string.Empty : $"完成 {pack.UnlockQuestCount} 项任务",
+                        };
                     }).ToList().AsReadOnly(),
                 Cardopedia = Model.Content.Cards.All.OrderBy(item => item.Category).ThenBy(item => item.NameZh)
                     .Select(card => new CardopediaEntrySnapshot
@@ -72,10 +83,44 @@ namespace GameLogic.Core.Ctrl
             });
         }
 
+        internal void PublishCardProgress()
+        {
+            if (Model.Run == null || Model.Run.Works.Count == 0) return;
+
+            CoreSystem.PublishCardProgress(new CardProgressBatch
+            {
+                Cards = Model.Run.Works.Select(ToProgressSnapshot).Where(item => item != null)
+                    .ToList().AsReadOnly(),
+            });
+        }
+
+        private CardProgressSnapshot ToProgressSnapshot(WorkRunData work)
+        {
+            CardRunData card = GetProgressCard(work);
+            return card == null ? null : new CardProgressSnapshot
+            {
+                InstanceId = card.InstanceId,
+                Progress = 1f - Math.Max(0f, work.Remaining) / Math.Max(0.01f, work.Duration),
+            };
+        }
+
+        private static int GetBoosterUnlockGroup(BoosterDefinition pack)
+        {
+            if (pack.Id == NewWorldBoosterId) return 2;
+            if (pack.AcquireMode == "PURCHASE") return 0;
+            return 1;
+        }
+
+        private static int GetBoosterUnlockThreshold(BoosterDefinition pack)
+        {
+            return pack.AcquireMode == "PURCHASE" ? pack.UnlockQuestCount : pack.PurchaseThreshold;
+        }
+
         private CardSnapshot ToSnapshot(CardRunData card)
         {
             CardDefinition definition = Model.Content.Cards.Get(card.CardId);
             WorkRunData work = Model.Run.Works.FirstOrDefault(item => item.CardIds.Contains(card.InstanceId));
+            bool showProgress = work != null && GetProgressCard(work)?.InstanceId == card.InstanceId;
             int maxHp = Model.Content.Units.Contains(card.CardId)
                 ? Model.Content.Units.Get(card.CardId).MaxHp.GetValueOrDefault() : 0;
             string displayId = card.CardId;
@@ -91,9 +136,17 @@ namespace GameLogic.Core.Ctrl
                 SellPrice = definition.SellPrice.GetValueOrDefault(),
                 FoodValue = definition.FoodValue.GetValueOrDefault(), Hp = card.Hp, MaxHp = maxHp,
                 IsFoil = card.IsFoil, IsLocked = work != null,
-                Progress = work == null ? 0f : 1f - Math.Max(0f, work.Remaining) / work.Duration,
+                Progress = showProgress
+                    ? 1f - Math.Max(0f, work.Remaining) / Math.Max(0.01f, work.Duration)
+                    : 0f,
                 Status = work == null ? string.Empty : work.IsRecipe ? "制作中" : "工作中",
             };
+        }
+
+        private CardRunData GetProgressCard(WorkRunData work)
+        {
+            return work.CardIds.Select(Model.GetCard).Where(card => card != null)
+                .OrderByDescending(card => card.StackOrder).FirstOrDefault();
         }
     }
 }

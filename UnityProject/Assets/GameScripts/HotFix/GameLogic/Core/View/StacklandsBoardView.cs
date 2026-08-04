@@ -11,17 +11,34 @@ namespace GameLogic.Core.View
     /// </summary>
     public sealed class StacklandsBoardView : MonoBehaviour
     {
-        private const float CardWidth = 1.5f;
-        private const float CardHeight = 2f;
+        private const float WholeStackHoldSeconds = 0.5f;
+        private const float WholeStackHoldMovementTolerance = 0.2f;
+        private const float BoosterDragThresholdPixels = 10f;
+        private const float ShopShelfY = 5.55f;
+        private const float SellSlotX = -9.5f;
+        private const float FirstShopSlotX = -7.65f;
+        private const float ShopSlotSpacing = 1.75f;
         private readonly Dictionary<string, CardView> _cards = new Dictionary<string, CardView>();
         private readonly Dictionary<string, BoosterView> _boosters = new Dictionary<string, BoosterView>();
+        private readonly Dictionary<string, ShopSlotView> _shopSlots = new Dictionary<string, ShopSlotView>();
+        private readonly HashSet<CardView> _wholeStackFeedbackCards = new HashSet<CardView>();
         private Camera _camera;
         private Sprite _whiteSprite;
         private Font _font;
+        private SellSlotView _sellSlot;
         private CardView _draggedCard;
+        private BoosterView _draggedBooster;
+        private readonly Dictionary<CardView, Vector3> _draggedOffsets = new Dictionary<CardView, Vector3>();
         private Vector3 _dragOffset;
+        private Vector3 _boosterDragOffset;
+        private Vector3 _boosterDragStartedPointer;
+        private Vector3 _dragStartedPosition;
         private Vector3 _lastPointer;
         private bool _panning;
+        private bool _dragWholeStack;
+        private bool _boosterMoved;
+        private bool _wholeStackHoldEligible;
+        private float _mouseDragStartedAt;
         private float _touchDragStartedAt;
 
         private void Awake()
@@ -37,7 +54,7 @@ namespace GameLogic.Core.View
             _camera.orthographic = true;
             _camera.orthographicSize = 7f;
             _camera.transform.position = new Vector3(0f, 0f, -10f);
-            _camera.rect = new Rect(0.18f, 0f, 0.82f, 0.86f);
+            _camera.rect = new Rect(0.18f, 0f, 0.82f, 1f);
             _camera.backgroundColor = new Color32(170, 218, 174, 255);
             _camera.clearFlags = CameraClearFlags.SolidColor;
             foreach (Camera overlayCamera in FindObjectsByType<Camera>(FindObjectsSortMode.None))
@@ -50,6 +67,8 @@ namespace GameLogic.Core.View
             _font = CreateChineseFont();
             CreateBoardFrame();
             CreateDecorations();
+            _sellSlot = CreateSellSlot();
+            LayoutShopSlots();
         }
 
         private void Update()
@@ -97,6 +116,43 @@ namespace GameLogic.Core.View
             }
         }
 
+        public void RenderCardProgress(CardProgressBatch snapshot)
+        {
+            if (snapshot?.Cards == null) return;
+            foreach (CardProgressSnapshot card in snapshot.Cards)
+                if (_cards.TryGetValue(card.InstanceId, out CardView view))
+                    view.RenderProgress(card.Progress);
+        }
+
+        public void RenderHud(HudSnapshot snapshot)
+        {
+            if (snapshot == null) return;
+            _sellSlot?.Render(snapshot.Coins);
+            bool shopLayoutChanged = false;
+            var slotIds = new HashSet<string>(snapshot.Boosters.Select(item => item.Id));
+            foreach (string id in _shopSlots.Keys.Where(id => !slotIds.Contains(id)).ToArray())
+            {
+                Destroy(_shopSlots[id].gameObject);
+                _shopSlots.Remove(id);
+                shopLayoutChanged = true;
+            }
+
+            for (int index = 0; index < snapshot.Boosters.Count; index++)
+            {
+                BoosterShopSnapshot booster = snapshot.Boosters[index];
+                if (!_shopSlots.TryGetValue(booster.Id, out ShopSlotView slot))
+                {
+                    slot = CreateShopSlot(booster.Id);
+                    _shopSlots.Add(booster.Id, slot);
+                    shopLayoutChanged = true;
+                }
+                if (slot.Order != index) shopLayoutChanged = true;
+                slot.Order = index;
+                slot.Render(booster, snapshot.Coins);
+            }
+            if (shopLayoutChanged) LayoutShopSlots();
+        }
+
         private void HandleKeyboard()
         {
             if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Alpha1)) SendSpeed(0f);
@@ -125,10 +181,23 @@ namespace GameLogic.Core.View
             }
             if (Input.GetMouseButtonUp(1) || Input.GetMouseButtonUp(2)) _panning = false;
 
-            if (Input.GetMouseButtonDown(0) && !PointerOverUi(mouse)) BeginPointer(mouse);
+            if (Input.GetMouseButtonDown(0) && !PointerOverUi(mouse))
+            {
+                BeginPointer(mouse, Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift));
+                _mouseDragStartedAt = Time.unscaledTime;
+            }
             if (Input.GetMouseButton(0) && _draggedCard != null)
-                _draggedCard.transform.position = ScreenToWorld(mouse) + _dragOffset;
-            if (Input.GetMouseButtonUp(0)) EndPointer(mouse, Input.GetKey(KeyCode.LeftShift));
+            {
+                Vector3 anchorPosition = ScreenToWorld(mouse) + _dragOffset;
+                UpdateWholeStackHoldEligibility(anchorPosition);
+                if (_wholeStackHoldEligible && Time.unscaledTime - _mouseDragStartedAt >= WholeStackHoldSeconds)
+                    PromoteToWholeStackDrag();
+                MoveDraggedCards(anchorPosition);
+            }
+            else if (Input.GetMouseButton(0) && _draggedBooster != null)
+                UpdateBoosterDrag(mouse);
+            if (Input.GetMouseButtonUp(0))
+                EndPointer(mouse, Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift));
         }
 
         private void HandleTouch()
@@ -143,39 +212,68 @@ namespace GameLogic.Core.View
             }
             if (Input.touchCount != 1) return;
             Touch touch = Input.GetTouch(0);
-            if (PointerOverUi(touch.position)) return;
+            if (PointerOverUi(touch.position) && _draggedCard == null && _draggedBooster == null) return;
             if (touch.phase == TouchPhase.Began)
             {
-                BeginPointer(touch.position);
+                BeginPointer(touch.position, false);
                 _touchDragStartedAt = Time.unscaledTime;
             }
-            else if (touch.phase == TouchPhase.Moved)
+            else if (touch.phase == TouchPhase.Moved || touch.phase == TouchPhase.Stationary)
             {
-                if (_draggedCard != null) _draggedCard.transform.position = ScreenToWorld(touch.position) + _dragOffset;
-                else _camera.transform.position -= (Vector3)touch.deltaPosition * (_camera.orthographicSize / 450f);
+                if (_draggedCard != null)
+                {
+                    Vector3 anchorPosition = ScreenToWorld(touch.position) + _dragOffset;
+                    UpdateWholeStackHoldEligibility(anchorPosition);
+                    if (_wholeStackHoldEligible &&
+                        Time.unscaledTime - _touchDragStartedAt >= WholeStackHoldSeconds)
+                        PromoteToWholeStackDrag();
+                    MoveDraggedCards(anchorPosition);
+                }
+                else if (_draggedBooster != null)
+                    UpdateBoosterDrag(touch.position);
+                else if (touch.phase == TouchPhase.Moved)
+                    _camera.transform.position -= (Vector3)touch.deltaPosition * (_camera.orthographicSize / 450f);
             }
             else if (touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled)
-                EndPointer(touch.position, _draggedCard != null && Time.unscaledTime - _touchDragStartedAt >= 0.35f);
+                EndPointer(touch.position, false);
         }
 
-        private void BeginPointer(Vector3 pointer)
+        private void BeginPointer(Vector3 pointer, bool wholeStack)
         {
             Vector2 world = ScreenToWorld(pointer);
             Collider2D hit = Physics2D.OverlapPointAll(world)
-                .OrderByDescending(item => item.transform.position.z).FirstOrDefault();
+                .OrderBy(item => item.transform.position.z).FirstOrDefault();
             if (hit == null) return;
             BoosterView booster = hit.GetComponent<BoosterView>();
             if (booster != null)
             {
-                CoreSystem.SubmitCommand(new StacklandsCommandDto
-                {
-                    Kind = StacklandsCommandKind.OpenBooster, InstanceId = booster.InstanceId,
-                });
+                _draggedBooster = booster;
+                _boosterDragOffset = booster.transform.position - (Vector3)world;
+                _boosterDragStartedPointer = pointer;
+                _boosterMoved = false;
+                return;
+            }
+            ShopSlotView shopSlot = hit.GetComponent<ShopSlotView>();
+            if (shopSlot != null)
+            {
+                if (shopSlot.CanBuy)
+                    CoreSystem.SubmitCommand(new StacklandsCommandDto
+                    {
+                        Kind = StacklandsCommandKind.BuyBooster, ContentId = shopSlot.BoosterId,
+                    });
                 return;
             }
             _draggedCard = hit.GetComponent<CardView>();
             if (_draggedCard == null) return;
+            ClearWholeStackFeedback();
             _dragOffset = _draggedCard.transform.position - (Vector3)world;
+            _dragStartedPosition = _draggedCard.transform.position;
+            _dragWholeStack = wholeStack;
+            _wholeStackHoldEligible = !wholeStack &&
+                                      _cards.Values.Count(card => card.StackId == _draggedCard.StackId) > 1;
+            CacheDraggedCards();
+            SetDraggedCardsSorting(true);
+            if (_dragWholeStack) ShowWholeStackFeedback();
             CoreSystem.SubmitCommand(new StacklandsCommandDto
             {
                 Kind = StacklandsCommandKind.SelectCard, InstanceId = _draggedCard.InstanceId,
@@ -184,11 +282,39 @@ namespace GameLogic.Core.View
 
         private void EndPointer(Vector3 pointer, bool wholeStack)
         {
+            if (_draggedBooster != null)
+            {
+                UpdateBoosterDrag(pointer);
+                string boosterId = _draggedBooster.InstanceId;
+                Vector3 position = _draggedBooster.transform.position;
+                bool moved = _boosterMoved;
+                _draggedBooster.SetDragSorting(false);
+                _draggedBooster = null;
+                _boosterMoved = false;
+                CoreSystem.SubmitCommand(new StacklandsCommandDto
+                {
+                    Kind = moved ? StacklandsCommandKind.MoveBooster : StacklandsCommandKind.OpenBooster,
+                    InstanceId = boosterId,
+                    X = position.x,
+                    Y = position.y,
+                });
+                return;
+            }
             if (_draggedCard == null) return;
             Vector2 world = ScreenToWorld(pointer);
             string draggedId = _draggedCard.InstanceId;
+            string draggedStackId = _draggedCard.StackId;
+            bool moveWholeStack = _dragWholeStack || wholeStack;
+            var movingIds = new HashSet<string>(moveWholeStack
+                ? _cards.Values.Where(card => card.StackId == draggedStackId).Select(card => card.InstanceId)
+                : new[] { draggedId });
+            ClearWholeStackFeedback();
+            SetDraggedCardsSorting(false);
             _draggedCard = null;
-            if (IsSellDrop(pointer))
+            _draggedOffsets.Clear();
+            _dragWholeStack = false;
+            _wholeStackHoldEligible = false;
+            if (_sellSlot != null && _sellSlot.Contains(world))
             {
                 CoreSystem.SubmitCommand(new StacklandsCommandDto
                 {
@@ -197,11 +323,12 @@ namespace GameLogic.Core.View
                 return;
             }
             Collider2D target = Physics2D.OverlapPointAll(world)
+                .OrderBy(item => item.transform.position.z)
                 .FirstOrDefault(item => item.GetComponent<CardView>() != null &&
-                                        item.GetComponent<CardView>().InstanceId != draggedId);
+                                        !movingIds.Contains(item.GetComponent<CardView>().InstanceId));
             CoreSystem.SubmitCommand(new StacklandsCommandDto
             {
-                Kind = wholeStack ? StacklandsCommandKind.MoveStack : StacklandsCommandKind.MoveCard,
+                Kind = moveWholeStack ? StacklandsCommandKind.MoveStack : StacklandsCommandKind.MoveCard,
                 InstanceId = draggedId,
                 TargetInstanceId = target == null ? null : target.GetComponent<CardView>().InstanceId,
                 X = world.x,
@@ -209,11 +336,76 @@ namespace GameLogic.Core.View
             });
         }
 
-        private static bool IsSellDrop(Vector2 pointer)
+        private void CacheDraggedCards()
         {
-            float x = pointer.x / Screen.width;
-            float y = pointer.y / Screen.height;
-            return x >= 0.18f && x <= 0.27f && y >= 0.86f;
+            _draggedOffsets.Clear();
+            if (_draggedCard == null) return;
+            Vector3 anchorPosition = _draggedCard.transform.position;
+            IEnumerable<CardView> cards = _dragWholeStack
+                ? _cards.Values.Where(card => card.StackId == _draggedCard.StackId)
+                : new[] { _draggedCard };
+            foreach (CardView card in cards) _draggedOffsets[card] = card.transform.position - anchorPosition;
+        }
+
+        private void PromoteToWholeStackDrag()
+        {
+            if (_dragWholeStack || !_wholeStackHoldEligible || _draggedCard == null) return;
+            _dragWholeStack = true;
+            _wholeStackHoldEligible = false;
+            CacheDraggedCards();
+            SetDraggedCardsSorting(true);
+            ShowWholeStackFeedback();
+        }
+
+        private void UpdateWholeStackHoldEligibility(Vector3 anchorPosition)
+        {
+            if (!_wholeStackHoldEligible || _dragWholeStack) return;
+            if (Vector2.Distance(_dragStartedPosition, anchorPosition) <= WholeStackHoldMovementTolerance) return;
+            _wholeStackHoldEligible = false;
+        }
+
+        private void ShowWholeStackFeedback()
+        {
+            ClearWholeStackFeedback();
+            if (_draggedCard == null) return;
+            foreach (CardView card in _cards.Values.Where(card => card.StackId == _draggedCard.StackId))
+            {
+                card.SetWholeStackDragFeedback(true, card == _draggedCard);
+                _wholeStackFeedbackCards.Add(card);
+            }
+        }
+
+        private void ClearWholeStackFeedback()
+        {
+            foreach (CardView card in _wholeStackFeedbackCards)
+                if (card != null) card.SetWholeStackDragFeedback(false, false);
+            _wholeStackFeedbackCards.Clear();
+        }
+
+        private void MoveDraggedCards(Vector3 anchorPosition)
+        {
+            foreach (KeyValuePair<CardView, Vector3> pair in _draggedOffsets)
+                if (pair.Key != null) pair.Key.transform.position = anchorPosition + pair.Value;
+        }
+
+        private void UpdateBoosterDrag(Vector3 pointer)
+        {
+            if (_draggedBooster == null) return;
+            Vector3 position = ScreenToWorld(pointer) + _boosterDragOffset;
+            if (!_boosterMoved &&
+                Vector2.Distance(_boosterDragStartedPointer, pointer) < BoosterDragThresholdPixels) return;
+            if (!_boosterMoved)
+            {
+                _boosterMoved = true;
+                _draggedBooster.SetDragSorting(true);
+            }
+            _draggedBooster.transform.position = position;
+        }
+
+        private void SetDraggedCardsSorting(bool active)
+        {
+            foreach (CardView card in _draggedOffsets.Keys)
+                if (card != null) card.SetDragSorting(active);
         }
 
         private CardView CreateCard(string id)
@@ -228,6 +420,30 @@ namespace GameLogic.Core.View
             var go = new GameObject("Booster " + id);
             go.transform.SetParent(transform, false);
             return go.AddComponent<BoosterView>().Initialize(id, _whiteSprite, _font);
+        }
+
+        private SellSlotView CreateSellSlot()
+        {
+            var go = new GameObject("Sell Slot");
+            go.transform.SetParent(transform, false);
+            return go.AddComponent<SellSlotView>().Initialize(_whiteSprite, _font);
+        }
+
+        private ShopSlotView CreateShopSlot(string id)
+        {
+            var go = new GameObject("Shop Slot " + id);
+            go.transform.SetParent(transform, false);
+            return go.AddComponent<ShopSlotView>().Initialize(id, _whiteSprite, _font);
+        }
+
+        private void LayoutShopSlots()
+        {
+            if (_sellSlot == null) return;
+            _sellSlot.SetLayout(new Vector3(SellSlotX, ShopShelfY, 0f));
+
+            int index = 0;
+            foreach (ShopSlotView slot in _shopSlots.Values.OrderBy(item => item.Order))
+                slot.SetLayout(new Vector3(FirstShopSlotX + ShopSlotSpacing * index++, ShopShelfY, 0f));
         }
 
         private void CreateBoardFrame()
@@ -326,116 +542,5 @@ namespace GameLogic.Core.View
             return false;
         }
 
-        private sealed class CardView : MonoBehaviour
-        {
-            private SpriteRenderer _body;
-            private SpriteRenderer _outline;
-            private TextMesh _title;
-            private TextMesh _footer;
-            private Transform _progress;
-            public string InstanceId { get; private set; }
-
-            public CardView Initialize(string id, Sprite sprite, Font font)
-            {
-                InstanceId = id;
-                _outline = AddSprite("Outline", sprite, Color.black, -1, new Vector3(CardWidth + 0.12f, CardHeight + 0.12f));
-                _body = AddSprite("Body", sprite, Color.white, 0, new Vector3(CardWidth, CardHeight));
-                _title = AddText("Title", font, 36, TextAnchor.MiddleCenter, new Vector3(0, 0.55f, -0.05f));
-                _footer = AddText("Footer", font, 22, TextAnchor.MiddleCenter, new Vector3(0, -0.67f, -0.05f));
-                gameObject.AddComponent<BoxCollider2D>().size = new Vector2(CardWidth, CardHeight);
-                Transform track = AddSprite("ProgressTrack", sprite, Color.black, 2, new Vector3(1.25f, 0.09f)).transform;
-                track.localPosition = new Vector3(0, -0.87f, -0.1f);
-                _progress = AddSprite("Progress", sprite, new Color32(255, 238, 150, 255), 3,
-                    new Vector3(1.2f, 0.055f)).transform;
-                _progress.SetParent(track, false);
-                return this;
-            }
-
-            public void Render(CardSnapshot data, bool selected)
-            {
-                transform.position = new Vector3(data.X, data.Y - data.StackOrder * 0.32f, -data.StackOrder * 0.01f);
-                _body.color = ParseColor(data.Color, data.Category);
-                _outline.color = selected ? Color.white : Color.black;
-                _title.text = BreakName(data.NameZh);
-                _footer.text = Footer(data);
-                float progress = Mathf.Clamp01(data.Progress);
-                _progress.localScale = new Vector3(progress, 1f, 1f);
-                _progress.localPosition = new Vector3((progress - 1f) * 0.5f, 0f, -0.01f);
-                _progress.parent.gameObject.SetActive(progress > 0f && progress < 1f);
-            }
-
-            private SpriteRenderer AddSprite(string objectName, Sprite sprite, Color color, int order, Vector3 scale)
-            {
-                var child = new GameObject(objectName);
-                child.transform.SetParent(transform, false);
-                child.transform.localScale = scale;
-                var renderer = child.AddComponent<SpriteRenderer>();
-                renderer.sprite = sprite; renderer.color = color; renderer.sortingOrder = order;
-                return renderer;
-            }
-
-            private TextMesh AddText(string objectName, Font font, int size, TextAnchor anchor, Vector3 position)
-            {
-                var child = new GameObject(objectName);
-                child.transform.SetParent(transform, false); child.transform.localPosition = position;
-                var mesh = child.AddComponent<TextMesh>();
-                mesh.font = font; mesh.fontSize = size; mesh.characterSize = 0.06f; mesh.anchor = anchor;
-                mesh.alignment = TextAlignment.Center; mesh.color = Color.black;
-                if (font != null) mesh.GetComponent<MeshRenderer>().sharedMaterial = font.material;
-                mesh.GetComponent<MeshRenderer>().sortingOrder = 10;
-                return mesh;
-            }
-
-            private static string BreakName(string name) => string.IsNullOrEmpty(name) ? "未命名" :
-                name.Length <= 5 ? name : name.Substring(0, (name.Length + 1) / 2) + "\n" + name.Substring((name.Length + 1) / 2);
-            private static string Footer(CardSnapshot data)
-            {
-                if (data.MaxHp > 0) return $"HP {data.Hp}/{data.MaxHp}";
-                if (data.FoodValue > 0) return $"食 {data.FoodValue}  售 {data.SellPrice}";
-                return (data.IsFoil ? "闪  " : string.Empty) + $"售 {data.SellPrice}";
-            }
-            private static Color ParseColor(string color, string category)
-            {
-                string key = (color + category).ToUpperInvariant();
-                if (key.Contains("FOOD")) return new Color32(244, 166, 104, 255);
-                if (key.Contains("STRUCTURE")) return new Color32(242, 150, 146, 255);
-                if (key.Contains("ANIMAL")) return new Color32(164, 112, 75, 255);
-                if (key.Contains("VILLAGER")) return new Color32(246, 211, 107, 255);
-                if (key.Contains("LOCATION")) return new Color32(168, 143, 197, 255);
-                if (key.Contains("ENEMY")) return new Color32(205, 91, 81, 255);
-                if (key.Contains("IDEA") || key.Contains("RUMOR")) return new Color32(115, 139, 164, 255);
-                return new Color32(131, 151, 175, 255);
-            }
-        }
-
-        private sealed class BoosterView : MonoBehaviour
-        {
-            private SpriteRenderer _body;
-            private TextMesh _text;
-            public string InstanceId { get; private set; }
-            public BoosterView Initialize(string id, Sprite sprite, Font font)
-            {
-                InstanceId = id;
-                _body = gameObject.AddComponent<SpriteRenderer>();
-                _body.sprite = sprite; _body.color = Color.black; _body.sortingOrder = 20;
-                transform.localScale = new Vector3(1.6f, 2.2f, 1f);
-                var textObject = new GameObject("Text");
-                textObject.transform.SetParent(transform, false);
-                textObject.transform.localScale = new Vector3(0.625f, 0.455f, 1f);
-                textObject.transform.localPosition = new Vector3(0, 0, -0.05f);
-                _text = textObject.AddComponent<TextMesh>();
-                _text.font = font; _text.fontSize = 34; _text.characterSize = 0.1f;
-                _text.anchor = TextAnchor.MiddleCenter; _text.alignment = TextAlignment.Center; _text.color = Color.white;
-                if (font != null) _text.GetComponent<MeshRenderer>().sharedMaterial = font.material;
-                _text.GetComponent<MeshRenderer>().sortingOrder = 25;
-                gameObject.AddComponent<BoxCollider2D>().size = Vector2.one;
-                return this;
-            }
-            public void Render(BoosterSnapshot data)
-            {
-                transform.position = new Vector3(data.X, data.Y, -0.2f);
-                _text.text = data.NameZh + "\n剩余 " + data.Remaining;
-            }
-        }
     }
 }
