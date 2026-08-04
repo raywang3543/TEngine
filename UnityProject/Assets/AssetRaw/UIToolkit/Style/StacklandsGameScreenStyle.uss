@@ -27,7 +27,6 @@
 .detail-title { font-size: 25px; -unity-font-style: bold; margin-bottom: 7px; }
 .detail-description { font-size: 17px; white-space: normal; flex-grow: 1; }
 .detail-stats { font-size: 16px; margin-top: 6px; }
-.action-button { height: 34px; margin-top: 8px; background-color: rgb(58, 61, 55); color: white; border-width: 0; }
 
 .right-area { flex-grow: 1; height: 100%; }
 .top-shell { height: 14%; min-height: 118px; background-color: rgba(0, 0, 0, 0); }

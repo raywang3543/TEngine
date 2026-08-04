@@ -46,6 +46,14 @@ BOOSTERS = {
     "booster_bg_black": (36, 36, 36),
 }
 
+# 卡槽底图：尺寸对应 Core/View/SellSlotView.cs 的出售槽比例（1.4 x 1.55 世界单位 = 28:31）。
+# 填充烘焙为出售槽/可购买商店槽的目标色 (10, 11, 10)，无独立描边，
+# 其余状态由代码按目标色 / 底色的倍率染色还原。
+SLOT_WIDTH, SLOT_HEIGHT = 280, 310
+SLOTS = {
+    "slot_bg_black": (10, 11, 10),
+}
+
 
 def make_card(fill_rgb, width=WIDTH, height=HEIGHT):
     w, h = width * SS, height * SS
@@ -67,6 +75,18 @@ def make_card(fill_rgb, width=WIDTH, height=HEIGHT):
     return image.resize((width, height), Image.LANCZOS)
 
 
+def make_slot(fill_rgb, width=SLOT_WIDTH, height=SLOT_HEIGHT):
+    """纯色圆角矩形，无描边，对应卡槽当前白底染色的表现。"""
+    w, h = width * SS, height * SS
+    radius = CORNER_RADIUS * SS * width // WIDTH
+
+    image = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(image)
+    draw.rounded_rectangle([0, 0, w - 1, h - 1], radius=radius, fill=fill_rgb + (255,))
+
+    return image.resize((width, height), Image.LANCZOS)
+
+
 def main():
     out_dir = os.path.normpath(OUT_DIR)
     os.makedirs(out_dir, exist_ok=True)
@@ -77,6 +97,10 @@ def main():
     for name, rgb in BOOSTERS.items():
         path = os.path.join(out_dir, name + ".png")
         make_card(rgb, BOOSTER_WIDTH, BOOSTER_HEIGHT).save(path)
+        print("written:", path)
+    for name, rgb in SLOTS.items():
+        path = os.path.join(out_dir, name + ".png")
+        make_slot(rgb).save(path)
         print("written:", path)
 
 

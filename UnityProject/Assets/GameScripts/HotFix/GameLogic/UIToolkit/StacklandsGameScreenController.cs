@@ -34,7 +34,6 @@ namespace GameLogic
         private Button _closeModal;
         private Button _settings;
         private Button _cardopedia;
-        private Button _sell;
         private Button[] _speedButtons;
         private ScrollView _modalList;
         private BoardSnapshot _board;
@@ -71,7 +70,7 @@ namespace GameLogic
             _moon = root.Q<Label>("moon-label"); _time = root.Q<Label>("time-label");
             _food = root.Q<Label>("food-label"); _cap = root.Q<Label>("cap-label");
             _detailTitle = root.Q<Label>("detail-title"); _detailDescription = root.Q<Label>("detail-description");
-            _detailStats = root.Q<Label>("detail-stats"); _sell = root.Q<Button>("sell-selected");
+            _detailStats = root.Q<Label>("detail-stats");
             _modal = root.Q("modal-overlay"); _modalTitle = root.Q<Label>("modal-title");
             _modalMessage = root.Q<Label>("modal-message"); _peaceful = root.Q<Toggle>("peaceful-toggle");
             _moonLength = root.Q<DropdownField>("moon-length");
@@ -92,7 +91,6 @@ namespace GameLogic
             _closeModal.clicked += CloseModal;
             _settings.clicked += OpenSettings;
             _cardopedia.clicked += OpenCardopedia;
-            _sell.clicked += SellSelected;
         }
 
         private void UnbindButtons()
@@ -105,7 +103,6 @@ namespace GameLogic
             _closeModal.clicked -= CloseModal;
             _settings.clicked -= OpenSettings;
             _cardopedia.clicked -= OpenCardopedia;
-            _sell.clicked -= SellSelected;
         }
 
         private void OnBoardChanged(BoardSnapshot snapshot)
@@ -118,13 +115,12 @@ namespace GameLogic
             if (selected == null)
             {
                 _detailTitle.text = "选择一张卡牌"; _detailDescription.text = "拖动卡牌进行堆叠。";
-                _detailStats.text = string.Empty; _sell.SetEnabled(false); return;
+                _detailStats.text = string.Empty; return;
             }
             _detailTitle.text = selected.NameZh;
             _detailDescription.text = selected.DescriptionZh;
             _detailStats.text = $"售价 {selected.SellPrice}  食物 {selected.FoodValue}" +
                                 (selected.MaxHp > 0 ? $"  HP {selected.Hp}/{selected.MaxHp}" : string.Empty);
-            _sell.SetEnabled(selected.SellPrice > 0);
         }
 
         private void OnHudChanged(HudSnapshot hud)
@@ -220,11 +216,6 @@ namespace GameLogic
                     _modalList.Add(label);
                 }
             _modal.RemoveFromClassList("hidden");
-        }
-        private void SellSelected()
-        {
-            if (string.IsNullOrEmpty(_selectedId)) return;
-            Send(new StacklandsCommandDto { Kind = StacklandsCommandKind.SellCard, InstanceId = _selectedId });
         }
     }
 }

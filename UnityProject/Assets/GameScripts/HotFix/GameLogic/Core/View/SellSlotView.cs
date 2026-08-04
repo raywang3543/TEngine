@@ -7,15 +7,32 @@ namespace GameLogic.Core.View
     /// </summary>
     internal sealed class SellSlotView : MonoBehaviour
     {
+        private const float SlotWidth = 1.4f;
+        private const float SlotHeight = 1.55f;
         private BoxCollider2D _collider;
+        private SpriteRenderer _body;
         private TextMesh _text;
+
+        /// <summary>
+        /// 图集卡槽底图；底图已烘焙出售槽目标色，为 null 时保持白色 Sprite 染色的回退表现。
+        /// </summary>
+        public Sprite Background
+        {
+            set
+            {
+                if (value == null || _body == null || _body.sprite == value) return;
+                _body.sprite = value;
+                _body.color = Color.white;
+                FitToSprite(value);
+            }
+        }
 
         public SellSlotView Initialize(Sprite sprite, Font font)
         {
             AddBackground(sprite, new Color32(10, 11, 10, 255));
             _text = AddSlotText(font);
             _collider = gameObject.AddComponent<BoxCollider2D>();
-            _collider.size = new Vector2(1.4f, 1.55f);
+            _collider.size = new Vector2(SlotWidth, SlotHeight);
             Render(0);
             return this;
         }
@@ -36,11 +53,20 @@ namespace GameLogic.Core.View
         {
             var child = new GameObject("Background");
             child.transform.SetParent(transform, false);
-            child.transform.localScale = new Vector3(1.4f, 1.55f, 1f);
-            var renderer = child.AddComponent<SpriteRenderer>();
-            renderer.sprite = sprite;
-            renderer.color = color;
-            renderer.sortingOrder = -60;
+            _body = child.AddComponent<SpriteRenderer>();
+            _body.sprite = sprite;
+            _body.color = color;
+            _body.sortingOrder = -60;
+            FitToSprite(sprite);
+        }
+
+        /// <summary>
+        /// 按底图实际尺寸换算缩放，不依赖贴图 Pixels Per Unit 设置。
+        /// </summary>
+        private void FitToSprite(Sprite sprite)
+        {
+            Vector2 size = sprite.bounds.size;
+            _body.transform.localScale = new Vector3(SlotWidth / size.x, SlotHeight / size.y, 1f);
         }
 
         private TextMesh AddSlotText(Font font)

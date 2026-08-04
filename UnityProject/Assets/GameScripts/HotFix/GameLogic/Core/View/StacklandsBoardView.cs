@@ -27,6 +27,7 @@ namespace GameLogic.Core.View
         private readonly Dictionary<string, Sprite> _cardSprites = new Dictionary<string, Sprite>();
         private readonly List<SubAssetsHandle> _cardSpriteHandles = new List<SubAssetsHandle>();
         private Sprite _boosterSprite;
+        private Sprite _slotSprite;
         private Sprite _borderBlack;
         private Sprite _borderWhite;
         private Sprite _borderYellow;
@@ -439,14 +440,18 @@ namespace GameLogic.Core.View
         {
             var go = new GameObject("Sell Slot");
             go.transform.SetParent(transform, false);
-            return go.AddComponent<SellSlotView>().Initialize(_whiteSprite, _font);
+            var view = go.AddComponent<SellSlotView>().Initialize(_whiteSprite, _font);
+            if (_slotSprite != null) view.Background = _slotSprite;
+            return view;
         }
 
         private ShopSlotView CreateShopSlot(string id)
         {
             var go = new GameObject("Shop Slot " + id);
             go.transform.SetParent(transform, false);
-            return go.AddComponent<ShopSlotView>().Initialize(id, _whiteSprite, _font);
+            var view = go.AddComponent<ShopSlotView>().Initialize(id, _whiteSprite, _font);
+            if (_slotSprite != null) view.Background = _slotSprite;
+            return view;
         }
 
         private void LayoutShopSlots()
@@ -554,6 +559,25 @@ namespace GameLogic.Core.View
             foreach (CardView view in _cards.Values)
                 if (view != null) view.SetBorderSprites(_borderBlack, _borderWhite, _borderYellow);
 
+            // 卡槽底图同样走图集子资源加载，加载完成后同步已存在的出售槽和商店槽。
+            var slotHandle = YooAssets.LoadSubAssetsAsync<Sprite>("slot_bg_black");
+            bool slotCancelled = await slotHandle
+                .ToUniTask(cancellationToken: this.GetCancellationTokenOnDestroy())
+                .SuppressCancellationThrow();
+            Sprite slot = slotCancelled ? null : slotHandle.GetSubAssetObjects<Sprite>()?.FirstOrDefault();
+            if (slot == null)
+            {
+                slotHandle.Dispose();
+            }
+            else
+            {
+                _cardSpriteHandles.Add(slotHandle);
+                _slotSprite = slot;
+                if (_sellSlot != null) _sellSlot.Background = slot;
+                foreach (ShopSlotView view in _shopSlots.Values)
+                    if (view != null) view.Background = slot;
+            }
+
             // 卡包底图同样走图集子资源加载，加载完成后同步已存在的卡包视图。
             var boosterHandle = YooAssets.LoadSubAssetsAsync<Sprite>("booster_bg_black");
             bool boosterCancelled = await boosterHandle
@@ -576,6 +600,7 @@ namespace GameLogic.Core.View
             foreach (SubAssetsHandle handle in _cardSpriteHandles) handle.Dispose();
             _cardSpriteHandles.Clear();
             _cardSprites.Clear();
+            _slotSprite = null;
             _borderBlack = null;
             _borderWhite = null;
             _borderYellow = null;

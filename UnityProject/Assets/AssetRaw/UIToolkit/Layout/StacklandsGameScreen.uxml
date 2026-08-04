@@ -11,7 +11,6 @@
                 <ui:Label name="detail-title" text="选择一张卡牌" class="detail-title" />
                 <ui:Label name="detail-description" text="拖动卡牌进行堆叠。" class="detail-description" />
                 <ui:Label name="detail-stats" text="" class="detail-stats" />
-                <ui:Button name="sell-selected" text="出售选中卡" class="action-button" />
             </ui:VisualElement>
         </ui:VisualElement>
 
