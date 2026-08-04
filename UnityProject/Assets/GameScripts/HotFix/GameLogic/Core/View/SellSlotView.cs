@@ -11,7 +11,36 @@ namespace GameLogic.Core.View
         private const float SlotHeight = 1.55f;
         private BoxCollider2D _collider;
         private SpriteRenderer _body;
+        private SpriteRenderer _border;
+        private Sprite _borderGreen;
+        private Sprite _borderRed;
         private TextMesh _text;
+
+        /// <summary>
+        /// 拖动悬停反馈边框图（绿=可出售，红=不可出售），默认隐藏。
+        /// </summary>
+        public void SetBorderSprites(Sprite green, Sprite red)
+        {
+            _borderGreen = green;
+            _borderRed = red;
+        }
+
+        /// <summary>
+        /// positive 显示绿色边框，否则红色；边框图未加载完成时不显示。
+        /// </summary>
+        public void ShowBorder(bool positive)
+        {
+            if (_border == null) return;
+            Sprite sprite = positive ? _borderGreen : _borderRed;
+            if (sprite == null) return;
+            _border.sprite = sprite;
+            _border.gameObject.SetActive(true);
+        }
+
+        public void HideBorder()
+        {
+            if (_border != null) _border.gameObject.SetActive(false);
+        }
 
         /// <summary>
         /// 图集卡槽底图；底图已烘焙出售槽目标色，为 null 时保持白色 Sprite 染色的回退表现。
@@ -58,6 +87,13 @@ namespace GameLogic.Core.View
             _body.color = color;
             _body.sortingOrder = -60;
             FitToSprite(sprite);
+
+            // 边框与底图同尺寸，作为子节点继承缩放即可对齐，默认隐藏。
+            var border = new GameObject("Border");
+            border.transform.SetParent(child.transform, false);
+            _border = border.AddComponent<SpriteRenderer>();
+            _border.sortingOrder = -54;
+            border.SetActive(false);
         }
 
         /// <summary>

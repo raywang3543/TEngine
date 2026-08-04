@@ -45,6 +45,7 @@ namespace GameLogic.Core
         public float X { get; internal set; }
         public float Y { get; internal set; }
         public int SellPrice { get; internal set; }
+        public bool CanSell { get; internal set; }
         public int FoodValue { get; internal set; }
         public int Hp { get; internal set; }
         public int MaxHp { get; internal set; }

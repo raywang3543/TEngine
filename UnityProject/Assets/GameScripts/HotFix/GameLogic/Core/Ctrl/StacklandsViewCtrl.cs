@@ -134,6 +134,7 @@ namespace GameLogic.Core.Ctrl
                 DescriptionZh = definition.DescriptionZh, Color = display.Color, Category = display.Category,
                 StackId = card.StackId, StackOrder = card.StackOrder, X = card.X, Y = card.Y,
                 SellPrice = definition.SellPrice.GetValueOrDefault(),
+                CanSell = definition.IsSellable == true && definition.SellPrice.GetValueOrDefault() > 0,
                 FoodValue = definition.FoodValue.GetValueOrDefault(), Hp = card.Hp, MaxHp = maxHp,
                 IsFoil = card.IsFoil, IsLocked = work != null,
                 Progress = showProgress

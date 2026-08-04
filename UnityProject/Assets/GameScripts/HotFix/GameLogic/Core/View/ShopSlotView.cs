@@ -13,6 +13,10 @@ namespace GameLogic.Core.View
         // 图集底图 slot_bg_black 的烘焙填充色；底图未加载时回退为白色 Sprite 直接染色。
         private static readonly Color32 SlotImageBase = new Color32(10, 11, 10, 255);
         private SpriteRenderer _body;
+        private SpriteRenderer _border;
+        private Sprite _borderGreen;
+        private Sprite _borderRed;
+        private BoxCollider2D _collider;
         private TextMesh _text;
         private Color _tintBase = Color.white;
         private Color32 _lastTarget = SlotImageBase;
@@ -20,6 +24,34 @@ namespace GameLogic.Core.View
         public string BoosterId { get; private set; }
         public bool CanBuy { get; private set; }
         public int Order { get; set; }
+
+        /// <summary>
+        /// 拖动悬停反馈边框图（绿=金币卡，红=非金币卡），默认隐藏。
+        /// </summary>
+        public void SetBorderSprites(Sprite green, Sprite red)
+        {
+            _borderGreen = green;
+            _borderRed = red;
+        }
+
+        /// <summary>
+        /// positive 显示绿色边框，否则红色；边框图未加载完成时不显示。
+        /// </summary>
+        public void ShowBorder(bool positive)
+        {
+            if (_border == null) return;
+            Sprite sprite = positive ? _borderGreen : _borderRed;
+            if (sprite == null) return;
+            _border.sprite = sprite;
+            _border.gameObject.SetActive(true);
+        }
+
+        public void HideBorder()
+        {
+            if (_border != null) _border.gameObject.SetActive(false);
+        }
+
+        public bool Contains(Vector2 worldPosition) => _collider != null && _collider.OverlapPoint(worldPosition);
 
         /// <summary>
         /// 图集卡槽底图；为 null 时保持白色 Sprite 染色的回退表现。
@@ -46,6 +78,13 @@ namespace GameLogic.Core.View
             _body.sortingOrder = -60;
             FitToSprite(sprite);
 
+            // 边框与底图同尺寸，作为子节点继承缩放即可对齐，默认隐藏。
+            var border = new GameObject("Border");
+            border.transform.SetParent(background.transform, false);
+            _border = border.AddComponent<SpriteRenderer>();
+            _border.sortingOrder = -54;
+            border.SetActive(false);
+
             var textObject = new GameObject("Text");
             textObject.transform.SetParent(transform, false);
             textObject.transform.localPosition = new Vector3(0f, 0f, -0.01f);
@@ -59,7 +98,8 @@ namespace GameLogic.Core.View
             if (font != null) _text.GetComponent<MeshRenderer>().sharedMaterial = font.material;
             _text.GetComponent<MeshRenderer>().sortingOrder = -55;
 
-            gameObject.AddComponent<BoxCollider2D>().size = new Vector2(SlotWidth, SlotHeight);
+            _collider = gameObject.AddComponent<BoxCollider2D>();
+            _collider.size = new Vector2(SlotWidth, SlotHeight);
             return this;
         }
 

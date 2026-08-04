@@ -23,6 +23,14 @@ BORDERS = {
     "card_border_yellow": ((255, 226, 92, 255), 16),
 }
 
+# 卡槽拖动反馈边框：尺寸与 gen_card_backgrounds.py 的 slot_bg_black 一致（280x310），
+# 颜色对应卡牌配方的分类色（绿=可出售/是金币，红=不可出售/非金币）。
+SLOT_WIDTH, SLOT_HEIGHT = 280, 310
+SLOT_BORDERS = {
+    "slot_border_green": ((121, 180, 104, 255), 12),
+    "slot_border_red": ((205, 91, 81, 255), 12),
+}
+
 OUT_DIR = os.path.join(
     os.path.dirname(os.path.abspath(__file__)),
     "..", "UnityProject", "Assets", "AssetRaw", "UIRaw", "Atlas", "Card",
@@ -31,7 +39,7 @@ OUT_DIR = os.path.join(
 
 def make_border(color, border_width, width=WIDTH, height=HEIGHT):
     w, h = width * SS, height * SS
-    radius = CORNER_RADIUS * SS
+    radius = CORNER_RADIUS * SS * width // WIDTH
     border = border_width * SS
 
     image = Image.new("RGBA", (w, h), (0, 0, 0, 0))
@@ -55,6 +63,10 @@ def main():
     for name, (color, border_width) in BORDERS.items():
         path = os.path.join(out_dir, name + ".png")
         make_border(color, border_width).save(path)
+        print("written:", path)
+    for name, (color, border_width) in SLOT_BORDERS.items():
+        path = os.path.join(out_dir, name + ".png")
+        make_border(color, border_width, SLOT_WIDTH, SLOT_HEIGHT).save(path)
         print("written:", path)
 
 

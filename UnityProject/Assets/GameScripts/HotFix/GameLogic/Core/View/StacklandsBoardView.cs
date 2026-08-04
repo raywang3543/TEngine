@@ -28,6 +28,8 @@ namespace GameLogic.Core.View
         private readonly List<SubAssetsHandle> _cardSpriteHandles = new List<SubAssetsHandle>();
         private Sprite _boosterSprite;
         private Sprite _slotSprite;
+        private Sprite _slotBorderGreen;
+        private Sprite _slotBorderRed;
         private Sprite _borderBlack;
         private Sprite _borderWhite;
         private Sprite _borderYellow;
@@ -36,6 +38,7 @@ namespace GameLogic.Core.View
         private Font _font;
         private SellSlotView _sellSlot;
         private CardView _draggedCard;
+        private readonly Dictionary<string, CardSnapshot> _cardData = new Dictionary<string, CardSnapshot>();
         private BoosterView _draggedBooster;
         private readonly Dictionary<CardView, Vector3> _draggedOffsets = new Dictionary<CardView, Vector3>();
         private Vector3 _dragOffset;
@@ -91,6 +94,8 @@ namespace GameLogic.Core.View
         public void Render(BoardSnapshot snapshot)
         {
             if (snapshot == null) return;
+            _cardData.Clear();
+            foreach (CardSnapshot card in snapshot.Cards) _cardData[card.InstanceId] = card;
             var cardIds = new HashSet<string>(snapshot.Cards.Select(item => item.InstanceId));
             foreach (string id in _cards.Keys.Where(id => !cardIds.Contains(id)).ToArray())
             {
@@ -203,6 +208,7 @@ namespace GameLogic.Core.View
                 if (_wholeStackHoldEligible && Time.unscaledTime - _mouseDragStartedAt >= WholeStackHoldSeconds)
                     PromoteToWholeStackDrag();
                 MoveDraggedCards(anchorPosition);
+                UpdateSlotFeedback(ScreenToWorld(mouse));
             }
             else if (Input.GetMouseButton(0) && _draggedBooster != null)
                 UpdateBoosterDrag(mouse);
@@ -238,6 +244,7 @@ namespace GameLogic.Core.View
                         Time.unscaledTime - _touchDragStartedAt >= WholeStackHoldSeconds)
                         PromoteToWholeStackDrag();
                     MoveDraggedCards(anchorPosition);
+                    UpdateSlotFeedback(ScreenToWorld(touch.position));
                 }
                 else if (_draggedBooster != null)
                     UpdateBoosterDrag(touch.position);
@@ -320,6 +327,7 @@ namespace GameLogic.Core.View
                 : new[] { draggedId });
             ClearWholeStackFeedback();
             SetDraggedCardsSorting(false);
+            HideSlotBorders();
             _draggedCard = null;
             _draggedOffsets.Clear();
             _dragWholeStack = false;
@@ -392,6 +400,37 @@ namespace GameLogic.Core.View
             _wholeStackFeedbackCards.Clear();
         }
 
+        /// <summary>
+        /// 拖动卡牌悬停在卡槽上时显示反馈边框：出售槽按能否出售、商店槽按是否货币卡分绿/红。
+        /// </summary>
+        private void UpdateSlotFeedback(Vector2 world)
+        {
+            if (_draggedCard == null)
+            {
+                HideSlotBorders();
+                return;
+            }
+            _cardData.TryGetValue(_draggedCard.InstanceId, out CardSnapshot data);
+            if (_sellSlot != null && _sellSlot.Contains(world))
+                _sellSlot.ShowBorder(data is { CanSell: true });
+            else _sellSlot?.HideBorder();
+
+            foreach (ShopSlotView slot in _shopSlots.Values)
+            {
+                if (slot == null) continue;
+                if (slot.Contains(world))
+                    slot.ShowBorder(data != null && data.CardId == Model.StacklandsGameModel.CurrencyCardId);
+                else slot.HideBorder();
+            }
+        }
+
+        private void HideSlotBorders()
+        {
+            _sellSlot?.HideBorder();
+            foreach (ShopSlotView slot in _shopSlots.Values)
+                if (slot != null) slot.HideBorder();
+        }
+
         private void MoveDraggedCards(Vector3 anchorPosition)
         {
             foreach (KeyValuePair<CardView, Vector3> pair in _draggedOffsets)
@@ -442,6 +481,7 @@ namespace GameLogic.Core.View
             go.transform.SetParent(transform, false);
             var view = go.AddComponent<SellSlotView>().Initialize(_whiteSprite, _font);
             if (_slotSprite != null) view.Background = _slotSprite;
+            view.SetBorderSprites(_slotBorderGreen, _slotBorderRed);
             return view;
         }
 
@@ -451,6 +491,7 @@ namespace GameLogic.Core.View
             go.transform.SetParent(transform, false);
             var view = go.AddComponent<ShopSlotView>().Initialize(id, _whiteSprite, _font);
             if (_slotSprite != null) view.Background = _slotSprite;
+            view.SetBorderSprites(_slotBorderGreen, _slotBorderRed);
             return view;
         }
 
@@ -578,6 +619,27 @@ namespace GameLogic.Core.View
                     if (view != null) view.Background = slot;
             }
 
+            // 卡槽拖动反馈边框同样走图集子资源加载，加载完成后同步已存在的卡槽。
+            string[] slotBorderLocations = { "slot_border_green", "slot_border_red" };
+            await UniTask.WhenAll(slotBorderLocations.Select(async location =>
+            {
+                var handle = YooAssets.LoadSubAssetsAsync<Sprite>(location);
+                bool cancelled = await handle.ToUniTask(cancellationToken: this.GetCancellationTokenOnDestroy())
+                    .SuppressCancellationThrow();
+                Sprite sprite = cancelled ? null : handle.GetSubAssetObjects<Sprite>()?.FirstOrDefault();
+                if (sprite == null)
+                {
+                    handle.Dispose();
+                    return;
+                }
+                _cardSpriteHandles.Add(handle);
+                if (location.EndsWith("green")) _slotBorderGreen = sprite;
+                else _slotBorderRed = sprite;
+            }));
+            _sellSlot?.SetBorderSprites(_slotBorderGreen, _slotBorderRed);
+            foreach (ShopSlotView view in _shopSlots.Values)
+                if (view != null) view.SetBorderSprites(_slotBorderGreen, _slotBorderRed);
+
             // 卡包底图同样走图集子资源加载，加载完成后同步已存在的卡包视图。
             var boosterHandle = YooAssets.LoadSubAssetsAsync<Sprite>("booster_bg_black");
             bool boosterCancelled = await boosterHandle
@@ -601,6 +663,8 @@ namespace GameLogic.Core.View
             _cardSpriteHandles.Clear();
             _cardSprites.Clear();
             _slotSprite = null;
+            _slotBorderGreen = null;
+            _slotBorderRed = null;
             _borderBlack = null;
             _borderWhite = null;
             _borderYellow = null;
