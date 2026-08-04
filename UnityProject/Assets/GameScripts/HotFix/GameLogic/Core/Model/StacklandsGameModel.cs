@@ -10,6 +10,7 @@ namespace GameLogic.Core.Model
     internal sealed class StacklandsGameModel
     {
         internal const string CurrencyCardId = "gold";
+        internal const string BgmLocation = "bgm";
 
         internal StacklandsGameModel(IStacklandsContentModel content, IStacklandsSaveStore saveStore)
         {

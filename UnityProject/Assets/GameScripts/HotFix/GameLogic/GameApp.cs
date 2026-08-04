@@ -58,11 +58,13 @@ public partial class GameApp
         await GameModule.UIToolkit.ShowUIAsync<StacklandsGameScreenController>(UITypes.StacklandsGameScreen);
         string savePath = Path.Combine(Application.persistentDataPath, "StacklandsOriginal");
         CoreSystem.Initialize(content, new JsonStacklandsSaveStore(savePath), boardView);
+        GameModule.Audio.Play(TEngine.AudioType.Music, StacklandsGameModel.BgmLocation, bLoop: true, bAsync: true);
     }
-    
+
     private static void Release()
     {
         CoreSystem.Release();
+        GameModule.Audio.Stop(TEngine.AudioType.Music, false);
         if (_stacklandsRoot != null)
         {
             UnityEngine.Object.Destroy(_stacklandsRoot);
