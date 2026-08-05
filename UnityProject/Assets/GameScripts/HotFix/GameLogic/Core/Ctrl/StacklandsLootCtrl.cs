@@ -81,7 +81,7 @@ namespace GameLogic.Core.Ctrl
             Model.Run.Boosters.Add(booster);
         }
 
-        internal void BuyBooster(string boosterId)
+        internal void BuyBooster(string boosterId, string paymentCardInstanceId)
         {
             if (Model.Run == null || !Model.Content.Boosters.Contains(boosterId)) return;
             BoosterDefinition pack = Model.Content.Boosters.Get(boosterId);
@@ -89,11 +89,21 @@ namespace GameLogic.Core.Ctrl
             {
                 CoreSystem.Notify("卡包尚未解锁"); return;
             }
-            if (Model.CountCard(pack.PriceCardId) < pack.PriceAmount)
+            CardRunData paymentCard = Model.GetCard(paymentCardInstanceId);
+            if (paymentCard == null || paymentCard.CardId != pack.PriceCardId)
+            {
+                CoreSystem.Notify("请将金币堆拖到卡槽购买"); return;
+            }
+            List<CardRunData> paymentStack = Model.StackCards(paymentCard.StackId)
+                .Where(card => card.CardId == pack.PriceCardId).ToList();
+            if (paymentStack.Count < pack.PriceAmount)
             {
                 CoreSystem.Notify("金币不足"); return;
             }
-            Model.RemoveCards(pack.PriceCardId, pack.PriceAmount);
+            foreach (CardRunData card in paymentStack.OrderByDescending(card => card.StackOrder)
+                         .Take(pack.PriceAmount).ToList())
+                Model.RemoveCard(card);
+            Model.NormalizeStacks();
             CreateBooster(boosterId, 0f, 3f, true);
             Model.Increment("PackPurchased:" + boosterId);
             CoreSystem.QuestCtrl.Evaluate();

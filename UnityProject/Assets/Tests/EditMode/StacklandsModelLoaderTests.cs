@@ -264,16 +264,146 @@ namespace GameLogic.Tests
             }
         }
 
+        [Test]
+        public void BuyBooster_ConsumesOnlyPriceFromDraggedCoinStack()
+        {
+            IStacklandsContentModel content = StacklandsModelLoader.Build(_tables);
+            BoosterDefinition pack = content.Boosters.All.First(item =>
+                item.AcquireMode == "PURCHASE" && item.PriceAmount > 0);
+            const string paymentStackId = "payment_stack";
+            var run = new StacklandsRunData
+            {
+                RandomState = 1,
+                MoonDuration = 120f,
+                MoonRemaining = 120f,
+            };
+            for (int index = 0; index < pack.PriceAmount + 2; index++)
+                run.Cards.Add(new CardRunData
+                {
+                    InstanceId = "payment_" + index,
+                    CardId = pack.PriceCardId,
+                    StackId = paymentStackId,
+                    StackOrder = index,
+                    X = -2f,
+                    Y = 1f,
+                });
+            run.Cards.Add(new CardRunData
+            {
+                InstanceId = "other_gold",
+                CardId = pack.PriceCardId,
+                StackId = "other_stack",
+                X = 4f,
+                Y = -1f,
+            });
+            var profile = new StacklandsProfileData
+            {
+                CompletedQuests = Enumerable.Range(0, pack.UnlockQuestCount)
+                    .Select(index => "completed_" + index).ToList(),
+            };
+            var store = new MemorySaveStore(run, profile);
+            var cameraObject = new GameObject("Stacklands Purchase Test Camera");
+            cameraObject.tag = "MainCamera";
+            cameraObject.AddComponent<Camera>();
+            var boardObject = new GameObject("Stacklands Purchase Test Board");
+            StacklandsBoardView boardView = boardObject.AddComponent<StacklandsBoardView>();
+
+            try
+            {
+                CoreSystem.Initialize(content, store, boardView);
+                CoreSystem.SubmitCommand(new StacklandsCommandDto
+                {
+                    Kind = StacklandsCommandKind.BuyBooster,
+                    InstanceId = "payment_" + (pack.PriceAmount + 1),
+                    ContentId = pack.Id,
+                });
+
+                CardRunData[] remainingPayment = run.Cards.Where(card => card.StackId == paymentStackId).ToArray();
+                Assert.That(remainingPayment, Has.Length.EqualTo(2));
+                Assert.That(remainingPayment.Select(card => card.StackOrder), Is.EqualTo(new[] { 0, 1 }));
+                Assert.That(remainingPayment.All(card => card.X == -2f && card.Y == 1f), Is.True);
+                Assert.That(run.Cards.Any(card => card.InstanceId == "other_gold"), Is.True,
+                    "不能从未拖动的金币堆扣款");
+                Assert.That(run.Boosters.Count(item => item.BoosterId == pack.Id), Is.EqualTo(1));
+            }
+            finally
+            {
+                CoreSystem.Release();
+                Object.DestroyImmediate(boardObject);
+                Object.DestroyImmediate(cameraObject);
+            }
+        }
+
+        [Test]
+        public void BuyBooster_WhenDraggedCoinStackIsShort_LeavesWholeStackInPlace()
+        {
+            IStacklandsContentModel content = StacklandsModelLoader.Build(_tables);
+            BoosterDefinition pack = content.Boosters.All.First(item =>
+                item.AcquireMode == "PURCHASE" && item.PriceAmount > 1);
+            const string paymentStackId = "short_payment_stack";
+            var run = new StacklandsRunData
+            {
+                RandomState = 1,
+                MoonDuration = 120f,
+                MoonRemaining = 120f,
+            };
+            for (int index = 0; index < pack.PriceAmount - 1; index++)
+                run.Cards.Add(new CardRunData
+                {
+                    InstanceId = "short_payment_" + index,
+                    CardId = pack.PriceCardId,
+                    StackId = paymentStackId,
+                    StackOrder = index,
+                    X = 3f,
+                    Y = 2f,
+                });
+            string draggedCardId = "short_payment_" + (pack.PriceAmount - 2);
+            var profile = new StacklandsProfileData
+            {
+                CompletedQuests = Enumerable.Range(0, pack.UnlockQuestCount)
+                    .Select(index => "completed_" + index).ToList(),
+            };
+            var store = new MemorySaveStore(run, profile);
+            var cameraObject = new GameObject("Stacklands Short Purchase Test Camera");
+            cameraObject.tag = "MainCamera";
+            cameraObject.AddComponent<Camera>();
+            var boardObject = new GameObject("Stacklands Short Purchase Test Board");
+            StacklandsBoardView boardView = boardObject.AddComponent<StacklandsBoardView>();
+
+            try
+            {
+                CoreSystem.Initialize(content, store, boardView);
+                CoreSystem.SubmitCommand(new StacklandsCommandDto
+                {
+                    Kind = StacklandsCommandKind.BuyBooster,
+                    InstanceId = draggedCardId,
+                    ContentId = pack.Id,
+                });
+
+                CardRunData[] remainingPayment = run.Cards.Where(card => card.StackId == paymentStackId).ToArray();
+                Assert.That(remainingPayment, Has.Length.EqualTo(pack.PriceAmount - 1));
+                Assert.That(remainingPayment.All(card => card.X == 3f && card.Y == 2f), Is.True);
+                Assert.That(run.Boosters.Count(item => item.BoosterId == pack.Id), Is.Zero);
+            }
+            finally
+            {
+                CoreSystem.Release();
+                Object.DestroyImmediate(boardObject);
+                Object.DestroyImmediate(cameraObject);
+            }
+        }
+
         private sealed class MemorySaveStore : IStacklandsSaveStore
         {
             private readonly StacklandsRunData _run;
+            private readonly StacklandsProfileData _profile;
 
-            public MemorySaveStore(StacklandsRunData run)
+            public MemorySaveStore(StacklandsRunData run, StacklandsProfileData profile = null)
             {
                 _run = run;
+                _profile = profile ?? new StacklandsProfileData();
             }
 
-            public StacklandsProfileData LoadProfile() => new StacklandsProfileData();
+            public StacklandsProfileData LoadProfile() => _profile;
             public StacklandsRunData LoadRun() => _run;
             public void SaveProfile(StacklandsProfileData profile) { }
             public void SaveRun(StacklandsRunData run) { }

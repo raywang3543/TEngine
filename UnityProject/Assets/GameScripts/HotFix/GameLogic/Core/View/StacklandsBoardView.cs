@@ -99,7 +99,7 @@ namespace GameLogic.Core.View
             var cardIds = new HashSet<string>(snapshot.Cards.Select(item => item.InstanceId));
             foreach (string id in _cards.Keys.Where(id => !cardIds.Contains(id)).ToArray())
             {
-                Destroy(_cards[id].gameObject);
+                DestroyView(_cards[id].gameObject);
                 _cards.Remove(id);
             }
 
@@ -116,7 +116,7 @@ namespace GameLogic.Core.View
             var boosterIds = new HashSet<string>(snapshot.Boosters.Select(item => item.InstanceId));
             foreach (string id in _boosters.Keys.Where(id => !boosterIds.Contains(id)).ToArray())
             {
-                Destroy(_boosters[id].gameObject);
+                DestroyView(_boosters[id].gameObject);
                 _boosters.Remove(id);
             }
 
@@ -147,7 +147,7 @@ namespace GameLogic.Core.View
             var slotIds = new HashSet<string>(snapshot.Boosters.Select(item => item.Id));
             foreach (string id in _shopSlots.Keys.Where(id => !slotIds.Contains(id)).ToArray())
             {
-                Destroy(_shopSlots[id].gameObject);
+                DestroyView(_shopSlots[id].gameObject);
                 _shopSlots.Remove(id);
                 shopLayoutChanged = true;
             }
@@ -271,21 +271,13 @@ namespace GameLogic.Core.View
                 return;
             }
             ShopSlotView shopSlot = hit.GetComponent<ShopSlotView>();
-            if (shopSlot != null)
-            {
-                if (shopSlot.CanBuy)
-                    CoreSystem.SubmitCommand(new StacklandsCommandDto
-                    {
-                        Kind = StacklandsCommandKind.BuyBooster, ContentId = shopSlot.BoosterId,
-                    });
-                return;
-            }
+            if (shopSlot != null) return;
             _draggedCard = hit.GetComponent<CardView>();
             if (_draggedCard == null) return;
             ClearWholeStackFeedback();
             _dragOffset = _draggedCard.transform.position - (Vector3)world;
             _dragStartedPosition = _draggedCard.transform.position;
-            _dragWholeStack = wholeStack;
+            _dragWholeStack = wholeStack || IsCurrencyStack(_draggedCard.StackId);
             _wholeStackHoldEligible = !wholeStack &&
                                       _cards.Values.Count(card => card.StackId == _draggedCard.StackId) > 1;
             CacheDraggedCards();
@@ -327,11 +319,12 @@ namespace GameLogic.Core.View
                 : new[] { draggedId });
             bool overSellSlot = _sellSlot != null && _sellSlot.Contains(world);
             bool canSell = _cardData.TryGetValue(draggedId, out CardSnapshot data) && data.CanSell;
-            if (overSellSlot && !canSell)
+            ShopSlotView shopSlot = _shopSlots.Values.FirstOrDefault(slot => slot != null && slot.Contains(world));
+            bool overShopSlot = shopSlot != null;
+            if ((overSellSlot && !canSell) || overShopSlot)
             {
-                // 不可出售：不出售也不移动，拖动的卡牌回到拖动前位置。
-                foreach (KeyValuePair<CardView, Vector3> pair in _draggedOffsets)
-                    if (pair.Key != null) pair.Key.transform.position = _dragStartedPosition + pair.Value;
+                // 卡槽操作不改变牌堆位置；Core 成功扣款后只会移除本次支付的金币。
+                RestoreDraggedCards();
             }
             ClearWholeStackFeedback();
             SetDraggedCardsSorting(false);
@@ -347,6 +340,16 @@ namespace GameLogic.Core.View
                     {
                         Kind = StacklandsCommandKind.SellCard, InstanceId = draggedId,
                     });
+                return;
+            }
+            if (overShopSlot)
+            {
+                CoreSystem.SubmitCommand(new StacklandsCommandDto
+                {
+                    Kind = StacklandsCommandKind.BuyBooster,
+                    InstanceId = draggedId,
+                    ContentId = shopSlot.BoosterId,
+                });
                 return;
             }
             Collider2D target = Physics2D.OverlapPointAll(world)
@@ -410,7 +413,7 @@ namespace GameLogic.Core.View
         }
 
         /// <summary>
-        /// 拖动卡牌悬停在卡槽上时显示反馈边框：出售槽按能否出售、商店槽按是否货币卡分绿/红。
+        /// 拖动卡牌悬停在卡槽上时显示反馈边框：出售槽按能否出售、商店槽按来源金币堆能否支付分绿/红。
         /// </summary>
         private void UpdateSlotFeedback(Vector2 world)
         {
@@ -428,9 +431,34 @@ namespace GameLogic.Core.View
             {
                 if (slot == null) continue;
                 if (slot.Contains(world))
-                    slot.ShowBorder(data != null && data.CardId == Model.StacklandsGameModel.CurrencyCardId);
+                    slot.ShowBorder(data != null && data.CardId == Model.StacklandsGameModel.CurrencyCardId &&
+                                    slot.Unlocked && CountStackCurrency(data.StackId) >= slot.Price);
                 else slot.HideBorder();
             }
+        }
+
+        private bool IsCurrencyStack(string stackId)
+        {
+            CardSnapshot[] cards = _cardData.Values.Where(card => card.StackId == stackId).ToArray();
+            return cards.Length > 1 && cards.All(card => card.CardId == Model.StacklandsGameModel.CurrencyCardId);
+        }
+
+        private int CountStackCurrency(string stackId)
+        {
+            return _cardData.Values.Count(card => card.StackId == stackId &&
+                                                  card.CardId == Model.StacklandsGameModel.CurrencyCardId);
+        }
+
+        private void RestoreDraggedCards()
+        {
+            foreach (KeyValuePair<CardView, Vector3> pair in _draggedOffsets)
+                if (pair.Key != null) pair.Key.transform.position = _dragStartedPosition + pair.Value;
+        }
+
+        private static void DestroyView(GameObject view)
+        {
+            if (Application.isPlaying) Destroy(view);
+            else DestroyImmediate(view);
         }
 
         private void HideSlotBorders()

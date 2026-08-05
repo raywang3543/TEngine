@@ -52,7 +52,7 @@ namespace GameLogic.Core.Ctrl
                 case StacklandsCommandKind.SelectCard:
                     Model.SelectedId = command.InstanceId; CoreSystem.ViewCtrl.PublishBoard(); break;
                 case StacklandsCommandKind.BuyBooster:
-                    CoreSystem.LootCtrl.BuyBooster(command.ContentId); break;
+                    CoreSystem.LootCtrl.BuyBooster(command.ContentId, command.InstanceId); break;
                 case StacklandsCommandKind.OpenBooster:
                     CoreSystem.LootCtrl.OpenBooster(command.InstanceId); break;
                 case StacklandsCommandKind.MoveBooster:

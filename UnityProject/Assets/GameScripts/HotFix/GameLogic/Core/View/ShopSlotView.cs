@@ -22,11 +22,12 @@ namespace GameLogic.Core.View
         private Color32 _lastTarget = SlotImageBase;
 
         public string BoosterId { get; private set; }
-        public bool CanBuy { get; private set; }
+        public bool Unlocked { get; private set; }
+        public int Price { get; private set; }
         public int Order { get; set; }
 
         /// <summary>
-        /// 拖动悬停反馈边框图（绿=金币卡，红=非金币卡），默认隐藏。
+        /// 拖动悬停反馈边框图（绿=来源金币堆足够支付，红=不可购买），默认隐藏。
         /// </summary>
         public void SetBorderSprites(Sprite green, Sprite red)
         {
@@ -105,10 +106,12 @@ namespace GameLogic.Core.View
 
         public void Render(BoosterShopSnapshot snapshot, int coins)
         {
-            CanBuy = snapshot.Unlocked && coins >= snapshot.Price;
+            Unlocked = snapshot.Unlocked;
+            Price = snapshot.Price;
+            bool canAfford = snapshot.Unlocked && coins >= snapshot.Price;
             _lastTarget = !snapshot.Unlocked
                 ? new Color32(50, 52, 48, 255)
-                : CanBuy ? new Color32(8, 9, 8, 255) : new Color32(28, 29, 27, 255);
+                : canAfford ? new Color32(8, 9, 8, 255) : new Color32(28, 29, 27, 255);
             _body.color = TintFor(_lastTarget);
             _text.color = snapshot.Unlocked ? Color.white : new Color32(155, 155, 149, 255);
             _text.text = FormatSlotName(snapshot.NameZh) + "\n" +
@@ -125,6 +128,7 @@ namespace GameLogic.Core.View
         /// </summary>
         private void FitToSprite(Sprite sprite)
         {
+            if (sprite == null) return;
             Vector2 size = sprite.bounds.size;
             _body.transform.localScale = new Vector3(SlotWidth / size.x, SlotHeight / size.y, 1f);
         }
