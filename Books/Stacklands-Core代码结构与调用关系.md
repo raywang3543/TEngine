@@ -47,7 +47,8 @@ Core/
 ├── DeterministicRandom.cs        # 可存档、可重放的确定性随机数
 ├── Ctrl/
 │   ├── StacklandsRunCtrl.cs      # 当前局生命周期、命令路由、Tick、存档
-│   ├── StacklandsBoardCtrl.cs    # 卡牌移动、堆叠、出售、装备和卸装
+│   ├── StacklandsBoardCtrl.cs    # 卡牌移动、堆叠、出售和牌堆变化后的自动尝试
+│   ├── StacklandsEquipmentCtrl.cs # 装备槽、佩戴、替换、卸下和读档校验
 │   ├── StacklandsWorkCtrl.cs     # 配方、动作、计时、消耗、产出、里程碑
 │   ├── StacklandsLootCtrl.cs     # 掉落池、购买/打开/移动卡包、保底和闪卡
 │   ├── StacklandsCombatCtrl.cs   # 自动战斗、装备修正、效果、死亡和胜负
@@ -65,8 +66,9 @@ Core/
 │   └── ContentValidationReport.cs # 内容结构校验报告和缺失数据异常
 └── View/
     ├── StacklandsBoardView.cs     # 2D 牌桌创建、输入、相机和快照渲染
-    ├── CardView.cs                # 卡牌图形、文字、描边、进度和层级
+    ├── CardView.cs                # 卡牌图形、文字、描边、进度、装备槽指示和层级
     ├── BoosterView.cs             # 已购买卡包的显示、点击和拖动表现
+    ├── EquippedCardView.cs        # 点击单位展开的装备卡堆中的单张装备卡（仅展示与点击卸下）
     ├── ShopSlotView.cs            # 顶部卡包购买槽
     └── SellSlotView.cs            # 出售投放槽和金币显示
 ```
@@ -152,12 +154,12 @@ CoreSystem.SubmitCommand(new StacklandsCommandDto
 | `OpenBooster` | 卡包实例 | `LootCtrl.OpenBooster` |
 | `MoveBooster` | 卡包实例、坐标 | `LootCtrl.MoveBooster` |
 | `SellCard` | 卡牌实例 | `BoardCtrl.Sell` |
-| `Equip` | 装备实例、单位实例 | `BoardCtrl.Equip` |
-| `Unequip` | 单位实例 | `BoardCtrl.Unequip` |
+| `Equip` | 装备实例、单位实例 | `EquipmentCtrl.Equip` |
+| `Unequip` | 单位实例、`EquipmentSlot` | `EquipmentCtrl.Unequip` |
 | `ConfirmSummon` | `Flag=true`、来源实例 | `WorkCtrl.StartSummonAction` |
 | `SaveGame` | 无 | `RunCtrl.SaveNow` |
 
-`StacklandsBoardView` 的拖放通常发送 `MoveCard`/`MoveStack`，装备不是由 View 特判：牌堆改变后，`BoardCtrl` 自动依次尝试装备、配方和卡牌动作。
+`StacklandsBoardView` 的拖放通常发送 `MoveCard`/`MoveStack`，装备不是由 View 特判：牌堆改变后，`BoardCtrl` 经 `EquipmentCtrl.TryEquipStack` 自动尝试装备，然后再尝试配方和卡牌动作。
 
 ## 5. 固定步长调用链
 
@@ -224,12 +226,14 @@ Ctrl 修改 Model
 ```mermaid
 flowchart TD
     Run["RunCtrl\n命令与 Tick"] --> Board["BoardCtrl"]
+    Run --> Equip["EquipmentCtrl"]
     Run --> Work["WorkCtrl"]
     Run --> Loot["LootCtrl"]
     Run --> Combat["CombatCtrl"]
     Run --> World["WorldCtrl"]
     Run --> ViewCtrl["ViewCtrl"]
 
+    Board --> Equip
     Board --> Work
     Board --> Quest["QuestCtrl"]
     Board --> World
@@ -247,6 +251,7 @@ flowchart TD
     World --> Quest
 
     Board --> Model["GameModel"]
+    Equip --> Model
     Work --> Model
     Loot --> Model
     Combat --> Model
@@ -266,9 +271,16 @@ flowchart TD
 
 - 处理单卡/整堆移动、合并、拆堆、容量限制和工作中牌堆锁定。
 - 整堆只做空间平移时保留 `StackId` 和工作剩余时间。
-- 牌堆组成改变时取消受影响工作，然后依次尝试装备、配方、动作。
+- 牌堆组成改变时取消受影响工作，然后依次尝试装备（`EquipmentCtrl.TryEquipStack`）、配方、动作。
 - 出售卡牌并生成 `gold` 卡。
-- 装备写入单位的 `EquipmentCardId`；替换装备时旧装备回到牌桌。
+
+### `StacklandsEquipmentCtrl`
+
+- 判定卡牌能否佩戴装备：卡牌必须是单位（`Content.Units` 包含其 CardId）且 Luban 单位表的 `CanEquip` 字段为 `true`（加载后暴露为 `UnitDefinition.CanEquip`）；不满足 `CanEquip` 的单位不会成为佩戴目标，也不能执行卸下。
+- 牌堆组成变化时由 `BoardCtrl` 触发 `TryEquipStack`：取堆中第一张可佩戴单位，把堆中所有装备卡依次写入其 `EquipmentSlots`（手 `Hand`、头 `Head`、身 `Body` 三槽）。
+- 装备侧只要求槽位可佩戴（`Slot ∈ {Hand, Head, Body}`，`None` 不可佩戴）；同槽已有装备时旧装备被顶出、掉落在单位右侧。
+- 卸下（`Unequip`）按指定槽位或全部槽位把装备退回牌桌。
+- 读档后由 `RunCtrl.LoadRun` 调用 `ValidateRunEquipment`，校验并清空引用了不存在装备的槽位；旧版 `EquipmentCardId` 单槽字段与迁移逻辑已移除。
 
 ### `StacklandsWorkCtrl`
 
@@ -320,6 +332,7 @@ sequenceDiagram
     participant View as StacklandsBoardView
     participant Run as RunCtrl
     participant Board as BoardCtrl
+    participant Equip as EquipmentCtrl
     participant Work as WorkCtrl
     participant Model as GameModel
     participant VC as ViewCtrl
@@ -331,7 +344,7 @@ sequenceDiagram
         Board->>Model: 仅更新整堆坐标
     else 牌堆组成改变
         Board->>Model: CancelWorks + 更新 StackId/Order
-        Board->>Board: TryEquipStack
+        Board->>Equip: TryEquipStack
         Board->>Work: TryStartRecipe
         Board->>Work: TryStartAction
     end
@@ -407,6 +420,7 @@ MoonRemaining <= 0
 - 创建正交相机、牌桌、装饰、出售槽和购买槽。
 - 生成并维护 `CardView`、`BoosterView` 实例字典。
 - 鼠标/触屏拖放、整堆长按、平移、缩放和点击开包。
+- 点击（位移不足 10px）可佩戴且已佩戴装备的单位时在单位下方展开装备卡堆；点击卡堆中的装备卡发送 `Unequip` 卸下对应槽位，再次点击该单位或点击其他位置则收起卡堆。
 - 使用临时高 `SortingGroup` 层级显示正在拖动的单卡、整堆或卡包。
 - 只发送命令，不自行修改 Run 状态。
 

@@ -13,6 +13,12 @@ namespace GameLogic.Core.View
         private const float CardWidth = 1.5f;
         private const float CardHeight = 2f;
         private const int DragSortingBase = 30000;
+        // 装备槽指示圆点：中下位置，左到右对应 Hand / Head / Body。
+        private const float EquipmentDotY = -0.35f;
+        private const float EquipmentDotSpacing = 0.2f;
+        private const float EquipmentDotSize = 0.14f;
+        private static Sprite _equipmentDotSprite;
+        private readonly SpriteRenderer[] _equipmentDots = new SpriteRenderer[3];
         private SpriteRenderer _body;
         private SpriteRenderer _outline;
         private SortingGroup _sortingGroup;
@@ -56,6 +62,15 @@ namespace GameLogic.Core.View
             _progress = AddSprite("Progress", sprite, new Color32(255, 238, 150, 255), 3,
                 new Vector3(1.2f, 0.055f)).transform;
             _progress.SetParent(track, false);
+            if (_equipmentDotSprite == null) _equipmentDotSprite = CreateCircleSprite();
+            for (int i = 0; i < _equipmentDots.Length; i++)
+            {
+                _equipmentDots[i] = AddSprite("EquipmentDot" + i, _equipmentDotSprite, Color.white, 2,
+                    new Vector3(EquipmentDotSize, EquipmentDotSize, 1f));
+                _equipmentDots[i].transform.localPosition =
+                    new Vector3((i - 1) * EquipmentDotSpacing, EquipmentDotY, -0.08f);
+                _equipmentDots[i].gameObject.SetActive(false);
+            }
             return this;
         }
 
@@ -79,7 +94,40 @@ namespace GameLogic.Core.View
             _title.color = textColor;
             _footer.text = Footer(data);
             _footer.color = textColor;
+            RenderEquipmentDots(data);
             RenderProgress(data.Progress);
+        }
+
+        /// <summary>
+        /// 可佩戴装备的单位在牌面中下位置显示 3 个实心圆，左到右对应 Hand / Head / Body；
+        /// 白色为空槽，黑色为已有装备。非佩戴单位隐藏圆点。
+        /// </summary>
+        private void RenderEquipmentDots(CardSnapshot data)
+        {
+            bool[] filled = { data.HasHandEquipment, data.HasHeadEquipment, data.HasBodyEquipment };
+            for (int i = 0; i < _equipmentDots.Length; i++)
+            {
+                _equipmentDots[i].gameObject.SetActive(data.CanEquip);
+                if (data.CanEquip) _equipmentDots[i].color = filled[i] ? Color.black : Color.white;
+            }
+        }
+
+        private static Sprite CreateCircleSprite()
+        {
+            const int size = 32;
+            const float radius = (size - 1) * 0.5f;
+            var texture = new Texture2D(size, size, TextureFormat.RGBA32, false) { name = "Runtime Equipment Dot" };
+            var pixels = new Color[size * size];
+            for (int y = 0; y < size; y++)
+            for (int x = 0; x < size; x++)
+            {
+                float distance = Mathf.Sqrt((x - radius) * (x - radius) + (y - radius) * (y - radius));
+                float alpha = Mathf.Clamp01(radius + 0.5f - distance);
+                pixels[y * size + x] = new Color(1f, 1f, 1f, alpha);
+            }
+            texture.SetPixels(pixels);
+            texture.Apply();
+            return Sprite.Create(texture, new Rect(0, 0, size, size), new Vector2(0.5f, 0.5f), size);
         }
 
         /// <summary>

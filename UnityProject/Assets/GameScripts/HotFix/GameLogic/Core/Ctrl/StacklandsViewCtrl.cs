@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using GameLogic.Core.Model;
 
@@ -123,6 +124,8 @@ namespace GameLogic.Core.Ctrl
             bool showProgress = work != null && GetProgressCard(work)?.InstanceId == card.InstanceId;
             int maxHp = Model.Content.Units.Contains(card.CardId)
                 ? Model.Content.Units.Get(card.CardId).MaxHp.GetValueOrDefault() : 0;
+            bool canEquip = Model.Content.Units.Contains(card.CardId) &&
+                            Model.Content.Units.Get(card.CardId).CanEquip;
             string displayId = card.CardId;
             string professionCardId = CoreSystem.EquipmentCtrl.GetProfessionCardId(card);
             if (!string.IsNullOrEmpty(professionCardId)) displayId = professionCardId;
@@ -141,7 +144,38 @@ namespace GameLogic.Core.Ctrl
                     ? 1f - Math.Max(0f, work.Remaining) / Math.Max(0.01f, work.Duration)
                     : 0f,
                 Status = work == null ? string.Empty : work.IsRecipe ? "制作中" : "工作中",
+                CanEquip = canEquip,
+                HasHandEquipment = canEquip && HasEquipment(card, EquipmentSlotKind.Hand),
+                HasHeadEquipment = canEquip && HasEquipment(card, EquipmentSlotKind.Head),
+                HasBodyEquipment = canEquip && HasEquipment(card, EquipmentSlotKind.Body),
+                EquippedItems = BuildEquippedItems(card, canEquip),
             };
+        }
+
+        private static bool HasEquipment(CardRunData card, EquipmentSlotKind slot)
+        {
+            return card.EquipmentSlots != null && !string.IsNullOrEmpty(card.EquipmentSlots.Get(slot));
+        }
+
+        /// <summary>
+        /// 按 Hand / Head / Body 顺序收集单位已佩戴装备的展示数据；引用失效的槽位跳过。
+        /// </summary>
+        private List<EquippedItemSnapshot> BuildEquippedItems(CardRunData card, bool canEquip)
+        {
+            var items = new List<EquippedItemSnapshot>();
+            if (!canEquip || card.EquipmentSlots == null) return items;
+            foreach (EquipmentSlotKind slot in new[]
+                         { EquipmentSlotKind.Hand, EquipmentSlotKind.Head, EquipmentSlotKind.Body })
+            {
+                string cardId = card.EquipmentSlots.Get(slot);
+                if (string.IsNullOrEmpty(cardId) || !Model.Content.Cards.Contains(cardId)) continue;
+                CardDefinition definition = Model.Content.Cards.Get(cardId);
+                items.Add(new EquippedItemSnapshot
+                {
+                    Slot = slot, CardId = cardId, NameZh = definition.NameZh, Color = definition.Color,
+                });
+            }
+            return items;
         }
 
         private CardRunData GetProgressCard(WorkRunData work)

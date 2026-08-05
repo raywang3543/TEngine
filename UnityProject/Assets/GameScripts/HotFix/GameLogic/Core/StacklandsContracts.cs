@@ -55,6 +55,25 @@ namespace GameLogic.Core
         public bool IsFoil { get; internal set; }
         public bool IsLocked { get; internal set; }
         public string Status { get; internal set; }
+        /// <summary>是否为可佩戴装备的单位（单位表 CanEquip）。</summary>
+        public bool CanEquip { get; internal set; }
+        /// <summary>Hand / Head / Body 装备位上是否已有装备，仅 CanEquip 单位有意义。</summary>
+        public bool HasHandEquipment { get; internal set; }
+        public bool HasHeadEquipment { get; internal set; }
+        public bool HasBodyEquipment { get; internal set; }
+        /// <summary>已佩戴装备的展示快照，按 Hand / Head / Body 顺序；未佩戴或非佩戴单位为空。</summary>
+        public IReadOnlyList<EquippedItemSnapshot> EquippedItems { get; internal set; }
+    }
+
+    /// <summary>
+    /// 单位单个装备位上已佩戴装备的只读展示数据。
+    /// </summary>
+    public sealed class EquippedItemSnapshot
+    {
+        public EquipmentSlotKind Slot { get; internal set; }
+        public string CardId { get; internal set; }
+        public string NameZh { get; internal set; }
+        public string Color { get; internal set; }
     }
 
     public sealed class BoosterSnapshot

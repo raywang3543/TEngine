@@ -15,7 +15,8 @@ namespace GameLogic.Core.View
     {
         private const float WholeStackHoldSeconds = 0.5f;
         private const float WholeStackHoldMovementTolerance = 0.2f;
-        private const float BoosterDragThresholdPixels = 10f;
+        // 点击与拖拽的判定阈值（像素）：卡包点击开包、单位点击展开装备卡堆共用。
+        private const float ClickDragThresholdPixels = 10f;
         private const float MinOrthoSize = 3.5f;
         private const float DefaultOrthoSize = 5f;
         private const float MaxOrthoSize = 7f;
@@ -23,6 +24,9 @@ namespace GameLogic.Core.View
         private const float ShopSlotSpacing = 1.75f;
         // 卡槽组整体右移量：2 个卡槽宽度（卡槽宽 1.35，见 ShopSlotView.SlotWidth）。
         private const float ShopSlotsXOffset = 2.7f;
+        // 装备卡堆相对单位的横向间距与纵向偏移。
+        private const float EquipmentFanSpacing = 1.2f;
+        private const float EquipmentFanYOffset = -1.6f;
         private readonly Dictionary<string, CardView> _cards = new Dictionary<string, CardView>();
         private readonly Dictionary<string, BoosterView> _boosters = new Dictionary<string, BoosterView>();
         private readonly Dictionary<string, ShopSlotView> _shopSlots = new Dictionary<string, ShopSlotView>();
@@ -44,11 +48,15 @@ namespace GameLogic.Core.View
         private SellSlotView _sellSlot;
         private CardView _draggedCard;
         private readonly Dictionary<string, CardSnapshot> _cardData = new Dictionary<string, CardSnapshot>();
+        private readonly List<EquippedCardView> _equipmentFanCards = new List<EquippedCardView>();
+        private CardView _equipmentFanUnit;
+        private EquippedCardView _pressedEquipmentCard;
         private BoosterView _draggedBooster;
         private readonly Dictionary<CardView, Vector3> _draggedOffsets = new Dictionary<CardView, Vector3>();
         private Vector3 _dragOffset;
         private Vector3 _boosterDragOffset;
         private Vector3 _boosterDragStartedPointer;
+        private Vector3 _cardPressPointer;
         private Vector3 _dragStartedPosition;
         private Vector3 _lastPointer;
         private bool _panning;
@@ -95,6 +103,8 @@ namespace GameLogic.Core.View
         public void Render(BoardSnapshot snapshot)
         {
             if (snapshot == null) return;
+            // 所属单位被销毁（出售/战斗死亡等）时清理残留的装备卡堆。
+            if (_equipmentFanUnit == null) CloseEquipmentFan();
             _cardData.Clear();
             foreach (CardSnapshot card in snapshot.Cards) _cardData[card.InstanceId] = card;
             var cardIds = new HashSet<string>(snapshot.Cards.Select(item => item.InstanceId));
@@ -215,6 +225,7 @@ namespace GameLogic.Core.View
                 UpdateWholeStackHoldEligibility(anchorPosition);
                 if (_wholeStackHoldEligible && Time.unscaledTime - _mouseDragStartedAt >= WholeStackHoldSeconds)
                     PromoteToWholeStackDrag();
+                CloseEquipmentFanOnDrag(mouse);
                 MoveDraggedCards(anchorPosition);
                 UpdateSlotFeedback(ScreenToWorld(mouse));
             }
@@ -251,6 +262,7 @@ namespace GameLogic.Core.View
                     if (_wholeStackHoldEligible &&
                         Time.unscaledTime - _touchDragStartedAt >= WholeStackHoldSeconds)
                         PromoteToWholeStackDrag();
+                    CloseEquipmentFanOnDrag(touch.position);
                     MoveDraggedCards(anchorPosition);
                     UpdateSlotFeedback(ScreenToWorld(touch.position));
                 }
@@ -271,7 +283,18 @@ namespace GameLogic.Core.View
             Vector2 world = ScreenToWorld(pointer);
             Collider2D hit = Physics2D.OverlapPointAll(world)
                 .OrderBy(item => item.transform.position.z).FirstOrDefault();
-            if (hit == null) return;
+            if (hit == null)
+            {
+                // 点击空白处收起装备卡堆。
+                CloseEquipmentFan();
+                return;
+            }
+            EquippedCardView equippedCard = hit.GetComponent<EquippedCardView>();
+            if (equippedCard != null)
+            {
+                _pressedEquipmentCard = equippedCard;
+                return;
+            }
             BoosterView booster = hit.GetComponent<BoosterView>();
             if (booster != null)
             {
@@ -284,10 +307,17 @@ namespace GameLogic.Core.View
             ShopSlotView shopSlot = hit.GetComponent<ShopSlotView>();
             if (shopSlot != null) return;
             _draggedCard = hit.GetComponent<CardView>();
-            if (_draggedCard == null) return;
+            if (_draggedCard == null)
+            {
+                CloseEquipmentFan();
+                return;
+            }
+            // 按下其他卡牌时收起装备卡堆；按下所属单位时保留，松开时切换展开/收起。
+            if (_draggedCard != _equipmentFanUnit) CloseEquipmentFan();
             ClearWholeStackFeedback();
             _dragOffset = _draggedCard.transform.position - (Vector3)world;
             _dragStartedPosition = _draggedCard.transform.position;
+            _cardPressPointer = pointer;
             _dragWholeStack = wholeStack || IsCurrencyStack(_draggedCard.StackId);
             _wholeStackHoldEligible = !wholeStack &&
                                       _cards.Values.Count(card => card.StackId == _draggedCard.StackId) > 1;
@@ -302,6 +332,21 @@ namespace GameLogic.Core.View
 
         private void EndPointer(Vector3 pointer, bool wholeStack)
         {
+            if (_pressedEquipmentCard != null)
+            {
+                // 松开时仍在同一装备卡上：卸下该槽位装备；否则视为点击其他位置，只收起卡堆。
+                EquippedCardView pressed = _pressedEquipmentCard;
+                _pressedEquipmentCard = null;
+                if (pressed != null && _equipmentFanUnit != null && pressed.Contains(ScreenToWorld(pointer)))
+                    CoreSystem.SubmitCommand(new StacklandsCommandDto
+                    {
+                        Kind = StacklandsCommandKind.Unequip,
+                        InstanceId = _equipmentFanUnit.InstanceId,
+                        EquipmentSlot = pressed.Slot,
+                    });
+                CloseEquipmentFan();
+                return;
+            }
             if (_draggedBooster != null)
             {
                 UpdateBoosterDrag(pointer);
@@ -336,6 +381,24 @@ namespace GameLogic.Core.View
             {
                 // 卡槽操作不改变牌堆位置；Core 成功扣款后只会移除本次支付的金币。
                 RestoreDraggedCards();
+            }
+            // 纯点击（位移不足阈值）可佩戴且已佩戴装备的单位：展开/收起装备卡堆，不发送移动命令。
+            CardView pressedCard = _draggedCard;
+            bool clickOnly = Vector2.Distance(_cardPressPointer, pointer) < ClickDragThresholdPixels;
+            if (clickOnly && !moveWholeStack &&
+                _cardData.TryGetValue(draggedId, out CardSnapshot clickData) &&
+                clickData.CanEquip && clickData.EquippedItems is { Count: > 0 })
+            {
+                RestoreDraggedCards();
+                ClearWholeStackFeedback();
+                SetDraggedCardsSorting(false);
+                HideSlotBorders();
+                _draggedCard = null;
+                _draggedOffsets.Clear();
+                _dragWholeStack = false;
+                _wholeStackHoldEligible = false;
+                ToggleEquipmentFan(pressedCard);
+                return;
             }
             ClearWholeStackFeedback();
             SetDraggedCardsSorting(false);
@@ -466,6 +529,54 @@ namespace GameLogic.Core.View
                 if (pair.Key != null) pair.Key.transform.position = _dragStartedPosition + pair.Value;
         }
 
+        /// <summary>
+        /// 点击可佩戴且已佩戴装备的单位：在单位下方展开装备卡堆；再次点击同一单位则收起。
+        /// </summary>
+        private void ToggleEquipmentFan(CardView unit)
+        {
+            if (_equipmentFanUnit == unit)
+            {
+                CloseEquipmentFan();
+                return;
+            }
+            CloseEquipmentFan();
+            if (!_cardData.TryGetValue(unit.InstanceId, out CardSnapshot data) ||
+                data.EquippedItems == null || data.EquippedItems.Count == 0) return;
+            _equipmentFanUnit = unit;
+            Vector3 center = unit.transform.position;
+            for (int i = 0; i < data.EquippedItems.Count; i++)
+            {
+                EquippedItemSnapshot item = data.EquippedItems[i];
+                Sprite background = null;
+                if (!string.IsNullOrEmpty(item.Color)) _cardSprites.TryGetValue(item.Color, out background);
+                EquippedCardView view = EquippedCardView.Create(transform, item, _whiteSprite, _font, background);
+                float offset = (i - (data.EquippedItems.Count - 1) * 0.5f) * EquipmentFanSpacing;
+                view.transform.position =
+                    new Vector3(center.x + offset, center.y + EquipmentFanYOffset, -0.5f);
+                _equipmentFanCards.Add(view);
+            }
+        }
+
+        private void CloseEquipmentFan()
+        {
+            _equipmentFanUnit = null;
+            _pressedEquipmentCard = null;
+            foreach (EquippedCardView view in _equipmentFanCards)
+                if (view != null) DestroyView(view.gameObject);
+            _equipmentFanCards.Clear();
+        }
+
+        /// <summary>
+        /// 装备卡堆展开时拖动卡牌（位移超过点击阈值）：收起装备卡堆。
+        /// 按下其他卡牌时卡堆已在 BeginPointer 收起，这里只需处理拖动所属单位的情况。
+        /// </summary>
+        private void CloseEquipmentFanOnDrag(Vector3 pointer)
+        {
+            if (_equipmentFanUnit != null &&
+                Vector2.Distance(_cardPressPointer, pointer) >= ClickDragThresholdPixels)
+                CloseEquipmentFan();
+        }
+
         private static void DestroyView(GameObject view)
         {
             if (Application.isPlaying) Destroy(view);
@@ -490,7 +601,7 @@ namespace GameLogic.Core.View
             if (_draggedBooster == null) return;
             Vector3 position = ScreenToWorld(pointer) + _boosterDragOffset;
             if (!_boosterMoved &&
-                Vector2.Distance(_boosterDragStartedPointer, pointer) < BoosterDragThresholdPixels) return;
+                Vector2.Distance(_boosterDragStartedPointer, pointer) < ClickDragThresholdPixels) return;
             if (!_boosterMoved)
             {
                 _boosterMoved = true;
