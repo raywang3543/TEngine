@@ -146,7 +146,7 @@ namespace GameLogic.Core.Model
                 ParseEnum<UnitFaction>(unit.Faction.ToString()), unit.FoodPerMoon, unit.MaxHp, unit.CombatLevel,
                 ParseEnum<AttackKind>(unit.AttackType.ToString()), unit.AttackInterval, unit.HitChance,
                 unit.DamageMin, unit.DamageMax, unit.Defense, unit.CritChance, unit.WorkSpeed, unit.ExploreSpeed,
-                unit.DeathResultCardId),
+                unit.DeathResultCardId, unit.CanEquip),
                 StringComparer.Ordinal);
         }
 

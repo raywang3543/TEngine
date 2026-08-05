@@ -56,8 +56,6 @@ namespace GameLogic.Core.Model
         public int Hp;
         public int Uses;
         public EquipmentSlotsRunData EquipmentSlots = new EquipmentSlotsRunData();
-        // 版本 1 存档兼容字段；加载后由 StacklandsEquipmentCtrl 迁移并清空。
-        public string EquipmentCardId;
         public float AttackCooldown;
         public float StunRemaining;
     }

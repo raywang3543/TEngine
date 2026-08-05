@@ -22,13 +22,14 @@ namespace GameLogic.Core.Model
     {
         internal UnitDefinition(string cardId, UnitFaction faction, int? foodPerMoon, int? maxHp, int? combatLevel,
             AttackKind attackType, float? attackInterval, float? hitChance, int? damageMin, int? damageMax,
-            int? defense, float? critChance, float? workSpeed, float? exploreSpeed, string deathResultCardId)
+            int? defense, float? critChance, float? workSpeed, float? exploreSpeed, string deathResultCardId,
+            bool canEquip)
         {
             CardId = cardId; Faction = faction; FoodPerMoon = foodPerMoon; MaxHp = maxHp;
             CombatLevel = combatLevel; AttackType = attackType; AttackInterval = attackInterval;
             HitChance = hitChance; DamageMin = damageMin; DamageMax = damageMax; Defense = defense;
             CritChance = critChance; WorkSpeed = workSpeed; ExploreSpeed = exploreSpeed;
-            DeathResultCardId = deathResultCardId;
+            DeathResultCardId = deathResultCardId; CanEquip = canEquip;
         }
 
         public string CardId { get; }
@@ -46,6 +47,7 @@ namespace GameLogic.Core.Model
         public float? WorkSpeed { get; }
         public float? ExploreSpeed { get; }
         public string DeathResultCardId { get; }
+        public bool CanEquip { get; }
     }
 
     public sealed class EquipmentDefinition

@@ -133,7 +133,7 @@ namespace GameLogic.Core.Ctrl
             Model.Run = data;
             Model.Random = new DeterministicRandom(data.RandomState);
             Model.RemoveInvalidSaveEntries();
-            CoreSystem.EquipmentCtrl.MigrateAndValidateRun();
+            CoreSystem.EquipmentCtrl.ValidateRunEquipment();
             CoreSystem.ViewCtrl.PublishAll();
         }
     }

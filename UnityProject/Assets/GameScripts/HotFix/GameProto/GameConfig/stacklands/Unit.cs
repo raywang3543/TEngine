@@ -36,6 +36,7 @@ public sealed partial class Unit : Luban.BeanBase
         SourceUrl = _buf.ReadString();
         SourceRevision = _buf.ReadString();
         SourceNote = _buf.ReadString();
+        CanEquip = _buf.ReadBool();
     }
 
     public static Unit DeserializeUnit(ByteBuf _buf)
@@ -120,6 +121,10 @@ public sealed partial class Unit : Luban.BeanBase
     /// 来源说明
     /// </summary>
     public readonly string SourceNote;
+    /// <summary>
+    /// 是否可以佩戴装备
+    /// </summary>
+    public readonly bool CanEquip;
    
     public const int __ID__ = -1685633934;
     public override int GetTypeId() => __ID__;
@@ -151,6 +156,7 @@ public sealed partial class Unit : Luban.BeanBase
         + "sourceUrl:" + SourceUrl + ","
         + "sourceRevision:" + SourceRevision + ","
         + "sourceNote:" + SourceNote + ","
+        + "canEquip:" + CanEquip + ","
         + "}";
     }
 }

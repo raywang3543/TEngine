@@ -5,7 +5,7 @@ using GameLogic.Core.Model;
 namespace GameLogic.Core.Ctrl
 {
     /// <summary>
-    /// 装备槽、佩戴、替换、卸下、存档迁移和装备掉落控制器。
+    /// 装备槽、佩戴、替换、卸下、存档校验和装备掉落控制器。
     /// </summary>
     internal sealed class StacklandsEquipmentCtrl
     {
@@ -24,8 +24,8 @@ namespace GameLogic.Core.Ctrl
         {
             CardRunData equipment = Model.GetCard(equipmentId);
             CardRunData unit = Model.GetCard(unitId);
-            if (equipment == null || unit == null || !Model.Content.Equipment.Contains(equipment.CardId) ||
-                !Model.Content.Units.Contains(unit.CardId)) return false;
+            if (equipment == null || unit == null || !Model.Content.Equipment.Contains(equipment.CardId) || !Model.Content.Units.Contains(unit.CardId)) return false;
+            if (!Model.Content.Units.Get(unit.CardId).CanEquip) return false;
 
             EquipmentDefinition definition = Model.Content.Equipment.Get(equipment.CardId);
             if (!IsWearableSlot(definition.Slot)) return false;
@@ -44,7 +44,7 @@ namespace GameLogic.Core.Ctrl
         {
             CardRunData unit = Model.GetCard(unitId);
             if (unit == null || !Model.Content.Units.Contains(unit.CardId)) return;
-
+            if (!Model.Content.Units.Get(unit.CardId).CanEquip) return;
             EnsureSlots(unit);
             bool changed = false;
             IEnumerable<EquipmentSlotKind> targetSlots = IsWearableSlot(slot) ? new[] { slot } : Slots;
@@ -62,7 +62,7 @@ namespace GameLogic.Core.Ctrl
         internal bool TryEquipStack(string stackId)
         {
             List<CardRunData> cards = Model.StackCards(stackId);
-            CardRunData unit = cards.FirstOrDefault(card => Model.Content.Units.Contains(card.CardId));
+            CardRunData unit = cards.FirstOrDefault(card => Model.Content.Units.Contains(card.CardId) && Model.Content.Units.Get(card.CardId).CanEquip);
             if (unit == null) return false;
 
             bool equipped = false;
@@ -118,22 +118,12 @@ namespace GameLogic.Core.Ctrl
             }
         }
 
-        internal void MigrateAndValidateRun()
+        internal void ValidateRunEquipment()
         {
             if (Model.Run == null) return;
-            foreach (CardRunData unit in Model.Run.Cards
-                         .Where(card => Model.Content.Units.Contains(card.CardId)).ToList())
+            foreach (CardRunData unit in Model.Run.Cards.Where(card => Model.Content.Units.Contains(card.CardId) && Model.Content.Units.Get(card.CardId).CanEquip).ToList())
             {
                 EnsureSlots(unit);
-                if (!string.IsNullOrEmpty(unit.EquipmentCardId) &&
-                    Model.Content.Equipment.Contains(unit.EquipmentCardId))
-                {
-                    EquipmentDefinition legacy = Model.Content.Equipment.Get(unit.EquipmentCardId);
-                    if (IsWearableSlot(legacy.Slot) && string.IsNullOrEmpty(unit.EquipmentSlots.Get(legacy.Slot)))
-                        unit.EquipmentSlots.Set(legacy.Slot, unit.EquipmentCardId);
-                }
-                unit.EquipmentCardId = null;
-
                 foreach (EquipmentSlotKind slot in Slots)
                 {
                     string cardId = unit.EquipmentSlots.Get(slot);
@@ -142,7 +132,6 @@ namespace GameLogic.Core.Ctrl
                         unit.EquipmentSlots.Set(slot, null);
                 }
             }
-            Model.Run.Version = 2;
         }
 
         private static void EnsureSlots(CardRunData unit)

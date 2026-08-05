@@ -113,6 +113,11 @@ namespace GameLogic.Tests
             Assert.That(content.WorldRules.PortalBaseThreat, Is.EqualTo(6));
             Assert.That(content.WorldRules.PortalThreatPerInterval, Is.EqualTo(4));
             Assert.That(content.WorldRules.RarePortalMultiplier, Is.EqualTo(2f));
+            Assert.That(content.Units.Get("kid").CanEquip, Is.False);
+            Assert.That(content.Units.Get("dog").CanEquip, Is.True);
+            Assert.That(content.Units.Get("villager").CanEquip, Is.True);
+            Assert.That(content.Units.Get("chicken").CanEquip, Is.False);
+            Assert.That(content.Units.Get("goblin").CanEquip, Is.False);
         }
 
         [Test]
@@ -323,6 +328,53 @@ namespace GameLogic.Tests
         }
 
         [Test]
+        public void Equip_WhenUnitCannotEquip_LeavesEquipmentOnBoard()
+        {
+            IStacklandsContentModel content = StacklandsModelLoader.Build(_tables);
+            var unit = new CardRunData
+            {
+                InstanceId = "unit", CardId = "chicken", StackId = "unit_stack", X = 2f, Y = 3f,
+            };
+            var equipment = new CardRunData
+            {
+                InstanceId = "equipment", CardId = "sword", StackId = "equipment_stack",
+            };
+            var run = new StacklandsRunData
+            {
+                RandomState = 1, MoonDuration = 120f, MoonRemaining = 120f,
+                Cards = { unit, equipment },
+            };
+            var store = new MemorySaveStore(run);
+            var cameraObject = new GameObject("Stacklands Non-equippable Unit Test Camera");
+            cameraObject.tag = "MainCamera";
+            cameraObject.AddComponent<Camera>();
+            var boardObject = new GameObject("Stacklands Non-equippable Unit Test Board");
+            StacklandsBoardView boardView = boardObject.AddComponent<StacklandsBoardView>();
+
+            try
+            {
+                CoreSystem.Initialize(content, store, boardView);
+                CoreSystem.SubmitCommand(new StacklandsCommandDto { Kind = StacklandsCommandKind.ContinueGame });
+
+                CoreSystem.SubmitCommand(new StacklandsCommandDto
+                {
+                    Kind = StacklandsCommandKind.Equip,
+                    InstanceId = equipment.InstanceId,
+                    TargetInstanceId = unit.InstanceId,
+                });
+
+                Assert.That(unit.EquipmentSlots.Hand, Is.Null);
+                Assert.That(run.Cards.Any(card => card.InstanceId == equipment.InstanceId), Is.True);
+            }
+            finally
+            {
+                CoreSystem.Release();
+                Object.DestroyImmediate(boardObject);
+                Object.DestroyImmediate(cameraObject);
+            }
+        }
+
+        [Test]
         public void Kill_DropsEveryEquippedCardIntoScene()
         {
             IStacklandsContentModel content = StacklandsModelLoader.Build(_tables);
@@ -353,42 +405,6 @@ namespace GameLogic.Tests
                 CardRunData dropped = run.Cards.Single(card => card.CardId == "map");
                 Assert.That(dropped.X, Is.EqualTo(2f));
                 Assert.That(dropped.Y, Is.EqualTo(3f));
-            }
-            finally
-            {
-                CoreSystem.Release();
-                Object.DestroyImmediate(boardObject);
-                Object.DestroyImmediate(cameraObject);
-            }
-        }
-
-        [Test]
-        public void ContinueGame_MigratesLegacyEquipmentIntoItsConfiguredSlot()
-        {
-            IStacklandsContentModel content = StacklandsModelLoader.Build(_tables);
-            var unit = new CardRunData
-            {
-                InstanceId = "unit", CardId = "villager", StackId = "unit_stack", EquipmentCardId = "map",
-            };
-            var run = new StacklandsRunData
-            {
-                Version = 1, RandomState = 1, MoonDuration = 120f, MoonRemaining = 120f, Cards = { unit },
-            };
-            var store = new MemorySaveStore(run);
-            var cameraObject = new GameObject("Stacklands Migration Test Camera");
-            cameraObject.tag = "MainCamera";
-            cameraObject.AddComponent<Camera>();
-            var boardObject = new GameObject("Stacklands Migration Test Board");
-            StacklandsBoardView boardView = boardObject.AddComponent<StacklandsBoardView>();
-
-            try
-            {
-                CoreSystem.Initialize(content, store, boardView);
-                CoreSystem.SubmitCommand(new StacklandsCommandDto { Kind = StacklandsCommandKind.ContinueGame });
-
-                Assert.That(unit.EquipmentSlots.Hand, Is.EqualTo("map"));
-                Assert.That(unit.EquipmentCardId, Is.Null);
-                Assert.That(run.Version, Is.EqualTo(2));
             }
             finally
             {
