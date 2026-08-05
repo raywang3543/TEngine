@@ -64,7 +64,7 @@ namespace GameLogic.Core.Ctrl
             {
                 Model.Run.AwaitingCardLimit = true; Model.Run.Speed = 0f;
                 CoreSystem.RequestFlow(new FlowRequest
-                    { Kind = StacklandsFlowKind.CardLimit, Title = "卡牌超出上限", Message = "出售多余卡牌后继续" });
+                    { Kind = StacklandsFlowKind.CardLimit, Title = StacklandsTexts.CardLimitTitle, Message = StacklandsTexts.CardLimitMessage });
             }
             else BeginNextMoon();
             CoreSystem.RunCtrl.SaveNow();

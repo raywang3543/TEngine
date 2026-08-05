@@ -115,7 +115,7 @@ namespace GameLogic.Core.View
             _body.color = TintFor(_lastTarget);
             _text.color = snapshot.Unlocked ? Color.white : new Color32(155, 155, 149, 255);
             _text.text = FormatSlotName(snapshot.NameZh) + "\n" +
-                         (snapshot.Unlocked ? snapshot.Price + " 金币" : snapshot.LockText);
+                         (snapshot.Unlocked ? StacklandsTexts.ShopPrice(snapshot.Price) : snapshot.LockText);
         }
 
         public void SetLayout(Vector3 position)
@@ -144,7 +144,7 @@ namespace GameLogic.Core.View
 
         private static string FormatSlotName(string name)
         {
-            if (string.IsNullOrEmpty(name)) return "未命名";
+            if (string.IsNullOrEmpty(name)) return StacklandsTexts.Unnamed;
             return name.Length <= 5
                 ? name
                 : name.Substring(0, (name.Length + 1) / 2) + "\n" + name.Substring((name.Length + 1) / 2);

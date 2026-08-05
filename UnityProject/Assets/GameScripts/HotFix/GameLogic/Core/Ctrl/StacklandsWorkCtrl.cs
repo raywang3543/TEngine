@@ -44,8 +44,8 @@ namespace GameLogic.Core.Ctrl
                 {
                     CoreSystem.RequestFlow(new FlowRequest
                     {
-                        Kind = StacklandsFlowKind.SummonDemon, Title = "召唤恶魔？",
-                        Message = "仪式开始后将消耗 Golden Goblet（金杯）。", InstanceId = source.InstanceId,
+                        Kind = StacklandsFlowKind.SummonDemon, Title = StacklandsTexts.SummonDemonTitle,
+                        Message = StacklandsTexts.SummonDemonMessage, InstanceId = source.InstanceId,
                     });
                     return true;
                 }

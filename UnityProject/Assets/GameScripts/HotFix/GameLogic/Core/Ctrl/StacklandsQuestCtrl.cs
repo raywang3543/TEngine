@@ -19,7 +19,7 @@ namespace GameLogic.Core.Ctrl
                     ? quest.Conditions.All(ConditionMet) : quest.Conditions.Any(ConditionMet);
                 if (!complete) continue;
                 Model.Profile.CompletedQuests.Add(quest.Id);
-                CoreSystem.Notify("任务完成：" + quest.NameZh);
+                CoreSystem.Notify(StacklandsTexts.NotifyQuestCompleted(quest.NameZh));
             }
         }
 

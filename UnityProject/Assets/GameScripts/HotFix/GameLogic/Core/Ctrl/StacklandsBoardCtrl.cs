@@ -46,7 +46,7 @@ namespace GameLogic.Core.Ctrl
                 : Model.Run.Cards.Where(item => item.StackId == target.StackId && !moving.Contains(item)).ToList();
             if (targetStack.Count + moving.Count > Model.Content.WorldRules.MaxStackSize)
             {
-                CoreSystem.Notify($"牌堆最多容纳 {Model.Content.WorldRules.MaxStackSize} 张卡");
+                CoreSystem.Notify(StacklandsTexts.NotifyStackCapacity(Model.Content.WorldRules.MaxStackSize));
                 CoreSystem.ViewCtrl.PublishBoard();
                 return;
             }

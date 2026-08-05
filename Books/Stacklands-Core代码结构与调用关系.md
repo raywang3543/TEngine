@@ -42,6 +42,7 @@ flowchart LR
 Core/
 ├── CoreSystem.cs                 # Core 唯一协调器和公共生命周期入口
 ├── StacklandsContracts.cs        # 命令、流程和只读表现快照 DTO
+├── StacklandsTexts.cs            # 面向玩家的显示文本（通知、流程弹窗、牌面/卡槽文字）
 ├── StacklandsGameDriver.cs       # Unity 帧到 1/30 秒固定步长的适配器
 ├── StacklandsSaveStore.cs        # 存档接口和 JSON 实现
 ├── DeterministicRandom.cs        # 可存档、可重放的确定性随机数
@@ -302,6 +303,7 @@ flowchart TD
 - 计算攻击间隔、命中、伤害、防御、装备修正、克制、暴击和效果。
 - 死亡时生成尸体/指定结果和 Defeat 掉落。
 - Demon 死亡触发胜利；曾有村民但已无 Villager 类别卡时触发失败。
+- 攻击间隔 = 单位表 `AttackInterval`（默认 2s）× max(0.2, 1 − 装备攻速%/100)，下限 0.2s；冷却只在交战且未眩晕时递减，新卡冷却为 0，接触同堆的首个 Tick 必打一刀。
 
 ### `StacklandsWorldCtrl`
 
@@ -400,6 +402,46 @@ MoonRemaining <= 0
   → 未超限：BeginNextMoon + 随机事件
   → 立即保存并发布状态
 ```
+
+### 8.5 战斗触发、结算与表现
+
+战斗是纯数据模拟，没有攻击动画、伤害飘字、受击反馈或音效；玩家看到的一切都由快照字段间接呈现。
+
+**触发**
+
+- `WorldCtrl.TickMovement`：敌对单位未与友方同堆时，朝最近友方移动（0.45 单位/秒），距离 < 1.2 时并入对方牌堆。
+- `CombatCtrl.Tick` 按 `StackId` 分组，组内按 `Model.IsHostile` 分敌我，两边都非空即自动开战，无需玩家操作。
+
+**攻击节奏**
+
+```text
+攻击后冷却 = 单位表 AttackInterval（默认 2s）
+           × max(0.2, 1 − 装备攻速合计% / 100)
+           ，下限 0.2s
+```
+
+- 冷却只在「同堆有敌人且未眩晕」时递减；脱离战斗或被眩晕时冷却冻结。
+- 新卡 `AttackCooldown` 初始为 0，接触同堆的首个 Tick 双方必各打一刀。
+
+**单次攻击结算顺序（`CombatCtrl.Attack`）**
+
+1. 命中判定：`HitChance（默认 0.75）+ 装备命中%`，未命中本次作废；
+2. 基础伤害：`[DamageMin, DamageMax]` 随机 + 装备伤害 − 目标 `Defense` − 装备防御，最低 1；
+3. 攻击类型：手部装备可覆盖单位自身类型；克制环 远程 > 近战 > 魔法 > 远程，克制时 × `WorldRules.CombatAdvantageMultiplier`；
+4. 暴击：按 `CritChance` 概率伤害 ×2；
+5. 触发 `ON_HIT` 效果（如 STUN 眩晕，支持概率、次数上限、Run/Profile 一次性、`ALL_ENEMIES` 群体目标）；
+6. `Hp <= 0` 进入 `Kill`：装备全部掉回牌桌 → 移除卡牌 → 原位生成 `DeathResultCardId` → 结算 Defeat 掉落池 → 任务评估；`demon` 死亡请求 Victory 流程，无 Villager 类别卡请求 GameOver 流程。
+
+**表现通道**
+
+- HP 变化：`CardSnapshot.Hp/MaxHp` → `CardView` 底部 `HP x/y` 文字；
+- 职业换装：`ViewCtrl` 经 `EquipmentCtrl.GetProfessionCardId` 把佩戴特定装备的单位显示为职业卡（名称/底色替换）；
+- 装备槽指示：`CanEquip` 单位牌面中下 3 个圆点（Hand/Head/Body，白 = 空，黑 = 已装备）；点击单位展开装备卡堆，可点击卸下；
+- 追击移动：按 0.1 秒节流（`MovementPublishDelay`）发布 Board 快照，交战状态以堆叠偏移呈现；
+- 死亡：尸体/掉落物作为新卡出现在原位置；
+- 胜负：`FlowRequest`（Victory/GameOver）→ UI Toolkit 弹窗。
+
+**数值注意**：当前 `stacklands_unit.xlsx` 中敌对生物的伤害/防御为按 `combat_level` 推导的「玩法推定值」（如老鼠伤害 6–13、防御 5），相对原版系统性偏高——老鼠对 15 HP 村民 2 刀致死（约 0.9–1.8 秒），暴击可瞬间秒杀；村民攻击老鼠被防御抵消到每刀 1 点。调整战斗手感优先改该表的伤害三列并重新生成配置。
 
 ## 9. 表现层和事件出口
 

@@ -87,7 +87,7 @@ namespace GameLogic.Core.View
         public void Render(BoosterSnapshot data)
         {
             transform.position = new Vector3(data.X, data.Y, -0.2f);
-            _text.text = data.NameZh + "\n剩余 " + data.Remaining;
+            _text.text = StacklandsTexts.BoosterText(data.NameZh, data.Remaining);
         }
 
         public void SetDragSorting(bool active)

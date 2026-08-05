@@ -68,7 +68,7 @@ namespace GameLogic.Core.View
 
         public void Render(int coins)
         {
-            _text.text = "出售\n金币 " + coins;
+            _text.text = StacklandsTexts.SellSlot(coins);
         }
 
         public bool Contains(Vector2 worldPosition) => _collider != null && _collider.OverlapPoint(worldPosition);

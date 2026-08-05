@@ -95,7 +95,7 @@ namespace GameLogic.Core.Ctrl
             {
                 InstanceId = Model.NewId("pack"),
                 BoosterId = "new_weaponry",
-                DisplayNameZh = "装备测试包",
+                DisplayNameZh = StacklandsTexts.TemporaryEquipmentPackName,
                 X = x,
                 Y = y,
             };
@@ -115,18 +115,18 @@ namespace GameLogic.Core.Ctrl
             BoosterDefinition pack = Model.Content.Boosters.Get(boosterId);
             if (Model.Profile.CompletedQuests.Count < pack.UnlockQuestCount || pack.AcquireMode != "PURCHASE")
             {
-                CoreSystem.Notify("卡包尚未解锁"); return;
+                CoreSystem.Notify(StacklandsTexts.NotifyBoosterLocked); return;
             }
             CardRunData paymentCard = Model.GetCard(paymentCardInstanceId);
             if (paymentCard == null || paymentCard.CardId != pack.PriceCardId)
             {
-                CoreSystem.Notify("请将金币堆拖到卡槽购买"); return;
+                CoreSystem.Notify(StacklandsTexts.NotifyDragCoinsToSlot); return;
             }
             List<CardRunData> paymentStack = Model.StackCards(paymentCard.StackId)
                 .Where(card => card.CardId == pack.PriceCardId).ToList();
             if (paymentStack.Count < pack.PriceAmount)
             {
-                CoreSystem.Notify("金币不足"); return;
+                CoreSystem.Notify(StacklandsTexts.NotifyNotEnoughCoins); return;
             }
             foreach (CardRunData card in paymentStack.OrderByDescending(card => card.StackOrder)
                          .Take(pack.PriceAmount).ToList())

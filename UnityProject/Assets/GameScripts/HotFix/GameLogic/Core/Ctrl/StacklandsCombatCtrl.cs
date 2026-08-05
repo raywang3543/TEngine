@@ -63,7 +63,7 @@ namespace GameLogic.Core.Ctrl
             {
                 CoreSystem.RunCtrl.SaveNow();
                 CoreSystem.RequestFlow(new FlowRequest
-                    { Kind = StacklandsFlowKind.Victory, Title = "主大陆完成", Message = "你击败了恶魔！" });
+                    { Kind = StacklandsFlowKind.Victory, Title = StacklandsTexts.VictoryTitle, Message = StacklandsTexts.VictoryMessage });
             }
             CheckGameOver();
             Model.Changed();
@@ -74,7 +74,7 @@ namespace GameLogic.Core.Ctrl
             if (Model.Run.HadVillager && !Model.Run.Cards.Any(card =>
                     Model.Content.Cards.Get(card.CardId).Category == "VILLAGER"))
                 CoreSystem.RequestFlow(new FlowRequest
-                    { Kind = StacklandsFlowKind.GameOver, Title = "村庄覆灭", Message = "所有村民都已死亡" });
+                    { Kind = StacklandsFlowKind.GameOver, Title = StacklandsTexts.GameOverTitle, Message = StacklandsTexts.GameOverMessage });
         }
 
         private void Attack(CardRunData attacker, CardRunData target)

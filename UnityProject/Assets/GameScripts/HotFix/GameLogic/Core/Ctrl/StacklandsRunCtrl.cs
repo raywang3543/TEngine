@@ -19,8 +19,8 @@ namespace GameLogic.Core.Ctrl
             bool hasSave = Model.SaveStore.LoadRun() != null;
             CoreSystem.RequestFlow(new FlowRequest
             {
-                Kind = StacklandsFlowKind.MainMenu, Title = "堆叠大陆",
-                Message = hasSave ? "继续当前冒险，或保留跨局进度开始新游戏" : "开始新的 Original 主大陆冒险",
+                Kind = StacklandsFlowKind.MainMenu, Title = StacklandsTexts.GameTitle,
+                Message = hasSave ? StacklandsTexts.MainMenuContinueMessage : StacklandsTexts.MainMenuNewGameMessage,
                 CanContinue = hasSave,
             });
             CoreSystem.ViewCtrl.PublishAll();
@@ -98,7 +98,8 @@ namespace GameLogic.Core.Ctrl
                 Model.SaveDelay = -1f;
                 CoreSystem.RequestFlow(new FlowRequest
                 {
-                    Kind = StacklandsFlowKind.SaveError, Title = "存档失败", Message = exception.Message,
+                    Kind = StacklandsFlowKind.SaveError, Title = StacklandsTexts.SaveErrorTitle,
+                    Message = exception.Message,
                 });
             }
         }
@@ -127,7 +128,7 @@ namespace GameLogic.Core.Ctrl
             if (data == null)
             {
                 CoreSystem.RequestFlow(new FlowRequest
-                    { Kind = StacklandsFlowKind.MainMenu, Title = "没有存档", Message = "请开始新游戏" });
+                    { Kind = StacklandsFlowKind.MainMenu, Title = StacklandsTexts.NoSaveTitle, Message = StacklandsTexts.NoSaveMessage });
                 return;
             }
             Model.Run = data;

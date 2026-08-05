@@ -53,7 +53,7 @@ namespace GameLogic.Core.View
             _footer = AddText("Footer", font, 22, TextAnchor.MiddleCenter, new Vector3(0, -0.67f, -0.05f));
             _wholeStackBadge = AddText("WholeStackBadge", font, 20, TextAnchor.UpperCenter,
                 new Vector3(0, 0.96f, -0.08f));
-            _wholeStackBadge.text = "整堆";
+            _wholeStackBadge.text = StacklandsTexts.WholeStackBadge;
             _wholeStackBadge.color = new Color32(255, 226, 92, 255);
             _wholeStackBadge.gameObject.SetActive(false);
             gameObject.AddComponent<BoxCollider2D>().size = new Vector2(CardWidth, CardHeight);
@@ -241,15 +241,16 @@ namespace GameLogic.Core.View
             return mesh;
         }
 
-        private static string BreakName(string name) => string.IsNullOrEmpty(name) ? "未命名" :
+        private static string BreakName(string name) => string.IsNullOrEmpty(name) ? StacklandsTexts.Unnamed :
             name.Length <= 5 ? name : name.Substring(0, (name.Length + 1) / 2) + "\n" +
                                        name.Substring((name.Length + 1) / 2);
 
         private static string Footer(CardSnapshot data)
         {
-            if (data.MaxHp > 0) return $"HP {data.Hp}/{data.MaxHp}";
-            if (data.FoodValue > 0) return $"食 {data.FoodValue}  售 {data.SellPrice}";
-            return (data.IsFoil ? "闪  " : string.Empty) + $"售 {data.SellPrice}";
+            if (data.MaxHp > 0) return StacklandsTexts.CardHp(data.Hp, data.MaxHp);
+            if (data.FoodValue > 0) return StacklandsTexts.CardFoodFooter(data.FoodValue, data.SellPrice);
+            return (data.IsFoil ? StacklandsTexts.FoilPrefix : string.Empty) +
+                   StacklandsTexts.CardSellFooter(data.SellPrice);
         }
 
         private static Color ParseColor(string color, string category)

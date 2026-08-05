@@ -72,7 +72,7 @@ namespace GameLogic.Core.Ctrl
                         {
                             Id = pack.Id, NameZh = pack.NameZh, Price = pack.PriceAmount,
                             Unlocked = unlocked,
-                            LockText = unlocked ? string.Empty : $"完成 {pack.UnlockQuestCount} 项任务",
+                            LockText = unlocked ? string.Empty : StacklandsTexts.ShopLockedByQuests(pack.UnlockQuestCount),
                         };
                     }).ToList().AsReadOnly(),
                 Cardopedia = Model.Content.Cards.All.OrderBy(item => item.Category).ThenBy(item => item.NameZh)
@@ -143,7 +143,9 @@ namespace GameLogic.Core.Ctrl
                 Progress = showProgress
                     ? 1f - Math.Max(0f, work.Remaining) / Math.Max(0.01f, work.Duration)
                     : 0f,
-                Status = work == null ? string.Empty : work.IsRecipe ? "制作中" : "工作中",
+                Status = work == null
+                    ? string.Empty
+                    : work.IsRecipe ? StacklandsTexts.StatusCrafting : StacklandsTexts.StatusWorking,
                 CanEquip = canEquip,
                 HasHandEquipment = canEquip && HasEquipment(card, EquipmentSlotKind.Hand),
                 HasHeadEquipment = canEquip && HasEquipment(card, EquipmentSlotKind.Head),
