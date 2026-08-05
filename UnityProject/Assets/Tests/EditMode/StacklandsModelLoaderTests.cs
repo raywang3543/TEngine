@@ -26,7 +26,8 @@ namespace GameLogic.Tests
         {
             IStacklandsContentModel content = StacklandsModelLoader.Build(_tables);
 
-            Assert.That(content.Cards.Count, Is.EqualTo(121));
+            Assert.That(content.Cards.All.Count(card => !card.Id.StartsWith("test_")), Is.EqualTo(121));
+            Assert.That(content.Cards.Count, Is.EqualTo(123));
             Assert.That(content.Cards.All.Count(card => card.Category == "IDEA"), Is.EqualTo(32));
             Assert.That(content.Cards.All.Count(card => card.Category == "RUMOR"), Is.EqualTo(2));
             Assert.That(content.Quests.Count, Is.EqualTo(56));
@@ -226,6 +227,43 @@ namespace GameLogic.Tests
             Assert.That(slots.Get(EquipmentSlotKind.Hand), Is.EqualTo("replacement_hand_item"));
             Assert.That(slots.Get(EquipmentSlotKind.Head), Is.EqualTo("head_item"));
             Assert.That(slots.Get(EquipmentSlotKind.Body), Is.EqualTo("body_item"));
+        }
+
+        [Test]
+        public void NewGame_CreatesTemporaryBoosterWithFiveEquipmentAcrossThreeSlots()
+        {
+            IStacklandsContentModel content = StacklandsModelLoader.Build(_tables);
+            var store = new MemorySaveStore(null);
+            var cameraObject = new GameObject("Stacklands Test Pack Camera");
+            cameraObject.tag = "MainCamera";
+            cameraObject.AddComponent<Camera>();
+            var boardObject = new GameObject("Stacklands Test Pack Board");
+            StacklandsBoardView boardView = boardObject.AddComponent<StacklandsBoardView>();
+
+            try
+            {
+                CoreSystem.Initialize(content, store, boardView);
+                CoreSystem.SubmitCommand(StacklandsCommandDto.NewGame(false, 1));
+
+                BoosterRunData booster = CoreSystem.Model.Run.Boosters
+                    .Single(item => item.DisplayNameZh == "装备测试包");
+                Assert.That(booster.Results,
+                    Is.EqualTo(new[] { "map", "spear", "sword", "test_helmet", "test_armor" }));
+                Assert.That(booster.Results.Distinct(), Has.Count.EqualTo(5));
+                Assert.That(booster.Results.Select(cardId => content.Equipment.Get(cardId).Slot).Distinct(),
+                    Is.EquivalentTo(new[]
+                    {
+                        EquipmentSlotKind.Hand,
+                        EquipmentSlotKind.Head,
+                        EquipmentSlotKind.Body,
+                    }));
+            }
+            finally
+            {
+                CoreSystem.Release();
+                Object.DestroyImmediate(boardObject);
+                Object.DestroyImmediate(cameraObject);
+            }
         }
 
         [Test]

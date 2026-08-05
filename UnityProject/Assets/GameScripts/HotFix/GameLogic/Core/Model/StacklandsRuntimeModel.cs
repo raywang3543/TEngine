@@ -67,6 +67,7 @@ namespace GameLogic.Core.Model
     {
         public string InstanceId;
         public string BoosterId;
+        public string DisplayNameZh;
         public float X;
         public float Y;
         public int Revealed;

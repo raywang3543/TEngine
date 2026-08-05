@@ -212,7 +212,8 @@ namespace GameLogic
         {
             _currentFlow = null; _modalTitle.text = "Cardopedia 卡牌图鉴";
             int discovered = _lastHud?.Cardopedia == null ? 0 : _lastHud.Cardopedia.Count(item => item.Discovered);
-            _modalMessage.text = $"已发现 {discovered}/121；Idea 配方也会记录在图鉴中。";
+            int total = _lastHud?.Cardopedia?.Count ?? 0;
+            _modalMessage.text = $"已发现 {discovered}/{total}；Idea 配方也会记录在图鉴中。";
             _peaceful.style.display = DisplayStyle.None; _moonLength.style.display = DisplayStyle.None;
             _confirmFlow.style.display = DisplayStyle.None; _newGame.style.display = DisplayStyle.None;
             _modalList.RemoveFromClassList("hidden");

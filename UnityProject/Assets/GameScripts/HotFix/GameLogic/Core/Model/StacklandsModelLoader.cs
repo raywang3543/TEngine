@@ -219,7 +219,8 @@ namespace GameLogic.Core.Model
             foreach (var equipment in tables.TbEquipment.DataList)
             {
                 CheckCard(equipment.CardId, "TbEquipment", equipment.CardId, cards, report);
-                CheckCard(equipment.ProfessionCardId, "TbEquipment", equipment.CardId, cards, report);
+                if (!string.IsNullOrEmpty(equipment.ProfessionCardId))
+                    CheckCard(equipment.ProfessionCardId, "TbEquipment", equipment.CardId, cards, report);
             }
 
             foreach (var structure in tables.TbStructure.DataList)

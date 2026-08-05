@@ -10,6 +10,11 @@ namespace GameLogic.Core.Ctrl
     /// </summary>
     internal sealed class StacklandsLootCtrl
     {
+        private static readonly string[] TemporaryTestEquipment =
+        {
+            "map", "spear", "sword", "test_helmet", "test_armor",
+        };
+
         private StacklandsGameModel Model => CoreSystem.Model;
 
         internal List<string> RollPool(string poolId, int depth = 0)
@@ -77,6 +82,29 @@ namespace GameLogic.Core.Ctrl
                 else if (Model.CountAdultVillagers() == 1 &&
                          Model.Random.NextFloat() < Model.Content.WorldRules.SingleVillagerPackChance)
                     booster.Results[0] = "villager";
+            }
+            Model.Run.Boosters.Add(booster);
+        }
+
+        /// <summary>
+        /// 临时装备验收卡包；正式内容接入后删除调用及两张 test_ 配置卡。
+        /// </summary>
+        internal void CreateTemporaryEquipmentTestBooster(float x, float y)
+        {
+            var booster = new BoosterRunData
+            {
+                InstanceId = Model.NewId("pack"),
+                BoosterId = "new_weaponry",
+                DisplayNameZh = "装备测试包",
+                X = x,
+                Y = y,
+            };
+            foreach (string cardId in TemporaryTestEquipment)
+            {
+                if (!Model.Content.Cards.Contains(cardId) || !Model.Content.Equipment.Contains(cardId))
+                    throw new InvalidOperationException("装备测试包缺少装备配置：" + cardId);
+                booster.Results.Add(cardId);
+                booster.Foils.Add(false);
             }
             Model.Run.Boosters.Add(booster);
         }

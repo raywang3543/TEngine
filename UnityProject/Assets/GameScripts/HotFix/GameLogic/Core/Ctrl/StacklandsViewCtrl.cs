@@ -34,7 +34,9 @@ namespace GameLogic.Core.Ctrl
                 Boosters = Model.Run.Boosters.Select(pack => new BoosterSnapshot
                 {
                     InstanceId = pack.InstanceId, BoosterId = pack.BoosterId,
-                    NameZh = Model.Content.Boosters.Get(pack.BoosterId).NameZh, X = pack.X, Y = pack.Y,
+                    NameZh = string.IsNullOrEmpty(pack.DisplayNameZh)
+                        ? Model.Content.Boosters.Get(pack.BoosterId).NameZh : pack.DisplayNameZh,
+                    X = pack.X, Y = pack.Y,
                     Remaining = pack.Results.Count - pack.Revealed,
                 }).ToList().AsReadOnly(),
             });
