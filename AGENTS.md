@@ -108,6 +108,7 @@ dotnet build Tools/GameEventSourceGenerator/SourceGenerator.sln
 - `GameLogic` 的其它相邻目录（`UI/`、`UIToolkit/`、`Module/`、`Tool/`）只放可复用扩展组件、框架适配器、UI 表现/绑定、资源或平台集成、通用工具；不得实现具体游戏规则或直接改游戏状态。
 - UI 与集成层通过事件把命令转发给 `Core/`（经 `CoreSystem`），只渲染 `Core/` 模型暴露的只读状态；外部代码**绝不保留** Ctrl 或 Model 引用。
 - 卡牌数值改动优先走 Luban 配置表（见上）。
+- 修改 `Core/` 代码结构、调用关系或新增/删除功能后，必须同步更新 `Books/游戏核心代码说明.md`（目录结构、命令路由、Ctrl 职责、调用链等受影响小节），保持文档与源码一致。
 
 ## UI Toolkit 规范（Unity 6.3 / Built-in RP）
 
@@ -141,6 +142,7 @@ dotnet build Tools/GameEventSourceGenerator/SourceGenerator.sln
 ## 文档导航
 
 - `Books/`：框架各模块使用指南（资源、事件、内存池、对象池、UI、配置表、流程、网络）。
+- `Books/游戏核心代码说明.md`：游戏 `Core/` 的代码结构、命令路由、Ctrl 职责与调用链；改动 `Core/` 后必须同步更新。
 - `UnityProject/repowiki/zh/content/`：更深的架构与 API 参考（项目概述、核心架构、事件系统、资源管理、UI 系统、热更新、部署发布等）。
 - `README.md`：上游 TEngine 介绍与热更出包步骤。
 - `work-log/`：历史开发记录，可从中了解近期改动与决策背景。

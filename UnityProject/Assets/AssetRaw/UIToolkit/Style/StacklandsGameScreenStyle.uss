@@ -31,7 +31,7 @@
 .right-area { flex-grow: 1; height: 100%; }
 .top-shell { height: 14%; min-height: 118px; background-color: rgba(0, 0, 0, 0); }
 
-.hud-strip { position: absolute; right: 12px; top: 15%; height: 42px; flex-direction: row; align-items: center; padding: 5px 8px; background-color: rgba(255, 248, 219, 0.94); border-width: 2px; border-color: rgb(31, 32, 29); border-radius: 5px; }
+.hud-strip { position: absolute; right: 12px; bottom: 12px; height: 42px; flex-direction: row; align-items: center; padding: 5px 8px; background-color: rgba(255, 248, 219, 0.94); border-width: 2px; border-color: rgb(31, 32, 29); border-radius: 5px; }
 .hud-label { font-size: 16px; margin: 0 6px; }
 .strong { -unity-font-style: bold; }
 .speed-button { width: 42px; height: 29px; margin: 0 2px; padding: 2px; background-color: rgb(43, 47, 42); color: white; border-width: 0; }

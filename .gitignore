@@ -22,4 +22,11 @@ Tools/GameEventSourceGenerator/*/obj
 #openspec
 openspec/
 
+#tmp
+tmp
+
+/outputs
+
+.codex
+
 .utmp

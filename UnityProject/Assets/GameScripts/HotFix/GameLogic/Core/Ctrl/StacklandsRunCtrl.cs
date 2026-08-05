@@ -8,9 +8,6 @@ namespace GameLogic.Core.Ctrl
     /// </summary>
     internal sealed class StacklandsRunCtrl
     {
-        // 临时验收开关：正式卡包流程完成后删除测试卡包及两张 test_ 配置卡。
-        private const bool EnableTemporaryEquipmentTestBooster = true;
-
         private StacklandsGameModel Model => CoreSystem.Model;
 
         internal void Start()
@@ -116,8 +113,6 @@ namespace GameLogic.Core.Ctrl
             };
             Model.Random = new DeterministicRandom(Model.Run.RandomState);
             CoreSystem.LootCtrl.CreateBooster("a_new_world", -4f, 2f, false);
-            if (EnableTemporaryEquipmentTestBooster)
-                CoreSystem.LootCtrl.CreateTemporaryEquipmentTestBooster(0f, 2f);
             Model.Increment("EventCount:new_game");
             Model.MarkDirty();
             CoreSystem.ViewCtrl.PublishAll();

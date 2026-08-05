@@ -20,8 +20,6 @@ namespace GameLogic.Core
         public static string CardSellFooter(int sellPrice) => $"售 {sellPrice}";
 
         // 卡包与卡槽
-        public const string TemporaryEquipmentPackName = "装备测试包";
-
         public static string BoosterText(string name, int remaining) => name + "\n剩余 " + remaining;
         public static string ShopLockedByQuests(int questCount) => $"完成 {questCount} 项任务";
         public static string ShopPrice(int price) => price + " 金币";
