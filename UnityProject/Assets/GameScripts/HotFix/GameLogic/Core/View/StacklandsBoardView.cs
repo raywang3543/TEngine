@@ -16,10 +16,14 @@ namespace GameLogic.Core.View
         private const float WholeStackHoldSeconds = 0.5f;
         private const float WholeStackHoldMovementTolerance = 0.2f;
         private const float BoosterDragThresholdPixels = 10f;
+        private const float MinOrthoSize = 3.5f;
+        private const float DefaultOrthoSize = 5f;
+        private const float MaxOrthoSize = 7f;
         private const float ShopShelfY = 5.55f;
-        private const float SellSlotX = -9.5f;
-        private const float FirstShopSlotX = -7.65f;
         private const float ShopSlotSpacing = 1.75f;
+        private const float SidebarWidthFraction = 0.18f;
+        private const float SidebarMinWidthPixels = 238f;
+        private const float SlotSidebarMargin = 0.5f;
         private readonly Dictionary<string, CardView> _cards = new Dictionary<string, CardView>();
         private readonly Dictionary<string, BoosterView> _boosters = new Dictionary<string, BoosterView>();
         private readonly Dictionary<string, ShopSlotView> _shopSlots = new Dictionary<string, ShopSlotView>();
@@ -35,7 +39,6 @@ namespace GameLogic.Core.View
         private Sprite _borderYellow;
         private Camera _camera;
         private Transform _boardFrame;
-        private float _boardFrameOrtho;
         private float _boardFrameAspect;
         private Sprite _whiteSprite;
         private Font _font;
@@ -55,6 +58,8 @@ namespace GameLogic.Core.View
         private bool _wholeStackHoldEligible;
         private float _mouseDragStartedAt;
         private float _touchDragStartedAt;
+        private int _lastScreenWidth;
+        private float _lastAspect;
 
         private void Awake()
         {
@@ -66,8 +71,10 @@ namespace GameLogic.Core.View
                 cameraObject.tag = "MainCamera";
             }
             _camera.orthographic = true;
-            _camera.orthographicSize = 5f;
-            _camera.transform.position = new Vector3(0f, 0f, -10f);
+            _camera.orthographicSize = DefaultOrthoSize;
+            // 默认停在地图左上角边界：可移动余量为 (MaxOrthoSize - DefaultOrthoSize)，横向再乘宽高比。
+            float slack = MaxOrthoSize - DefaultOrthoSize;
+            _camera.transform.position = new Vector3(-slack * _camera.aspect, slack, -10f);
             _camera.rect = new Rect(0f, 0f, 1f, 1f);
             foreach (Camera overlayCamera in FindObjectsByType<Camera>(FindObjectsSortMode.None))
             {
@@ -84,6 +91,12 @@ namespace GameLogic.Core.View
         private void Update()
         {
             UpdateBoardFrame();
+            if (Screen.width != _lastScreenWidth || _camera.aspect != _lastAspect)
+            {
+                _lastScreenWidth = Screen.width;
+                _lastAspect = _camera.aspect;
+                LayoutShopSlots();
+            }
             HandleKeyboard();
             HandleMouse();
             HandleTouch();
@@ -196,6 +209,7 @@ namespace GameLogic.Core.View
                 Vector3 before = ScreenToWorld(_lastPointer);
                 Vector3 after = ScreenToWorld(mouse);
                 _camera.transform.position += before - after;
+                ClampCameraPosition();
                 _lastPointer = mouse;
             }
             if (Input.GetMouseButtonUp(1) || Input.GetMouseButtonUp(2)) _panning = false;
@@ -253,7 +267,10 @@ namespace GameLogic.Core.View
                 else if (_draggedBooster != null)
                     UpdateBoosterDrag(touch.position);
                 else if (touch.phase == TouchPhase.Moved)
+                {
                     _camera.transform.position -= (Vector3)touch.deltaPosition * (_camera.orthographicSize / 450f);
+                    ClampCameraPosition();
+                }
             }
             else if (touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled)
                 EndPointer(touch.position, false);
@@ -539,11 +556,26 @@ namespace GameLogic.Core.View
         private void LayoutShopSlots()
         {
             if (_sellSlot == null) return;
-            _sellSlot.SetLayout(new Vector3(SellSlotX, ShopShelfY, 0f));
+            float firstX = FirstSlotX();
+            _sellSlot.SetLayout(new Vector3(firstX, ShopShelfY, 0f));
 
             int index = 0;
             foreach (ShopSlotView slot in _shopSlots.Values.OrderBy(item => item.Order))
-                slot.SetLayout(new Vector3(FirstShopSlotX + ShopSlotSpacing * index++, ShopShelfY, 0f));
+                slot.SetLayout(new Vector3(firstX + ShopSlotSpacing * (index + 1), ShopShelfY, 0f));
+        }
+
+        /// <summary>
+        /// 首个卡槽（出售槽）的世界 X：以 DefaultOrthoSize、相机停在左上边界时的默认视野为基准，
+        /// 屏幕左缘 + 左侧任务栏宽度（18%，最小 238px，与 StacklandsGameScreenStyle.uss 一致）+ 固定间距。
+        /// 随宽高比与屏幕宽度换算，适配不同分辨率。
+        /// </summary>
+        private float FirstSlotX()
+        {
+            float aspect = _camera.aspect;
+            float halfWidth = DefaultOrthoSize * aspect;
+            float screenLeft = -(MaxOrthoSize - DefaultOrthoSize) * aspect - halfWidth;
+            float sidebarFraction = Mathf.Max(SidebarWidthFraction, SidebarMinWidthPixels / Screen.width);
+            return screenLeft + sidebarFraction * halfWidth * 2f + SlotSidebarMargin;
         }
 
         private void CreateBoardFrame()
@@ -559,21 +591,42 @@ namespace GameLogic.Core.View
         }
 
         /// <summary>
-        /// 牌桌底色矩形跟随相机视野缩放与平移，始终铺满屏幕并留 1 单位余量。
+        /// 牌桌底色矩形为固定尺寸（按最大缩放 MaxOrthoSize 的视野铺满全屏并留 1 单位余量），
+        /// 不跟随相机移动；仅在屏幕宽高比变化时重算宽度。
         /// </summary>
         private void UpdateBoardFrame()
         {
             if (_boardFrame == null || _camera == null) return;
             float aspect = _camera.aspect;
-            if (_boardFrameOrtho != _camera.orthographicSize || _boardFrameAspect != aspect)
-            {
-                _boardFrameOrtho = _camera.orthographicSize;
-                _boardFrameAspect = aspect;
-                float height = _camera.orthographicSize * 2f + 1f;
-                _boardFrame.localScale = new Vector3(height * aspect + 1f, height, 1f);
-            }
-            Vector3 cameraPosition = _camera.transform.position;
-            _boardFrame.position = new Vector3(cameraPosition.x, cameraPosition.y, 0f);
+            if (_boardFrameAspect == aspect) return;
+            _boardFrameAspect = aspect;
+            float height = MaxOrthoSize * 2f + 1f;
+            _boardFrame.localScale = new Vector3(height * aspect + 1f, height, 1f);
+            _boardFrame.position = Vector3.zero;
+        }
+
+        /// <summary>
+        /// 缩放只改相机 orthographicSize，范围 [MinOrthoSize, MaxOrthoSize]；缩放后按地图边界回收相机位置。
+        /// </summary>
+        private void Zoom(float amount)
+        {
+            _camera.orthographicSize = Mathf.Clamp(_camera.orthographicSize + amount, MinOrthoSize, MaxOrthoSize);
+            ClampCameraPosition();
+        }
+
+        /// <summary>
+        /// 地图边界为 MaxOrthoSize 时的视野范围（世界原点为中心）。
+        /// 当前视野小于边界时，相机中心只允许在「边界减去当前视野」的剩余空间内移动；
+        /// orthographicSize 等于 MaxOrthoSize 时剩余空间为 0，无法移动地图。
+        /// </summary>
+        private void ClampCameraPosition()
+        {
+            float slack = Mathf.Max(0f, MaxOrthoSize - _camera.orthographicSize);
+            float maxX = slack * _camera.aspect;
+            Vector3 position = _camera.transform.position;
+            position.x = Mathf.Clamp(position.x, -maxX, maxX);
+            position.y = Mathf.Clamp(position.y, -slack, slack);
+            _camera.transform.position = position;
         }
 
         /// <summary>
@@ -727,7 +780,6 @@ namespace GameLogic.Core.View
             return value;
         }
 
-        private void Zoom(float amount) => _camera.orthographicSize = Mathf.Clamp(_camera.orthographicSize + amount, 3.5f, 14f);
         private static void SendSpeed(float speed) => CoreSystem.SubmitCommand(
             new StacklandsCommandDto { Kind = StacklandsCommandKind.SetSpeed, Number = speed });
 
