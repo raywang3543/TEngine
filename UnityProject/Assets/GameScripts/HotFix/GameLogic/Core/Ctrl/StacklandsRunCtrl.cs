@@ -12,24 +12,14 @@ namespace GameLogic.Core.Ctrl
 
         internal void Start()
         {
-            StacklandsRunData savedRun = Model.SaveStore.LoadRun();
-            if (savedRun == null)
+            // 启动只请求开始菜单，不自动加载存档；继续回合或开始新回合后才加载对局。
+            bool hasSave = Model.SaveStore.LoadRun() != null;
+            CoreSystem.RequestFlow(new FlowRequest
             {
-                CoreSystem.RequestFlow(new FlowRequest
-                {
-                    Kind = StacklandsFlowKind.MainMenu, Title = "堆叠大陆",
-                    Message = "开始新的 Original 主大陆冒险", CanContinue = false,
-                });
-            }
-            else
-            {
-                LoadRun(savedRun);
-                CoreSystem.RequestFlow(new FlowRequest
-                {
-                    Kind = StacklandsFlowKind.MainMenu, Title = "堆叠大陆",
-                    Message = "继续当前冒险，或保留跨局进度开始新游戏", CanContinue = true,
-                });
-            }
+                Kind = StacklandsFlowKind.MainMenu, Title = "堆叠大陆",
+                Message = hasSave ? "继续当前冒险，或保留跨局进度开始新游戏" : "开始新的 Original 主大陆冒险",
+                CanContinue = hasSave,
+            });
             CoreSystem.ViewCtrl.PublishAll();
         }
 

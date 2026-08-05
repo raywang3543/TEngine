@@ -1,0 +1,26 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <ui:Style src="project://database/Assets/AssetRaw/UIToolkit/Style/StacklandsGameScreenStyle.uss" />
+    <ui:VisualElement name="stacklands-start-root" class="stacklands-root" picking-mode="Ignore">
+        <ui:VisualElement name="start-menu" class="start-menu">
+            <ui:VisualElement class="start-menu-panel">
+                <ui:Label text="堆叠大陆" class="start-menu-title" />
+                <ui:Button name="menu-continue" text="继续回合" class="start-menu-item" />
+                <ui:Button name="menu-new-game" text="开始新回合" class="start-menu-item" />
+                <ui:Button name="menu-quit" text="退出" class="start-menu-item" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <ui:VisualElement name="modal-overlay" class="modal-overlay hidden">
+            <ui:VisualElement class="modal-card">
+                <ui:Label name="modal-title" text="开始新回合" class="modal-title" />
+                <ui:Label name="modal-message" text="选择模式与 Moon 长度" class="modal-message" />
+                <ui:Toggle name="peaceful-toggle" text="和平模式" class="modal-control" />
+                <ui:DropdownField name="moon-length" label="Moon 长度" class="modal-control" />
+                <ui:VisualElement class="modal-buttons">
+                    <ui:Button name="new-game-button" text="确定" class="primary-button" />
+                    <ui:Button name="close-modal-button" text="返回" class="secondary-button" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

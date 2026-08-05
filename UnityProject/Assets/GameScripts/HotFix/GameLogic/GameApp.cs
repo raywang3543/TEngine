@@ -49,13 +49,13 @@ public partial class GameApp
         }
 
         IStacklandsContentModel content = StacklandsModelLoader.Build(ConfigSystem.Instance.Tables);
-        GameModule.Debugger.ActiveWindow = false;
+        // GameModule.Debugger.ActiveWindow = false;
         _stacklandsRoot = new GameObject("Stacklands Original Runtime");
         UnityEngine.Object.DontDestroyOnLoad(_stacklandsRoot);
         _stacklandsRoot.AddComponent<StacklandsGameDriver>();
         StacklandsBoardView boardView = _stacklandsRoot.AddComponent<StacklandsBoardView>();
 
-        await GameModule.UIToolkit.ShowUIAsync<StacklandsGameScreenController>(UITypes.StacklandsGameScreen);
+        await GameModule.UIToolkit.ShowUIAsync<StacklandsStartScreenController>(UITypes.StacklandsStartScreen);
         string savePath = Path.Combine(Application.persistentDataPath, "StacklandsOriginal");
         CoreSystem.Initialize(content, new JsonStacklandsSaveStore(savePath), boardView);
     }

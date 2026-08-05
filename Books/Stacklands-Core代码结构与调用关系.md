@@ -94,7 +94,7 @@ sequenceDiagram
     Core->>Core: 创建 Model 和全部 Ctrl
     Core->>Core: 注册 StacklandsCommand 监听
     Core->>Run: Start()
-    Run->>Run: 加载 Run 或请求主菜单
+    Run->>Run: 请求开始菜单（不自动加载存档）
     Run->>Core: 发布初始 Board/HUD
 ```
 
@@ -102,7 +102,7 @@ sequenceDiagram
 
 | API | 调用者 | 作用 |
 |---|---|---|
-| `CoreSystem.Initialize(...)` | `GameApp.StartGameLogic` | 创建 Model/Ctrl、注册命令、加载当前局 |
+| `CoreSystem.Initialize(...)` | `GameApp.StartGameLogic` | 创建 Model/Ctrl、注册命令、请求开始菜单 |
 | `CoreSystem.SubmitCommand(dto)` | `Core/View`，测试或内部适配器 | 直接把命令交给 `RunCtrl.Handle` |
 | `EventDefine.StacklandsCommand` | 外部 UI/集成层 | 跨 Core 边界发送同一类命令 |
 | `CoreSystem.Tick(delta)` | `StacklandsGameDriver` | 推进固定步长模拟 |
@@ -400,7 +400,7 @@ MoonRemaining <= 0
 | `StacklandsFlowRequested` | `FlowRequest` | 主菜单、超限、召唤确认、胜利、失败、存档错误 |
 | `StacklandsNotification` | `string` | 任务完成、购买失败等短提示 |
 
-当前 [`StacklandsGameScreenController.cs`](../UnityProject/Assets/GameScripts/HotFix/GameLogic/UIToolkit/StacklandsGameScreenController.cs) 监听 Board、HUD、Flow 和 Notification。进度增量由 `CoreSystem` 直接调用 `StacklandsBoardView.RenderCardProgress`；事件也已发布，供其他表现层按需订阅。
+当前界面拆分为开始界面与游戏界面：[`StacklandsStartScreenController.cs`](../UnityProject/Assets/GameScripts/HotFix/GameLogic/UIToolkit/StacklandsStartScreenController.cs) 负责开始菜单与新回合设置弹窗，只监听 Flow；[`StacklandsGameScreenController.cs`](../UnityProject/Assets/GameScripts/HotFix/GameLogic/UIToolkit/StacklandsGameScreenController.cs) 负责 HUD、任务、卡牌详情与其余流程弹窗，监听 Board、HUD、Flow 和 Notification。`GameApp` 启动时打开开始界面，继续回合/开始新回合后切换到游戏界面，主菜单流程再切回。进度增量由 `CoreSystem` 直接调用 `StacklandsBoardView.RenderCardProgress`；事件也已发布，供其他表现层按需订阅。
 
 `StacklandsBoardView` 负责：
 

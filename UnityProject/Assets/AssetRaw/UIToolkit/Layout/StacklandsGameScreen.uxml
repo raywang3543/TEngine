@@ -40,8 +40,7 @@
                 <ui:ScrollView name="modal-list" class="modal-list hidden" />
                 <ui:VisualElement class="modal-buttons">
                     <ui:Button name="confirm-flow-button" text="确认" class="primary-button" />
-                    <ui:Button name="continue-button" text="继续游戏" class="primary-button" />
-                    <ui:Button name="new-game-button" text="新游戏" class="primary-button" />
+                    <ui:Button name="new-game-button" text="确定" class="primary-button" />
                     <ui:Button name="close-modal-button" text="返回" class="secondary-button" />
                 </ui:VisualElement>
             </ui:VisualElement>

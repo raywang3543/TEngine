@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Cysharp.Threading.Tasks;
 using GameLogic.Core;
 using TEngine;
 using UnityEngine;
@@ -28,7 +29,6 @@ namespace GameLogic
         private Label _modalMessage;
         private Toggle _peaceful;
         private DropdownField _moonLength;
-        private Button _continue;
         private Button _confirmFlow;
         private Button _newGame;
         private Button _closeModal;
@@ -77,7 +77,6 @@ namespace GameLogic
             _modalList = root.Q<ScrollView>("modal-list");
             _moonLength.choices = new List<string> { "短（60 秒）", "普通（120 秒）", "长（180 秒）" };
             _moonLength.index = 1;
-            _continue = root.Q<Button>("continue-button");
             _confirmFlow = root.Q<Button>("confirm-flow-button");
             _newGame = root.Q<Button>("new-game-button");
             _closeModal = root.Q<Button>("close-modal-button");
@@ -86,7 +85,6 @@ namespace GameLogic
             _speedButtons = new[] { root.Q<Button>("speed-0"), root.Q<Button>("speed-1"), root.Q<Button>("speed-5") };
             _speedButtons[0].clicked += Speed0; _speedButtons[1].clicked += Speed1; _speedButtons[2].clicked += Speed5;
             _newGame.clicked += NewGame;
-            _continue.clicked += ContinueGame;
             _confirmFlow.clicked += ConfirmFlow;
             _closeModal.clicked += CloseModal;
             _settings.clicked += OpenSettings;
@@ -98,7 +96,6 @@ namespace GameLogic
             if (_speedButtons == null) return;
             _speedButtons[0].clicked -= Speed0; _speedButtons[1].clicked -= Speed1; _speedButtons[2].clicked -= Speed5;
             _newGame.clicked -= NewGame;
-            _continue.clicked -= ContinueGame;
             _confirmFlow.clicked -= ConfirmFlow;
             _closeModal.clicked -= CloseModal;
             _settings.clicked -= OpenSettings;
@@ -151,17 +148,32 @@ namespace GameLogic
 
         private void OnFlowRequested(FlowRequest request)
         {
+            // 主菜单流程由开始界面处理，关闭游戏界面并切换过去。
+            if (request.Kind == StacklandsFlowKind.MainMenu)
+            {
+                SwitchToStartUI();
+                return;
+            }
             _currentFlow = request;
             _modalTitle.text = request.Title; _modalMessage.text = request.Message;
             _modal.RemoveFromClassList("hidden");
-            bool menu = request.Kind == StacklandsFlowKind.MainMenu;
             _modalList.AddToClassList("hidden");
-            _peaceful.style.display = menu ? DisplayStyle.Flex : DisplayStyle.None;
-            _moonLength.style.display = menu ? DisplayStyle.Flex : DisplayStyle.None;
-            _continue.style.display = menu && request.CanContinue ? DisplayStyle.Flex : DisplayStyle.None;
+            _peaceful.style.display = DisplayStyle.None;
+            _moonLength.style.display = DisplayStyle.None;
             _confirmFlow.style.display = request.Kind == StacklandsFlowKind.SummonDemon ? DisplayStyle.Flex : DisplayStyle.None;
-            _newGame.style.display = menu || request.Kind == StacklandsFlowKind.GameOver ||
+            _newGame.style.display = request.Kind == StacklandsFlowKind.GameOver ||
                                      request.Kind == StacklandsFlowKind.Victory ? DisplayStyle.Flex : DisplayStyle.None;
+        }
+
+        /// <summary>
+        /// 关闭游戏界面并打开开始界面。
+        /// </summary>
+        private void SwitchToStartUI() => SwitchToStartUIAsync().Forget();
+
+        private async UniTaskVoid SwitchToStartUIAsync()
+        {
+            await GameModule.UIToolkit.ShowUIAsync<StacklandsStartScreenController>(UITypes.StacklandsStartScreen);
+            GameModule.UIToolkit.CloseUI(UITypes.StacklandsGameScreen);
         }
 
         private void ShowToast(string message)
@@ -178,7 +190,6 @@ namespace GameLogic
         private void Speed1() => Send(new StacklandsCommandDto { Kind = StacklandsCommandKind.SetSpeed, Number = 1f });
         private void Speed5() => Send(new StacklandsCommandDto { Kind = StacklandsCommandKind.SetSpeed, Number = 5f });
         private void NewGame() { CloseModal(); Send(StacklandsCommandDto.NewGame(_peaceful.value, _moonLength.index)); }
-        private void ContinueGame() { CloseModal(); Send(new StacklandsCommandDto { Kind = StacklandsCommandKind.ContinueGame }); }
         private void ConfirmFlow()
         {
             if (_currentFlow?.Kind == StacklandsFlowKind.SummonDemon)
@@ -194,8 +205,7 @@ namespace GameLogic
             _currentFlow = null;
             _modalTitle.text = "游戏菜单"; _modalMessage.text = "暂停、继续或开始新游戏";
             _peaceful.style.display = DisplayStyle.Flex; _moonLength.style.display = DisplayStyle.Flex;
-            _continue.style.display = DisplayStyle.None; _confirmFlow.style.display = DisplayStyle.None;
-            _newGame.style.display = DisplayStyle.Flex; _modalList.AddToClassList("hidden");
+            _confirmFlow.style.display = DisplayStyle.None; _newGame.style.display = DisplayStyle.Flex; _modalList.AddToClassList("hidden");
             _modal.RemoveFromClassList("hidden");
         }
         private void OpenCardopedia()
@@ -204,8 +214,8 @@ namespace GameLogic
             int discovered = _lastHud?.Cardopedia == null ? 0 : _lastHud.Cardopedia.Count(item => item.Discovered);
             _modalMessage.text = $"已发现 {discovered}/121；Idea 配方也会记录在图鉴中。";
             _peaceful.style.display = DisplayStyle.None; _moonLength.style.display = DisplayStyle.None;
-            _continue.style.display = DisplayStyle.None; _confirmFlow.style.display = DisplayStyle.None;
-            _newGame.style.display = DisplayStyle.None; _modalList.RemoveFromClassList("hidden");
+            _confirmFlow.style.display = DisplayStyle.None; _newGame.style.display = DisplayStyle.None;
+            _modalList.RemoveFromClassList("hidden");
             _modalList.Clear();
             if (_lastHud?.Cardopedia != null)
                 foreach (CardopediaEntrySnapshot entry in _lastHud.Cardopedia)

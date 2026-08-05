@@ -34,6 +34,9 @@ namespace GameLogic.Core.View
         private Sprite _borderWhite;
         private Sprite _borderYellow;
         private Camera _camera;
+        private Transform _boardFrame;
+        private float _boardFrameOrtho;
+        private float _boardFrameAspect;
         private Sprite _whiteSprite;
         private Font _font;
         private SellSlotView _sellSlot;
@@ -66,9 +69,7 @@ namespace GameLogic.Core.View
             _camera.orthographic = true;
             _camera.orthographicSize = 7f;
             _camera.transform.position = new Vector3(0f, 0f, -10f);
-            _camera.rect = new Rect(0.18f, 0f, 0.82f, 1f);
-            _camera.backgroundColor = new Color32(170, 218, 174, 255);
-            _camera.clearFlags = CameraClearFlags.SolidColor;
+            _camera.rect = new Rect(0f, 0f, 1f, 1f);
             foreach (Camera overlayCamera in FindObjectsByType<Camera>(FindObjectsSortMode.None))
             {
                 if (overlayCamera != _camera && overlayCamera.depth > _camera.depth &&
@@ -79,13 +80,11 @@ namespace GameLogic.Core.View
             _font = CreateChineseFont();
             LoadCardBackgroundsAsync().Forget();
             CreateBoardFrame();
-            CreateDecorations();
-            _sellSlot = CreateSellSlot();
-            LayoutShopSlots();
         }
 
         private void Update()
         {
+            UpdateBoardFrame();
             HandleKeyboard();
             HandleMouse();
             HandleTouch();
@@ -142,7 +141,13 @@ namespace GameLogic.Core.View
         public void RenderHud(HudSnapshot snapshot)
         {
             if (snapshot == null) return;
-            _sellSlot?.Render(snapshot.Coins);
+            // 出售槽与商店槽延迟到对局开始后的首个 HUD 快照创建，开始菜单阶段不显示。
+            if (_sellSlot == null)
+            {
+                _sellSlot = CreateSellSlot();
+                LayoutShopSlots();
+            }
+            _sellSlot.Render(snapshot.Coins);
             bool shopLayoutChanged = false;
             var slotIds = new HashSet<string>(snapshot.Boosters.Select(item => item.Id));
             foreach (string id in _shopSlots.Keys.Where(id => !slotIds.Contains(id)).ToArray())
@@ -550,42 +555,26 @@ namespace GameLogic.Core.View
             renderer.sprite = _whiteSprite;
             renderer.color = new Color32(175, 224, 181, 255);
             renderer.sortingOrder = -100;
-            frame.transform.localScale = new Vector3(22f, 13f, 1f);
+            _boardFrame = frame.transform;
+            UpdateBoardFrame();
         }
 
-        private void CreateDecorations()
+        /// <summary>
+        /// 牌桌底色矩形跟随相机视野缩放与平移，始终铺满屏幕并留 1 单位余量。
+        /// </summary>
+        private void UpdateBoardFrame()
         {
-            Color ink = new Color(0.18f, 0.38f, 0.24f, 0.22f);
-            CreateLine("Pine Left", new Vector2(-8.7f, -4.7f), ink,
-                new Vector2(0, 0), new Vector2(0.8f, 1.4f), new Vector2(0.35f, 1.25f),
-                new Vector2(1f, 2.3f), new Vector2(0.55f, 2.1f), new Vector2(1.15f, 3.1f),
-                new Vector2(1.75f, 2.1f), new Vector2(1.3f, 2.3f), new Vector2(1.95f, 1.25f),
-                new Vector2(1.5f, 1.4f), new Vector2(2.3f, 0), new Vector2(0, 0));
-            CreateLine("Bush Right", new Vector2(7.3f, -4.5f), ink,
-                new Vector2(0, 0), new Vector2(0.15f, 0.65f), new Vector2(0.55f, 0.95f),
-                new Vector2(0.9f, 0.72f), new Vector2(1.25f, 1.05f), new Vector2(1.7f, 0.7f),
-                new Vector2(1.85f, 0), new Vector2(0, 0));
-            for (int i = 0; i < 7; i++)
+            if (_boardFrame == null || _camera == null) return;
+            float aspect = _camera.aspect;
+            if (_boardFrameOrtho != _camera.orthographicSize || _boardFrameAspect != aspect)
             {
-                float x = -7.2f + i * 2.3f;
-                float y = i % 2 == 0 ? 4.4f : -3.4f;
-                CreateLine("Grass " + i, new Vector2(x, y), ink,
-                    new Vector2(-0.3f, 0), new Vector2(-0.1f, 0.45f), new Vector2(0, 0),
-                    new Vector2(0.15f, 0.55f), new Vector2(0.2f, 0), new Vector2(0.45f, 0.38f));
+                _boardFrameOrtho = _camera.orthographicSize;
+                _boardFrameAspect = aspect;
+                float height = _camera.orthographicSize * 2f + 1f;
+                _boardFrame.localScale = new Vector3(height * aspect + 1f, height, 1f);
             }
-        }
-
-        private void CreateLine(string objectName, Vector2 origin, Color color, params Vector2[] points)
-        {
-            var go = new GameObject(objectName);
-            go.transform.SetParent(transform, false);
-            go.transform.localPosition = new Vector3(origin.x, origin.y, 0f);
-            var line = go.AddComponent<LineRenderer>();
-            line.useWorldSpace = false; line.loop = false; line.positionCount = points.Length;
-            line.startWidth = 0.035f; line.endWidth = 0.035f;
-            line.startColor = color; line.endColor = color; line.sortingOrder = -90;
-            line.material = new Material(Shader.Find("Sprites/Default"));
-            for (int i = 0; i < points.Length; i++) line.SetPosition(i, points[i]);
+            Vector3 cameraPosition = _camera.transform.position;
+            _boardFrame.position = new Vector3(cameraPosition.x, cameraPosition.y, 0f);
         }
 
         /// <summary>
