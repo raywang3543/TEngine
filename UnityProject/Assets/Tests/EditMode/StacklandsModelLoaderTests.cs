@@ -26,8 +26,9 @@ namespace GameLogic.Tests
         {
             IStacklandsContentModel content = StacklandsModelLoader.Build(_tables);
 
-            Assert.That(content.Cards.All.Count(card => !card.Id.StartsWith("test_")), Is.EqualTo(121));
-            Assert.That(content.Cards.Count, Is.EqualTo(123));
+            Assert.That(content.Cards.All.Any(card => card.Id.StartsWith("test_")), Is.False,
+                "临时 test_ 配置卡已删除，不应再出现在目录中");
+            Assert.That(content.Cards.Count, Is.EqualTo(121));
             Assert.That(content.Cards.All.Count(card => card.Category == "IDEA"), Is.EqualTo(32));
             Assert.That(content.Cards.All.Count(card => card.Category == "RUMOR"), Is.EqualTo(2));
             Assert.That(content.Quests.Count, Is.EqualTo(56));
@@ -178,6 +179,7 @@ namespace GameLogic.Tests
             try
             {
                 CoreSystem.Initialize(content, store, boardView);
+                CoreSystem.SubmitCommand(new StacklandsCommandDto { Kind = StacklandsCommandKind.ContinueGame });
                 CoreSystem.SubmitCommand(new StacklandsCommandDto
                 {
                     Kind = StacklandsCommandKind.MoveStack,
@@ -407,6 +409,7 @@ namespace GameLogic.Tests
             try
             {
                 CoreSystem.Initialize(content, store, boardView);
+                CoreSystem.SubmitCommand(new StacklandsCommandDto { Kind = StacklandsCommandKind.ContinueGame });
                 CoreSystem.SubmitCommand(new StacklandsCommandDto
                 {
                     Kind = StacklandsCommandKind.MoveBooster,
@@ -474,6 +477,7 @@ namespace GameLogic.Tests
             try
             {
                 CoreSystem.Initialize(content, store, boardView);
+                CoreSystem.SubmitCommand(new StacklandsCommandDto { Kind = StacklandsCommandKind.ContinueGame });
                 CoreSystem.SubmitCommand(new StacklandsCommandDto
                 {
                     Kind = StacklandsCommandKind.BuyBooster,
@@ -536,6 +540,7 @@ namespace GameLogic.Tests
             try
             {
                 CoreSystem.Initialize(content, store, boardView);
+                CoreSystem.SubmitCommand(new StacklandsCommandDto { Kind = StacklandsCommandKind.ContinueGame });
                 CoreSystem.SubmitCommand(new StacklandsCommandDto
                 {
                     Kind = StacklandsCommandKind.BuyBooster,

@@ -98,9 +98,11 @@ namespace GameLogic.Core.View
 
         /// <summary>
         /// 按底图实际尺寸换算缩放，不依赖贴图 Pixels Per Unit 设置。
+        /// EditMode 测试等场景下回退 Sprite 为 null 时保持默认缩放。
         /// </summary>
         private void FitToSprite(Sprite sprite)
         {
+            if (sprite == null) return;
             Vector2 size = sprite.bounds.size;
             _body.transform.localScale = new Vector3(SlotWidth / size.x, SlotHeight / size.y, 1f);
         }
