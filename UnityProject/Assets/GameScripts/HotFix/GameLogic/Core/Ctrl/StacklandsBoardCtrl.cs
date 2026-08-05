@@ -72,7 +72,7 @@ namespace GameLogic.Core.Ctrl
             }
             Model.NormalizeStacks();
             string stackId = moving[0].StackId;
-            if (!TryEquipStack(stackId) && !CoreSystem.WorkCtrl.TryStartRecipe(stackId))
+            if (!CoreSystem.EquipmentCtrl.TryEquipStack(stackId) && !CoreSystem.WorkCtrl.TryStartRecipe(stackId))
                 CoreSystem.WorkCtrl.TryStartAction(stackId);
             Model.Increment("EventCount:drag_card");
             Model.Changed();
@@ -101,36 +101,5 @@ namespace GameLogic.Core.Ctrl
             Model.Changed();
         }
 
-        internal void Equip(string equipmentId, string unitId)
-        {
-            CardRunData equipment = Model.GetCard(equipmentId);
-            CardRunData unit = Model.GetCard(unitId);
-            if (equipment == null || unit == null || !Model.Content.Equipment.Contains(equipment.CardId) ||
-                !Model.Content.Units.Contains(unit.CardId)) return;
-            if (!string.IsNullOrEmpty(unit.EquipmentCardId))
-                Model.AddCard(unit.EquipmentCardId, unit.X + 0.5f, unit.Y, false);
-            unit.EquipmentCardId = equipment.CardId;
-            Model.RemoveCard(equipment);
-            Model.Changed();
-        }
-
-        internal void Unequip(string unitId)
-        {
-            CardRunData unit = Model.GetCard(unitId);
-            if (unit == null || string.IsNullOrEmpty(unit.EquipmentCardId)) return;
-            Model.AddCard(unit.EquipmentCardId, unit.X + 0.5f, unit.Y, false);
-            unit.EquipmentCardId = null;
-            Model.Changed();
-        }
-
-        internal bool TryEquipStack(string stackId)
-        {
-            List<CardRunData> cards = Model.StackCards(stackId);
-            CardRunData equipment = cards.FirstOrDefault(card => Model.Content.Equipment.Contains(card.CardId));
-            CardRunData unit = cards.FirstOrDefault(card => Model.Content.Units.Contains(card.CardId));
-            if (equipment == null || unit == null || equipment == unit) return false;
-            Equip(equipment.InstanceId, unit.InstanceId);
-            return true;
-        }
     }
 }

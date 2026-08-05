@@ -91,8 +91,8 @@ namespace GameLogic.Core.Ctrl
             if (worker != null)
             {
                 float speed = Model.Content.Units.Get(worker.CardId).WorkSpeed.GetValueOrDefault(1f);
-                if (!string.IsNullOrEmpty(worker.EquipmentCardId) && Model.Content.Equipment.Contains(worker.EquipmentCardId))
-                    speed *= Model.Content.Equipment.Get(worker.EquipmentCardId).WorkSpeedMultiplier;
+                foreach (EquipmentDefinition equipment in CoreSystem.EquipmentCtrl.GetEquipment(worker))
+                    speed *= equipment.WorkSpeedMultiplier;
                 duration /= Math.Max(0.1f, speed);
             }
             Model.Run.Works.Add(new WorkRunData

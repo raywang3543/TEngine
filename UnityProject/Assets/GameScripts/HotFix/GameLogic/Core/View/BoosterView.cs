@@ -16,6 +16,7 @@ namespace GameLogic.Core.View
         private SortingGroup _sortingGroup;
         private SpriteRenderer _body;
         private TextMesh _text;
+        private BoxCollider2D _collider;
 
         public string InstanceId { get; private set; }
 
@@ -56,17 +57,20 @@ namespace GameLogic.Core.View
             if (font != null) _text.GetComponent<MeshRenderer>().sharedMaterial = font.material;
             _text.GetComponent<MeshRenderer>().sortingOrder = 1;
             FitText();
-            gameObject.AddComponent<BoxCollider2D>().size = Vector2.one;
+            _collider = gameObject.AddComponent<BoxCollider2D>();
+            _collider.size = Vector2.one;
             return this;
         }
 
         /// <summary>
         /// 按底图实际尺寸换算缩放，不依赖贴图 Pixels Per Unit 设置。
+        /// 碰撞体尺寸同步为精灵 bounds，保证触摸范围始终覆盖整个卡包显示区域。
         /// </summary>
         private void FitToSprite(Sprite sprite)
         {
             Vector2 size = sprite.bounds.size;
             transform.localScale = new Vector3(BoosterWidth / size.x, BoosterHeight / size.y, 1f);
+            _collider.size = size;
             FitText();
         }
 

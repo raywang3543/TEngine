@@ -50,9 +50,9 @@ namespace GameLogic.Core.Ctrl
                 case StacklandsCommandKind.SellCard:
                     CoreSystem.BoardCtrl.Sell(command.InstanceId); break;
                 case StacklandsCommandKind.Equip:
-                    CoreSystem.BoardCtrl.Equip(command.InstanceId, command.TargetInstanceId); break;
+                    CoreSystem.EquipmentCtrl.Equip(command.InstanceId, command.TargetInstanceId); break;
                 case StacklandsCommandKind.Unequip:
-                    CoreSystem.BoardCtrl.Unequip(command.InstanceId); break;
+                    CoreSystem.EquipmentCtrl.Unequip(command.InstanceId, command.EquipmentSlot); break;
                 case StacklandsCommandKind.ConfirmSummon:
                     if (command.Flag) CoreSystem.WorkCtrl.StartSummonAction(command.InstanceId); break;
                 case StacklandsCommandKind.SaveGame:
@@ -128,6 +128,7 @@ namespace GameLogic.Core.Ctrl
             Model.Run = data;
             Model.Random = new DeterministicRandom(data.RandomState);
             Model.RemoveInvalidSaveEntries();
+            CoreSystem.EquipmentCtrl.MigrateAndValidateRun();
             CoreSystem.ViewCtrl.PublishAll();
         }
     }

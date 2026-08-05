@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using GameLogic.Core.Model;
 
 namespace GameLogic.Core
 {
@@ -20,6 +21,7 @@ namespace GameLogic.Core
         public float Y;
         public float Number;
         public bool Flag;
+        public EquipmentSlotKind EquipmentSlot;
 
         public static StacklandsCommandDto NewGame(bool peaceful, int moonLengthIndex)
         {

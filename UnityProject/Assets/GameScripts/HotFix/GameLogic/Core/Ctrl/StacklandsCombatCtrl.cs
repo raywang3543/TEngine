@@ -32,10 +32,9 @@ namespace GameLogic.Core.Ctrl
                     Attack(attacker, targets[Model.Random.Range(0, targets.Count)]);
                     UnitDefinition unit = Model.Content.Units.Get(attacker.CardId);
                     float interval = unit.AttackInterval.GetValueOrDefault(2f);
-                    if (!string.IsNullOrEmpty(attacker.EquipmentCardId) &&
-                        Model.Content.Equipment.Contains(attacker.EquipmentCardId))
-                        interval *= Math.Max(0.2f,
-                            1f - Model.Content.Equipment.Get(attacker.EquipmentCardId).AttackSpeedDelta / 100f);
+                    int attackSpeedDelta = CoreSystem.EquipmentCtrl.GetEquipment(attacker)
+                        .Sum(item => item.AttackSpeedDelta);
+                    interval *= Math.Max(0.2f, 1f - attackSpeedDelta / 100f);
                     attacker.AttackCooldown = Math.Max(0.2f, interval);
                     friendly.RemoveAll(item => Model.GetCard(item.InstanceId) == null);
                     hostile.RemoveAll(item => Model.GetCard(item.InstanceId) == null);
@@ -47,6 +46,7 @@ namespace GameLogic.Core.Ctrl
         {
             string cardId = card.CardId; float x = card.X, y = card.Y;
             UnitDefinition unit = Model.Content.Units.Get(cardId);
+            CoreSystem.EquipmentCtrl.DropAll(card);
             Model.RemoveCard(card);
             if (!string.IsNullOrEmpty(unit.DeathResultCardId))
                 Model.AddCard(unit.DeathResultCardId, x, y, false);
@@ -81,20 +81,17 @@ namespace GameLogic.Core.Ctrl
         {
             UnitDefinition source = Model.Content.Units.Get(attacker.CardId);
             UnitDefinition destination = Model.Content.Units.Get(target.CardId);
-            EquipmentDefinition sourceEquipment = !string.IsNullOrEmpty(attacker.EquipmentCardId) &&
-                                                   Model.Content.Equipment.Contains(attacker.EquipmentCardId)
-                ? Model.Content.Equipment.Get(attacker.EquipmentCardId) : null;
-            EquipmentDefinition targetEquipment = !string.IsNullOrEmpty(target.EquipmentCardId) &&
-                                                   Model.Content.Equipment.Contains(target.EquipmentCardId)
-                ? Model.Content.Equipment.Get(target.EquipmentCardId) : null;
-            float hitChance = source.HitChance.GetValueOrDefault(0.75f) + (sourceEquipment?.HitDelta ?? 0) / 100f;
+            IReadOnlyList<EquipmentDefinition> sourceEquipment = CoreSystem.EquipmentCtrl.GetEquipment(attacker);
+            IReadOnlyList<EquipmentDefinition> targetEquipment = CoreSystem.EquipmentCtrl.GetEquipment(target);
+            float hitChance = source.HitChance.GetValueOrDefault(0.75f) +
+                              sourceEquipment.Sum(item => item.HitDelta) / 100f;
             if (Model.Random.NextFloat() > hitChance) return;
             int min = source.DamageMin.GetValueOrDefault(1), max = source.DamageMax.GetValueOrDefault(min);
-            int damage = Model.Random.Range(min, max + 1) + (sourceEquipment?.DamageDelta ?? 0);
+            int damage = Model.Random.Range(min, max + 1) + sourceEquipment.Sum(item => item.DamageDelta);
             damage = Math.Max(1, damage - destination.Defense.GetValueOrDefault() -
-                                 (targetEquipment?.DefenseDelta ?? 0));
-            AttackKind sourceKind = sourceEquipment != null && sourceEquipment.AttackType != AttackKind.None
-                ? sourceEquipment.AttackType : source.AttackType;
+                                 targetEquipment.Sum(item => item.DefenseDelta));
+            EquipmentDefinition attackTypeEquipment = CoreSystem.EquipmentCtrl.GetAttackTypeEquipment(attacker);
+            AttackKind sourceKind = attackTypeEquipment?.AttackType ?? source.AttackType;
             if (HasAdvantage(sourceKind, destination.AttackType))
                 damage = Math.Max(1,
                     (int)Math.Round(damage * Model.Content.WorldRules.CombatAdvantageMultiplier));

@@ -122,8 +122,8 @@ namespace GameLogic.Core.Ctrl
             int maxHp = Model.Content.Units.Contains(card.CardId)
                 ? Model.Content.Units.Get(card.CardId).MaxHp.GetValueOrDefault() : 0;
             string displayId = card.CardId;
-            if (!string.IsNullOrEmpty(card.EquipmentCardId) && Model.Content.Equipment.Contains(card.EquipmentCardId))
-                displayId = Model.Content.Equipment.Get(card.EquipmentCardId).ProfessionCardId;
+            string professionCardId = CoreSystem.EquipmentCtrl.GetProfessionCardId(card);
+            if (!string.IsNullOrEmpty(professionCardId)) displayId = professionCardId;
             CardDefinition display = Model.Content.Cards.Contains(displayId)
                 ? Model.Content.Cards.Get(displayId) : definition;
             return new CardSnapshot

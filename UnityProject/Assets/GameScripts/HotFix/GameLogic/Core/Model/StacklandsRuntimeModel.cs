@@ -15,6 +15,35 @@ namespace GameLogic.Core.Model
     }
 
     [Serializable]
+    public sealed class EquipmentSlotsRunData
+    {
+        public string Hand;
+        public string Head;
+        public string Body;
+
+        public string Get(EquipmentSlotKind slot)
+        {
+            switch (slot)
+            {
+                case EquipmentSlotKind.Hand: return Hand;
+                case EquipmentSlotKind.Head: return Head;
+                case EquipmentSlotKind.Body: return Body;
+                default: return null;
+            }
+        }
+
+        public void Set(EquipmentSlotKind slot, string cardId)
+        {
+            switch (slot)
+            {
+                case EquipmentSlotKind.Hand: Hand = cardId; break;
+                case EquipmentSlotKind.Head: Head = cardId; break;
+                case EquipmentSlotKind.Body: Body = cardId; break;
+            }
+        }
+    }
+
+    [Serializable]
     public sealed class CardRunData
     {
         public string InstanceId;
@@ -26,6 +55,8 @@ namespace GameLogic.Core.Model
         public bool IsFoil;
         public int Hp;
         public int Uses;
+        public EquipmentSlotsRunData EquipmentSlots = new EquipmentSlotsRunData();
+        // 版本 1 存档兼容字段；加载后由 StacklandsEquipmentCtrl 迁移并清空。
         public string EquipmentCardId;
         public float AttackCooldown;
         public float StunRemaining;
@@ -65,7 +96,7 @@ namespace GameLogic.Core.Model
     [Serializable]
     public sealed class StacklandsRunData
     {
-        public int Version = 1;
+        public int Version = 2;
         public uint RandomState;
         public int Moon = 1;
         public float MoonRemaining;

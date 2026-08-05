@@ -21,6 +21,8 @@ namespace GameLogic.Core.View
         private const float MaxOrthoSize = 7f;
         private const float ShopShelfY = MaxOrthoSize * 0.5f;
         private const float ShopSlotSpacing = 1.75f;
+        // 卡槽组整体右移量：2 个卡槽宽度（卡槽宽 1.35，见 ShopSlotView.SlotWidth）。
+        private const float ShopSlotsXOffset = 2.7f;
         private readonly Dictionary<string, CardView> _cards = new Dictionary<string, CardView>();
         private readonly Dictionary<string, BoosterView> _boosters = new Dictionary<string, BoosterView>();
         private readonly Dictionary<string, ShopSlotView> _shopSlots = new Dictionary<string, ShopSlotView>();
@@ -542,12 +544,12 @@ namespace GameLogic.Core.View
         }
 
         /// <summary>
-        /// 出售槽与商店槽作为整体在世界原点水平居中，垂直固定在中心与地图上边界中间（ShopShelfY）。
+        /// 出售槽与商店槽作为整体水平居中后再右移 ShopSlotsXOffset，垂直固定在中心与地图上边界中间（ShopShelfY）。
         /// </summary>
         private void LayoutShopSlots()
         {
             if (_sellSlot == null) return;
-            float firstX = -ShopSlotSpacing * _shopSlots.Count * 0.5f;
+            float firstX = ShopSlotsXOffset - ShopSlotSpacing * _shopSlots.Count * 0.5f;
             _sellSlot.SetLayout(new Vector3(firstX, ShopShelfY, 0f));
 
             int index = 0;

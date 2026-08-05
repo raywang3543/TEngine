@@ -18,6 +18,7 @@ namespace GameLogic.Core
 
         internal static StacklandsRunCtrl RunCtrl { get; private set; }
         internal static StacklandsBoardCtrl BoardCtrl { get; private set; }
+        internal static StacklandsEquipmentCtrl EquipmentCtrl { get; private set; }
         internal static StacklandsWorkCtrl WorkCtrl { get; private set; }
         internal static StacklandsLootCtrl LootCtrl { get; private set; }
         internal static StacklandsCombatCtrl CombatCtrl { get; private set; }
@@ -33,6 +34,7 @@ namespace GameLogic.Core
                 saveStore ?? throw new ArgumentNullException(nameof(saveStore)));
             View = view ?? throw new ArgumentNullException(nameof(view));
             RunCtrl = new StacklandsRunCtrl();
+            EquipmentCtrl = new StacklandsEquipmentCtrl();
             BoardCtrl = new StacklandsBoardCtrl();
             WorkCtrl = new StacklandsWorkCtrl();
             LootCtrl = new StacklandsLootCtrl();
@@ -61,6 +63,7 @@ namespace GameLogic.Core
             CombatCtrl = null;
             LootCtrl = null;
             WorkCtrl = null;
+            EquipmentCtrl = null;
             BoardCtrl = null;
             RunCtrl = null;
             View = null;
