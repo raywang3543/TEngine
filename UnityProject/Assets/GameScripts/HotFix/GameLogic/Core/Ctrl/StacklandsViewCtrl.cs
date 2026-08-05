@@ -57,21 +57,19 @@ namespace GameLogic.Core.Ctrl
                         Completed = Model.Profile.CompletedQuests.Contains(quest.Id), IsMain = quest.IsMain,
                     }).ToList().AsReadOnly(),
                 Boosters = Model.Content.Boosters.All
+                    // 非购买获取的卡包（任务特殊奖励）不进商店，不生成卡槽。
+                    .Where(pack => pack.AcquireMode == "PURCHASE")
                     .OrderBy(GetBoosterUnlockGroup)
                     .ThenBy(GetBoosterUnlockThreshold)
                     .ThenBy(pack => pack.Id)
                     .Select(pack =>
                     {
-                        bool purchasable = pack.AcquireMode == "PURCHASE";
-                        bool unlocked = purchasable &&
-                                        Model.Profile.CompletedQuests.Count >= pack.UnlockQuestCount;
+                        bool unlocked = Model.Profile.CompletedQuests.Count >= pack.UnlockQuestCount;
                         return new BoosterShopSnapshot
                         {
                             Id = pack.Id, NameZh = pack.NameZh, Price = pack.PriceAmount,
                             Unlocked = unlocked,
-                            LockText = !purchasable
-                                ? "特殊奖励"
-                                : unlocked ? string.Empty : $"完成 {pack.UnlockQuestCount} 项任务",
+                            LockText = unlocked ? string.Empty : $"完成 {pack.UnlockQuestCount} 项任务",
                         };
                     }).ToList().AsReadOnly(),
                 Cardopedia = Model.Content.Cards.All.OrderBy(item => item.Category).ThenBy(item => item.NameZh)
