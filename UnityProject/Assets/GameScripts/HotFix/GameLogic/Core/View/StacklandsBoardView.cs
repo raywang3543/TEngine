@@ -65,9 +65,8 @@ namespace GameLogic.Core.View
                 _camera = cameraObject.AddComponent<Camera>();
                 cameraObject.tag = "MainCamera";
             }
-
             _camera.orthographic = true;
-            _camera.orthographicSize = 7f;
+            _camera.orthographicSize = 5f;
             _camera.transform.position = new Vector3(0f, 0f, -10f);
             _camera.rect = new Rect(0f, 0f, 1f, 1f);
             foreach (Camera overlayCamera in FindObjectsByType<Camera>(FindObjectsSortMode.None))
