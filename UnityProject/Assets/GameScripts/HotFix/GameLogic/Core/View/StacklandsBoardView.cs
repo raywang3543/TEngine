@@ -22,11 +22,11 @@ namespace GameLogic.Core.View
         private const float MaxOrthoSize = 7f;
         private const float ShopShelfY = MaxOrthoSize * 0.5f;
         private const float ShopSlotSpacing = 1.75f;
-        // 卡槽组整体右移量：2 个卡槽宽度（卡槽宽 1.35，见 ShopSlotView.SlotWidth）。
+        // 卡槽组整体右移量：2 个卡槽宽度（卡槽图 135px @ PPU 100 = 1.35 世界单位）。
         private const float ShopSlotsXOffset = 2.7f;
-        // 装备卡堆相对单位的横向间距与纵向偏移。
-        private const float EquipmentFanSpacing = 1.2f;
-        private const float EquipmentFanYOffset = -1.6f;
+        // 装备卡堆相对单位的横向间距与纵向偏移（装备卡与牌面同图，1.5 x 2 世界单位）。
+        private const float EquipmentFanSpacing = 1.6f;
+        private const float EquipmentFanYOffset = -1.85f;
         private readonly Dictionary<string, CardView> _cards = new Dictionary<string, CardView>();
         private readonly Dictionary<string, BoosterView> _boosters = new Dictionary<string, BoosterView>();
         private readonly Dictionary<string, ShopSlotView> _shopSlots = new Dictionary<string, ShopSlotView>();

@@ -9,15 +9,13 @@ namespace GameLogic.Core.View
     /// </summary>
     internal sealed class EquippedCardView : MonoBehaviour
     {
-        private const float Width = 1.1f;
-        private const float Height = 1.5f;
         private const int FanSortingOrder = 500;
         private BoxCollider2D _collider;
 
         public EquipmentSlotKind Slot { get; private set; }
 
         /// <summary>
-        /// 根节点不缩放，底图作为子节点按精灵实际尺寸换算缩放，碰撞体直接按世界尺寸设置。
+        /// 底图按图片原始尺寸渲染，碰撞体与底图同尺寸。
         /// </summary>
         public static EquippedCardView Create(Transform parent, EquippedItemSnapshot data, Sprite fallback,
             Font font, Sprite background)
@@ -34,8 +32,6 @@ namespace GameLogic.Core.View
             var body = bodyObject.AddComponent<SpriteRenderer>();
             body.sprite = background != null ? background : fallback;
             body.color = Color.white;
-            Vector2 size = body.sprite.bounds.size;
-            bodyObject.transform.localScale = new Vector3(Width / size.x, Height / size.y, 1f);
 
             var textObject = new GameObject("Text");
             textObject.transform.SetParent(go.transform, false);
@@ -52,7 +48,7 @@ namespace GameLogic.Core.View
             text.GetComponent<MeshRenderer>().sortingOrder = 1;
 
             view._collider = go.AddComponent<BoxCollider2D>();
-            view._collider.size = new Vector2(Width, Height);
+            view._collider.size = body.sprite.bounds.size;
             return view;
         }
 

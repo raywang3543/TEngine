@@ -10,7 +10,7 @@ import os
 from PIL import Image, ImageDraw
 
 # 最终尺寸（3:4），4 倍超采样抗锯齿
-WIDTH, HEIGHT = 240, 320
+WIDTH, HEIGHT = 150, 200
 SS = 4
 CORNER_RADIUS = 26
 BORDER_WIDTH = 10
@@ -41,15 +41,17 @@ OUT_DIR = os.path.join(
 
 # 卡包底图：尺寸对应 Core/View/BoosterView.cs 的卡包比例（1.6 x 2.2 世界单位 = 8:11）。
 # 填充用近黑色而非纯黑，避免与描边糊成一团。
-BOOSTER_WIDTH, BOOSTER_HEIGHT = 240, 330
+BOOSTER_WIDTH, BOOSTER_HEIGHT = 160, 220
 BOOSTERS = {
     "booster_bg_black": (36, 36, 36),
 }
 
-# 卡槽底图：尺寸对应 Core/View/SellSlotView.cs 的出售槽比例（1.4 x 1.55 世界单位 = 28:31）。
+# 卡槽底图：尺寸 135x155（27:31，宽度较世界比例 1.4 x 1.55 略收窄）。
 # 填充烘焙为出售槽/可购买商店槽的目标色 (10, 11, 10)，无独立描边，
 # 其余状态由代码按目标色 / 底色的倍率染色还原。
-SLOT_WIDTH, SLOT_HEIGHT = 280, 310
+# 圆角半径固定 30px（沿用 280 宽时的视觉弧度，不随新宽度等比缩小）。
+SLOT_WIDTH, SLOT_HEIGHT = 135, 155
+SLOT_CORNER_RADIUS = 30
 SLOTS = {
     "slot_bg_black": (10, 11, 10),
 }
@@ -78,7 +80,7 @@ def make_card(fill_rgb, width=WIDTH, height=HEIGHT):
 def make_slot(fill_rgb, width=SLOT_WIDTH, height=SLOT_HEIGHT):
     """纯色圆角矩形，无描边，对应卡槽当前白底染色的表现。"""
     w, h = width * SS, height * SS
-    radius = CORNER_RADIUS * SS * width // WIDTH
+    radius = SLOT_CORNER_RADIUS * SS
 
     image = Image.new("RGBA", (w, h), (0, 0, 0, 0))
     draw = ImageDraw.Draw(image)
@@ -87,20 +89,44 @@ def make_slot(fill_rgb, width=SLOT_WIDTH, height=SLOT_HEIGHT):
     return image.resize((width, height), Image.LANCZOS)
 
 
+def sync_meta_rect(png_path, width, height):
+    """PNG 尺寸变化后同步 .meta 中 spriteSheet 的显式 rect。
+
+    多精灵导入的贴图在 meta 里固化了子精灵矩形；只改 PNG 不改 rect 会让
+    子精灵越界、YooAsset 取不到 Sprite（游戏内表现为回退纯色块）。
+    """
+    import re
+
+    meta_path = png_path + ".meta"
+    if not os.path.exists(meta_path):
+        return
+    with open(meta_path, encoding="utf-8") as f:
+        content = f.read()
+    pattern = r"(      rect:\n        serializedVersion: 2\n        x: 0\n        y: 0\n        width: )\d+(\n        height: )\d+"
+    new_content = re.sub(pattern, lambda m: m.group(1) + str(width) + m.group(2) + str(height), content)
+    if new_content != content:
+        with open(meta_path, "w", encoding="utf-8") as f:
+            f.write(new_content)
+        print("meta rect synced:", meta_path)
+
+
 def main():
     out_dir = os.path.normpath(OUT_DIR)
     os.makedirs(out_dir, exist_ok=True)
     for name, rgb in CARDS.items():
         path = os.path.join(out_dir, name + ".png")
         make_card(rgb).save(path)
+        sync_meta_rect(path, WIDTH, HEIGHT)
         print("written:", path)
     for name, rgb in BOOSTERS.items():
         path = os.path.join(out_dir, name + ".png")
         make_card(rgb, BOOSTER_WIDTH, BOOSTER_HEIGHT).save(path)
+        sync_meta_rect(path, BOOSTER_WIDTH, BOOSTER_HEIGHT)
         print("written:", path)
     for name, rgb in SLOTS.items():
         path = os.path.join(out_dir, name + ".png")
         make_slot(rgb).save(path)
+        sync_meta_rect(path, SLOT_WIDTH, SLOT_HEIGHT)
         print("written:", path)
 
 

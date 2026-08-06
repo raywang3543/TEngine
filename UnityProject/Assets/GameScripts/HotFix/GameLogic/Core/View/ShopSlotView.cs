@@ -8,8 +8,6 @@ namespace GameLogic.Core.View
     /// </summary>
     internal sealed class ShopSlotView : MonoBehaviour
     {
-        private const float SlotWidth = 1.35f;
-        private const float SlotHeight = 1.55f;
         // 图集底图 slot_bg_black 的烘焙填充色；底图未加载时回退为白色 Sprite 直接染色。
         private static readonly Color32 SlotImageBase = new Color32(10, 11, 10, 255);
         private SpriteRenderer _body;
@@ -55,7 +53,7 @@ namespace GameLogic.Core.View
         public bool Contains(Vector2 worldPosition) => _collider != null && _collider.OverlapPoint(worldPosition);
 
         /// <summary>
-        /// 图集卡槽底图；为 null 时保持白色 Sprite 染色的回退表现。
+        /// 图集卡槽底图，按图片原始尺寸渲染；为 null 时保持白色 Sprite 染色的回退表现。
         /// </summary>
         public Sprite Background
         {
@@ -64,7 +62,7 @@ namespace GameLogic.Core.View
                 if (value == null || _body == null || _body.sprite == value) return;
                 _body.sprite = value;
                 _tintBase = SlotImageBase;
-                FitToSprite(value);
+                _collider.size = value.bounds.size;
                 _body.color = TintFor(_lastTarget);
             }
         }
@@ -77,9 +75,8 @@ namespace GameLogic.Core.View
             _body = background.AddComponent<SpriteRenderer>();
             _body.sprite = sprite;
             _body.sortingOrder = -60;
-            FitToSprite(sprite);
 
-            // 边框与底图同尺寸，作为子节点继承缩放即可对齐，默认隐藏。
+            // 边框与底图同为原始尺寸，作为子节点即可对齐，默认隐藏。
             var border = new GameObject("Border");
             border.transform.SetParent(background.transform, false);
             _border = border.AddComponent<SpriteRenderer>();
@@ -100,7 +97,8 @@ namespace GameLogic.Core.View
             _text.GetComponent<MeshRenderer>().sortingOrder = -55;
 
             _collider = gameObject.AddComponent<BoxCollider2D>();
-            _collider.size = new Vector2(SlotWidth, SlotHeight);
+            // 碰撞体跟随底图的原始世界尺寸（EditMode 测试等场景下底图为 null 时保持默认 1x1）。
+            if (_body.sprite != null) _collider.size = _body.sprite.bounds.size;
             return this;
         }
 
@@ -121,16 +119,6 @@ namespace GameLogic.Core.View
         public void SetLayout(Vector3 position)
         {
             transform.position = position;
-        }
-
-        /// <summary>
-        /// 按底图实际尺寸换算缩放，不依赖贴图 Pixels Per Unit 设置。
-        /// </summary>
-        private void FitToSprite(Sprite sprite)
-        {
-            if (sprite == null) return;
-            Vector2 size = sprite.bounds.size;
-            _body.transform.localScale = new Vector3(SlotWidth / size.x, SlotHeight / size.y, 1f);
         }
 
         /// <summary>

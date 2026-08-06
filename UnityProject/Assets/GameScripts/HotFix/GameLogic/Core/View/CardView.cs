@@ -10,8 +10,6 @@ namespace GameLogic.Core.View
     /// </summary>
     internal sealed class CardView : MonoBehaviour
     {
-        private const float CardWidth = 1.5f;
-        private const float CardHeight = 2f;
         private const int DragSortingBase = 30000;
         // 装备槽指示圆点：中下位置，左到右对应 Hand / Head / Body。
         private const float EquipmentDotY = -0.35f;
@@ -31,6 +29,7 @@ namespace GameLogic.Core.View
         private Sprite _borderBlack;
         private Sprite _borderWhite;
         private Sprite _borderYellow;
+        private BoxCollider2D _collider;
         private bool _selected;
         private bool _dragSorting;
         private bool _wholeStackDragFeedback;
@@ -46,9 +45,8 @@ namespace GameLogic.Core.View
             _fallbackSprite = sprite;
             _cardSprites = cardSprites;
             _sortingGroup = gameObject.AddComponent<SortingGroup>();
-            _outline = AddSprite("Outline", sprite, Color.black, -1,
-                new Vector3(CardWidth + 0.12f, CardHeight + 0.12f));
-            _body = AddSprite("Body", sprite, Color.white, 0, new Vector3(CardWidth, CardHeight));
+            _outline = AddSprite("Outline", sprite, Color.black, -1, Vector3.one);
+            _body = AddSprite("Body", sprite, Color.white, 0, Vector3.one);
             _title = AddText("Title", font, 36, TextAnchor.MiddleCenter, new Vector3(0, 0.55f, -0.05f));
             _footer = AddText("Footer", font, 22, TextAnchor.MiddleCenter, new Vector3(0, -0.67f, -0.05f));
             _wholeStackBadge = AddText("WholeStackBadge", font, 20, TextAnchor.UpperCenter,
@@ -56,7 +54,9 @@ namespace GameLogic.Core.View
             _wholeStackBadge.text = StacklandsTexts.WholeStackBadge;
             _wholeStackBadge.color = new Color32(255, 226, 92, 255);
             _wholeStackBadge.gameObject.SetActive(false);
-            gameObject.AddComponent<BoxCollider2D>().size = new Vector2(CardWidth, CardHeight);
+            // 碰撞体跟随牌面图片的原始世界尺寸（图片按 PPU 烘焙为目标大小，不再代码缩放）。
+            _collider = gameObject.AddComponent<BoxCollider2D>();
+            _collider.size = sprite.bounds.size;
             Transform track = AddSprite("ProgressTrack", sprite, Color.black, 2, new Vector3(1.25f, 0.09f)).transform;
             track.localPosition = new Vector3(0, -0.87f, -0.1f);
             _progress = AddSprite("Progress", sprite, new Color32(255, 238, 150, 255), 3,
@@ -85,8 +85,7 @@ namespace GameLogic.Core.View
             if (_body.sprite != body)
             {
                 _body.sprite = body;
-                Vector2 size = body.bounds.size;
-                _body.transform.localScale = new Vector3(CardWidth / size.x, CardHeight / size.y, 1f);
+                _collider.size = body.bounds.size;
             }
             _body.color = tint;
             RefreshOutline();
@@ -192,24 +191,24 @@ namespace GameLogic.Core.View
                 : _selected ? _borderWhite : _borderBlack;
             if (border != null)
             {
-                // 边框图与牌面同尺寸、内芯透明，叠在牌面正上方。
+                // 边框图与牌面同尺寸、内芯透明，按原始大小叠在牌面正上方。
                 _outline.sprite = border;
                 _outline.color = Color.white;
                 _outline.sortingOrder = 4;
-                Vector2 size = border.bounds.size;
-                _outline.transform.localScale = new Vector3(CardWidth / size.x, CardHeight / size.y, 1f);
+                _outline.transform.localScale = Vector3.one;
                 return;
             }
 
             // 边框图集未加载完成前的回退：纯色 Sprite 放大后垫在牌面底下。
+            Vector2 bodySize = _body.sprite.bounds.size;
             _outline.sprite = _fallbackSprite;
             _outline.sortingOrder = -1;
             _outline.color = _wholeStackDragFeedback
                 ? new Color32(255, 226, 92, 255)
                 : _selected ? Color.white : Color.black;
             _outline.transform.localScale = _wholeStackDragFeedback
-                ? new Vector3(CardWidth + 0.2f, CardHeight + 0.2f, 1f)
-                : new Vector3(CardWidth + 0.12f, CardHeight + 0.12f, 1f);
+                ? new Vector3(bodySize.x + 0.2f, bodySize.y + 0.2f, 1f)
+                : new Vector3(bodySize.x + 0.12f, bodySize.y + 0.12f, 1f);
         }
 
         private SpriteRenderer AddSprite(string objectName, Sprite sprite, Color color, int order, Vector3 scale)
