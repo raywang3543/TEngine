@@ -13,7 +13,7 @@ from PIL import Image, ImageDraw
 WIDTH, HEIGHT = 150, 200
 SS = 4
 CORNER_RADIUS = 26
-BORDER_WIDTH = 10
+BORDER_WIDTH = 5
 BORDER_COLOR = (16, 16, 16, 255)
 
 # 颜色与 Stacklands-Original卡牌配方与玩法逻辑.md 第 3 节的 14 种卡面颜色对应

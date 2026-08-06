@@ -16,11 +16,11 @@ SS = 4
 CORNER_RADIUS = 26
 
 # 颜色对应 CardView.RefreshOutline 原来的三态：默认黑、选中白、整堆拖动黄。
-# 黑/白取与底图描边相同的 10px 宽度；黄色对应原来更大的描边缩放，取 16px。
+# 黑/白 5px；黄色对应整堆拖动的高亮，取 8px。
 BORDERS = {
-    "card_border_black": ((16, 16, 16, 255), 10),
-    "card_border_white": ((255, 255, 255, 255), 10),
-    "card_border_yellow": ((255, 226, 92, 255), 16),
+    "card_border_black": ((16, 16, 16, 255), 5),
+    "card_border_white": ((255, 255, 255, 255), 5),
+    "card_border_yellow": ((255, 226, 92, 255), 8),
 }
 
 # 卡槽拖动反馈边框：尺寸与 gen_card_backgrounds.py 的 slot_bg_black 一致（135x155），
@@ -29,8 +29,8 @@ BORDERS = {
 SLOT_WIDTH, SLOT_HEIGHT = 135, 155
 SLOT_CORNER_RADIUS = 30
 SLOT_BORDERS = {
-    "slot_border_green": ((121, 180, 104, 255), 12),
-    "slot_border_red": ((205, 91, 81, 255), 12),
+    "slot_border_green": ((121, 180, 104, 255), 6),
+    "slot_border_red": ((205, 91, 81, 255), 6),
 }
 
 OUT_DIR = os.path.join(
