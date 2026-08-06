@@ -17,7 +17,19 @@
 
 .panel-title-row { min-height: 62px; flex-direction: row; justify-content: space-between; align-items: flex-start; border-bottom-width: 2px; border-bottom-color: rgb(54, 55, 48); padding-bottom: 8px; }
 .panel-title { font-size: 28px; -unity-font-style: bold; }
+.panel-title-actions { flex-direction: row; align-items: center; align-self: flex-end; }
 .panel-count { font-size: 20px; align-self: flex-end; }
+.quest-toggle-button { width: 32px; height: 32px; margin-left: 8px; padding: 0; font-size: 16px; -unity-font-style: bold; background-color: rgb(255, 250, 230); color: rgb(28, 30, 28); border-width: 2px; border-color: rgb(35, 35, 31); }
+
+/* 折叠状态：整个左侧栏收成一条只留展开按钮的窄条 */
+.left-sidebar.collapsed { width: 46px; min-width: 46px; padding: 12px 5px 10px 5px; background-color: rgba(0, 0, 0, 0); border-right-width: 0; }
+.left-sidebar.collapsed .panel-title,
+.left-sidebar.collapsed .panel-count,
+.left-sidebar.collapsed .quest-list,
+.left-sidebar.collapsed .card-detail-panel { display: none; }
+.left-sidebar.collapsed .panel-title-row { min-height: 0; padding-bottom: 0; border-bottom-width: 0; justify-content: center; }
+.left-sidebar.collapsed .panel-title-actions { align-self: center; }
+.left-sidebar.collapsed .quest-toggle-button { margin-left: 0; }
 .quest-list { flex-grow: 1; margin-top: 12px; margin-bottom: 10px; }
 .quest-item { padding: 7px 3px; font-size: 17px; white-space: normal; border-bottom-width: 1px; border-bottom-color: rgba(80, 76, 60, 0.2); }
 .quest-complete { color: rgb(63, 118, 67); }

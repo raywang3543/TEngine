@@ -34,6 +34,8 @@ namespace GameLogic
         private Button _closeModal;
         private Button _settings;
         private Button _cardopedia;
+        private Button _questToggle;
+        private VisualElement _sidebar;
         private Button[] _speedButtons;
         private ScrollView _modalList;
         private BoardSnapshot _board;
@@ -82,6 +84,9 @@ namespace GameLogic
             _closeModal = root.Q<Button>("close-modal-button");
             _settings = root.Q<Button>("settings-button");
             _cardopedia = root.Q<Button>("cardopedia-button");
+            _questToggle = root.Q<Button>("quest-toggle-button");
+            _questToggle.clicked += ToggleSidebar;
+            _sidebar = root.Q("left-sidebar");
             _speedButtons = new[] { root.Q<Button>("speed-0"), root.Q<Button>("speed-1"), root.Q<Button>("speed-5") };
             _speedButtons[0].clicked += Speed0; _speedButtons[1].clicked += Speed1; _speedButtons[2].clicked += Speed5;
             _newGame.clicked += NewGame;
@@ -100,6 +105,17 @@ namespace GameLogic
             _closeModal.clicked -= CloseModal;
             _settings.clicked -= OpenSettings;
             _cardopedia.clicked -= OpenCardopedia;
+            _questToggle.clicked -= ToggleSidebar;
+        }
+
+        /// <summary>
+        /// 折叠/展开整个任务侧栏（含任务列表与卡牌详情），只保留边缘小按钮。
+        /// </summary>
+        private void ToggleSidebar()
+        {
+            bool expand = _sidebar.ClassListContains("collapsed");
+            _sidebar.EnableInClassList("collapsed", !expand);
+            _questToggle.text = expand ? "«" : "»";
         }
 
         private void OnBoardChanged(BoardSnapshot snapshot)

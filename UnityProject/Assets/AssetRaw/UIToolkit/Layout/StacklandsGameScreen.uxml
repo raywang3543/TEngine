@@ -4,7 +4,10 @@
         <ui:VisualElement name="left-sidebar" class="left-sidebar">
             <ui:VisualElement class="panel-title-row">
                 <ui:Label text="任务" class="panel-title" />
-                <ui:Label name="quest-count" text="0/56" class="panel-count" />
+                <ui:VisualElement class="panel-title-actions">
+                    <ui:Label name="quest-count" text="0/56" class="panel-count" />
+                    <ui:Button name="quest-toggle-button" text="«" class="quest-toggle-button" />
+                </ui:VisualElement>
             </ui:VisualElement>
             <ui:ScrollView name="quest-list" class="quest-list" />
             <ui:VisualElement name="card-detail-panel" class="card-detail-panel">
