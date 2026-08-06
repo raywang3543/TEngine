@@ -6,7 +6,7 @@ using GameLogic.Core.Model;
 namespace GameLogic.Core.Ctrl
 {
     /// <summary>
-    /// 配方匹配、卡牌动作、消耗方式与里程碑控制器。
+    /// 配方匹配、卡牌动作、工作终止、消耗方式与里程碑控制器。
     /// </summary>
     internal sealed class StacklandsWorkCtrl
     {
@@ -79,6 +79,15 @@ namespace GameLogic.Core.Ctrl
                 Model.Run.Works.RemoveAt(i);
                 if (work.IsRecipe) CompleteRecipe(work); else CompleteAction(work);
             }
+        }
+
+        /// <summary>
+        /// 终止涉及指定卡牌的全部工作进度。牌堆组成改变（堆叠、拆堆）时由 BoardCtrl 调用。
+        /// </summary>
+        internal void TerminateWorksInvolving(IEnumerable<string> cardIds)
+        {
+            var set = new HashSet<string>(cardIds, StringComparer.Ordinal);
+            Model.Run.Works.RemoveAll(work => work.CardIds.Any(set.Contains));
         }
 
         private void StartAction(CardActionDefinition action, List<CardRunData> cards, string stackId)
@@ -165,15 +174,29 @@ namespace GameLogic.Core.Ctrl
 
         private bool MatchesAction(List<CardRunData> cards, CardRunData source, CardActionDefinition action)
         {
-            if (!Matches(cards.Where(card => card != source).ToList(), action.Requirements, true)) return false;
-            if (action.Worker == WorkerKind.None) return true;
-            return cards.Any(card => card != source && WorkerMatches(card, action.Worker));
+            List<CardRunData> others = cards.Where(card => card != source).ToList();
+            int required = 0;
+            foreach (CardRequirementDefinition requirement in action.Requirements)
+            {
+                int count = others.Count(card => RequirementMatches(card, requirement));
+                if (count < requirement.Count) return false;
+                required += requirement.Count;
+            }
+            bool needsWorker = action.Worker != WorkerKind.None;
+            if (needsWorker && !others.Any(card => WorkerMatches(card, action.Worker))) return false;
+            // 牌堆中存在组合之外的多余卡牌时不触发动作：除原料外仅允许一张工人卡；
+            // 工人卡本身已计入原料（如 Old Tome 研究由村民亲自研究）时不重复计数。
+            bool workerCountsAsRequirement = needsWorker && action.Requirements.Any(requirement =>
+                others.Any(card => WorkerMatches(card, action.Worker) && RequirementMatches(card, requirement)));
+            return others.Count == required + (needsWorker && !workerCountsAsRequirement ? 1 : 0);
         }
 
         private bool RequirementMatches(CardRunData card, CardRequirementDefinition requirement)
         {
-            if (requirement.Matcher == "CARD") return card.CardId == requirement.CardId;
+            if (requirement.Matcher == "EXACT") return card.CardId == requirement.CardId;
             CardDefinition definition = Model.Content.Cards.Get(card.CardId);
+            if (requirement.Matcher == "CATEGORY")
+                return string.Equals(definition.Category, requirement.Tag, StringComparison.OrdinalIgnoreCase);
             return definition.Tags.Any(tag => string.Equals(tag, requirement.Tag, StringComparison.OrdinalIgnoreCase));
         }
 

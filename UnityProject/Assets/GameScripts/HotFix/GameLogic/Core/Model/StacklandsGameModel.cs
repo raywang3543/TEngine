@@ -64,7 +64,8 @@ namespace GameLogic.Core.Model
         {
             if (card == null) return;
             Run.Cards.Remove(card);
-            CancelWorks(new[] { card.InstanceId });
+            // 状态一致性：卡牌消失后，引用它的工作进度不得残留。
+            Run.Works.RemoveAll(work => work.CardIds.Contains(card.InstanceId));
             if (SelectedId == card.InstanceId) SelectedId = null;
         }
 
@@ -102,12 +103,6 @@ namespace GameLogic.Core.Model
             .OrderBy(card => card.StackOrder).ToList();
         internal string NewId(string prefix) => prefix + "_" + Random.NextUInt().ToString("x8") +
                                                 Random.NextUInt().ToString("x8");
-
-        internal void CancelWorks(IEnumerable<string> cardIds)
-        {
-            var set = new HashSet<string>(cardIds, StringComparer.Ordinal);
-            Run.Works.RemoveAll(work => work.CardIds.Any(set.Contains));
-        }
 
         internal void NormalizeStacks()
         {

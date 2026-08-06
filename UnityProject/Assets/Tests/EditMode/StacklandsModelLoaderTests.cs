@@ -135,7 +135,7 @@ namespace GameLogic.Tests
         }
 
         [Test]
-        public void WorkingStack_PreservesProgressAndRejectsNewCards()
+        public void WorkingStack_SpatialMove_PreservesProgress()
         {
             IStacklandsContentModel content = StacklandsModelLoader.Build(_tables);
             var run = new StacklandsRunData
@@ -152,11 +152,6 @@ namespace GameLogic.Tests
                     new CardRunData
                     {
                         InstanceId = "card_b", CardId = "stone", StackId = "stack_a", StackOrder = 1,
-                    },
-                    new CardRunData
-                    {
-                        InstanceId = "card_c", CardId = "berry", StackId = "stack_b", StackOrder = 0,
-                        X = -3f,
                     },
                 },
                 Works =
@@ -191,15 +186,67 @@ namespace GameLogic.Tests
                 Assert.That(run.Works, Has.Count.EqualTo(1));
                 Assert.That(run.Works[0].Remaining, Is.EqualTo(7f));
                 Assert.That(run.Works[0].StackId, Is.EqualTo("stack_a"));
-                Assert.That(run.Cards.Where(card => card.InstanceId != "card_c")
-                    .All(card => card.StackId == "stack_a"), Is.True);
-                Assert.That(run.Cards.Where(card => card.InstanceId != "card_c")
-                    .All(card => card.X == 4f && card.Y == -2f), Is.True);
+                Assert.That(run.Cards.All(card => card.StackId == "stack_a"), Is.True);
+                Assert.That(run.Cards.All(card => card.X == 4f && card.Y == -2f), Is.True);
                 Transform[] activeProgressTracks = boardObject.GetComponentsInChildren<Transform>(true)
                     .Where(item => item.name == "ProgressTrack" && item.gameObject.activeSelf).ToArray();
                 Assert.That(activeProgressTracks, Has.Length.EqualTo(1));
                 Assert.That(activeProgressTracks[0].parent.name, Is.EqualTo("Card card_b"));
+            }
+            finally
+            {
+                CoreSystem.Release();
+                Object.DestroyImmediate(boardObject);
+                Object.DestroyImmediate(cameraObject);
+            }
+        }
 
+        [Test]
+        public void WorkingStack_StackingNewCard_TerminatesProgress()
+        {
+            IStacklandsContentModel content = StacklandsModelLoader.Build(_tables);
+            var run = new StacklandsRunData
+            {
+                RandomState = 1,
+                MoonDuration = 120f,
+                MoonRemaining = 120f,
+                Cards =
+                {
+                    new CardRunData
+                    {
+                        InstanceId = "card_a", CardId = "wood", StackId = "stack_a", StackOrder = 0,
+                    },
+                    new CardRunData
+                    {
+                        InstanceId = "card_b", CardId = "stone", StackId = "stack_a", StackOrder = 1,
+                    },
+                    new CardRunData
+                    {
+                        InstanceId = "card_c", CardId = "berry", StackId = "stack_b", StackOrder = 0,
+                        X = -3f,
+                    },
+                },
+                Works =
+                {
+                    new WorkRunData
+                    {
+                        Id = "work_a", DefinitionId = "behavior_brickyard_brick", IsRecipe = true,
+                        StackId = "stack_a", Remaining = 7f, Duration = 10f,
+                        CardIds = { "card_a", "card_b" },
+                    },
+                },
+            };
+            var store = new MemorySaveStore(run);
+            var cameraObject = new GameObject("Stacklands Terminate Test Camera");
+            cameraObject.tag = "MainCamera";
+            cameraObject.AddComponent<Camera>();
+            var boardObject = new GameObject("Stacklands Terminate Test Board");
+            StacklandsBoardView boardView = boardObject.AddComponent<StacklandsBoardView>();
+
+            try
+            {
+                CoreSystem.Initialize(content, store, boardView);
+                CoreSystem.SubmitCommand(new StacklandsCommandDto { Kind = StacklandsCommandKind.ContinueGame });
                 CoreSystem.SubmitCommand(new StacklandsCommandDto
                 {
                     Kind = StacklandsCommandKind.MoveCard,
@@ -207,11 +254,10 @@ namespace GameLogic.Tests
                     TargetInstanceId = "card_a",
                 });
 
-                CardRunData rejectedCard = run.Cards.Single(card => card.InstanceId == "card_c");
-                Assert.That(rejectedCard.StackId, Is.EqualTo("stack_b"));
-                Assert.That(rejectedCard.X, Is.EqualTo(-3f));
-                Assert.That(run.Works, Has.Count.EqualTo(1));
-                Assert.That(run.Works[0].Remaining, Is.EqualTo(7f));
+                CardRunData stackedCard = run.Cards.Single(card => card.InstanceId == "card_c");
+                Assert.That(stackedCard.StackId, Is.EqualTo("stack_a"), "工作中的牌堆应接受新卡牌");
+                Assert.That(stackedCard.StackOrder, Is.EqualTo(2));
+                Assert.That(run.Works, Is.Empty, "堆叠新卡牌后原有合成进度应被终止");
             }
             finally
             {
@@ -552,6 +598,293 @@ namespace GameLogic.Tests
                 Assert.That(remainingPayment, Has.Length.EqualTo(pack.PriceAmount - 1));
                 Assert.That(remainingPayment.All(card => card.X == 3f && card.Y == 2f), Is.True);
                 Assert.That(run.Boosters.Count(item => item.BoosterId == pack.Id), Is.Zero);
+            }
+            finally
+            {
+                CoreSystem.Release();
+                Object.DestroyImmediate(boardObject);
+                Object.DestroyImmediate(cameraObject);
+            }
+        }
+
+        [Test]
+        public void Recipe_ExactStack_StartsWork()
+        {
+            IStacklandsContentModel content = StacklandsModelLoader.Build(_tables);
+            var run = new StacklandsRunData
+            {
+                RandomState = 1,
+                MoonDuration = 120f,
+                MoonRemaining = 120f,
+                Cards =
+                {
+                    new CardRunData { InstanceId = "wood", CardId = "wood", StackId = "stack_wood" },
+                    new CardRunData
+                    {
+                        InstanceId = "villager", CardId = "villager", StackId = "stack_villager", X = 3f,
+                    },
+                },
+            };
+            var store = new MemorySaveStore(run);
+            var cameraObject = new GameObject("Stacklands Recipe Test Camera");
+            cameraObject.tag = "MainCamera";
+            cameraObject.AddComponent<Camera>();
+            var boardObject = new GameObject("Stacklands Recipe Test Board");
+            StacklandsBoardView boardView = boardObject.AddComponent<StacklandsBoardView>();
+
+            try
+            {
+                CoreSystem.Initialize(content, store, boardView);
+                CoreSystem.SubmitCommand(new StacklandsCommandDto { Kind = StacklandsCommandKind.ContinueGame });
+                CoreSystem.SubmitCommand(new StacklandsCommandDto
+                {
+                    Kind = StacklandsCommandKind.MoveCard,
+                    InstanceId = "villager",
+                    TargetInstanceId = "wood",
+                });
+
+                Assert.That(run.Works, Has.Count.EqualTo(1));
+                Assert.That(run.Works[0].DefinitionId, Is.EqualTo("recipe_stick_28"));
+                Assert.That(run.Works[0].IsRecipe, Is.True);
+            }
+            finally
+            {
+                CoreSystem.Release();
+                Object.DestroyImmediate(boardObject);
+                Object.DestroyImmediate(cameraObject);
+            }
+        }
+
+        [Test]
+        public void Recipe_ExtraCardInStack_BlocksWork()
+        {
+            IStacklandsContentModel content = StacklandsModelLoader.Build(_tables);
+            var run = new StacklandsRunData
+            {
+                RandomState = 1,
+                MoonDuration = 120f,
+                MoonRemaining = 120f,
+                Cards =
+                {
+                    new CardRunData { InstanceId = "wood", CardId = "wood", StackId = "stack_a", StackOrder = 0 },
+                    new CardRunData { InstanceId = "stone", CardId = "stone", StackId = "stack_a", StackOrder = 1 },
+                    new CardRunData
+                    {
+                        InstanceId = "villager", CardId = "villager", StackId = "stack_villager", X = 3f,
+                    },
+                },
+            };
+            var store = new MemorySaveStore(run);
+            var cameraObject = new GameObject("Stacklands Extra Recipe Test Camera");
+            cameraObject.tag = "MainCamera";
+            cameraObject.AddComponent<Camera>();
+            var boardObject = new GameObject("Stacklands Extra Recipe Test Board");
+            StacklandsBoardView boardView = boardObject.AddComponent<StacklandsBoardView>();
+
+            try
+            {
+                CoreSystem.Initialize(content, store, boardView);
+                CoreSystem.SubmitCommand(new StacklandsCommandDto { Kind = StacklandsCommandKind.ContinueGame });
+                CoreSystem.SubmitCommand(new StacklandsCommandDto
+                {
+                    Kind = StacklandsCommandKind.MoveCard,
+                    InstanceId = "villager",
+                    TargetInstanceId = "wood",
+                });
+
+                Assert.That(run.Works, Is.Empty, "牌堆中存在配方之外的多余卡牌时不应触发合成进度");
+            }
+            finally
+            {
+                CoreSystem.Release();
+                Object.DestroyImmediate(boardObject);
+                Object.DestroyImmediate(cameraObject);
+            }
+        }
+
+        [Test]
+        public void Action_ExactStack_StartsWork()
+        {
+            IStacklandsContentModel content = StacklandsModelLoader.Build(_tables);
+            var run = new StacklandsRunData
+            {
+                RandomState = 1,
+                MoonDuration = 120f,
+                MoonRemaining = 120f,
+                Cards =
+                {
+                    new CardRunData { InstanceId = "tree", CardId = "tree", StackId = "stack_tree" },
+                    new CardRunData
+                    {
+                        InstanceId = "villager", CardId = "villager", StackId = "stack_villager", X = 3f,
+                    },
+                },
+            };
+            var store = new MemorySaveStore(run);
+            var cameraObject = new GameObject("Stacklands Action Test Camera");
+            cameraObject.tag = "MainCamera";
+            cameraObject.AddComponent<Camera>();
+            var boardObject = new GameObject("Stacklands Action Test Board");
+            StacklandsBoardView boardView = boardObject.AddComponent<StacklandsBoardView>();
+
+            try
+            {
+                CoreSystem.Initialize(content, store, boardView);
+                CoreSystem.SubmitCommand(new StacklandsCommandDto { Kind = StacklandsCommandKind.ContinueGame });
+                CoreSystem.SubmitCommand(new StacklandsCommandDto
+                {
+                    Kind = StacklandsCommandKind.MoveCard,
+                    InstanceId = "villager",
+                    TargetInstanceId = "tree",
+                });
+
+                Assert.That(run.Works, Has.Count.EqualTo(1));
+                Assert.That(run.Works[0].DefinitionId, Is.EqualTo("action_tree"));
+                Assert.That(run.Works[0].IsRecipe, Is.False);
+            }
+            finally
+            {
+                CoreSystem.Release();
+                Object.DestroyImmediate(boardObject);
+                Object.DestroyImmediate(cameraObject);
+            }
+        }
+
+        [Test]
+        public void Action_ExtraCardInStack_BlocksWork()
+        {
+            IStacklandsContentModel content = StacklandsModelLoader.Build(_tables);
+            var run = new StacklandsRunData
+            {
+                RandomState = 1,
+                MoonDuration = 120f,
+                MoonRemaining = 120f,
+                Cards =
+                {
+                    new CardRunData { InstanceId = "tree", CardId = "tree", StackId = "stack_a", StackOrder = 0 },
+                    new CardRunData { InstanceId = "apple", CardId = "apple", StackId = "stack_a", StackOrder = 1 },
+                    new CardRunData
+                    {
+                        InstanceId = "villager", CardId = "villager", StackId = "stack_villager", X = 3f,
+                    },
+                },
+            };
+            var store = new MemorySaveStore(run);
+            var cameraObject = new GameObject("Stacklands Extra Action Test Camera");
+            cameraObject.tag = "MainCamera";
+            cameraObject.AddComponent<Camera>();
+            var boardObject = new GameObject("Stacklands Extra Action Test Board");
+            StacklandsBoardView boardView = boardObject.AddComponent<StacklandsBoardView>();
+
+            try
+            {
+                CoreSystem.Initialize(content, store, boardView);
+                CoreSystem.SubmitCommand(new StacklandsCommandDto { Kind = StacklandsCommandKind.ContinueGame });
+                CoreSystem.SubmitCommand(new StacklandsCommandDto
+                {
+                    Kind = StacklandsCommandKind.MoveCard,
+                    InstanceId = "villager",
+                    TargetInstanceId = "tree",
+                });
+
+                Assert.That(run.Works, Is.Empty, "牌堆中存在动作组合之外的多余卡牌时不应触发采集进度");
+            }
+            finally
+            {
+                CoreSystem.Release();
+                Object.DestroyImmediate(boardObject);
+                Object.DestroyImmediate(cameraObject);
+            }
+        }
+
+        [Test]
+        public void Action_WithExactRequirement_StartsWork()
+        {
+            IStacklandsContentModel content = StacklandsModelLoader.Build(_tables);
+            var run = new StacklandsRunData
+            {
+                RandomState = 1,
+                MoonDuration = 120f,
+                MoonRemaining = 120f,
+                Cards =
+                {
+                    new CardRunData
+                    {
+                        InstanceId = "chest", CardId = "treasure_chest", StackId = "stack_chest",
+                    },
+                    new CardRunData { InstanceId = "key", CardId = "key", StackId = "stack_key", X = 3f },
+                },
+            };
+            var store = new MemorySaveStore(run);
+            var cameraObject = new GameObject("Stacklands Chest Test Camera");
+            cameraObject.tag = "MainCamera";
+            cameraObject.AddComponent<Camera>();
+            var boardObject = new GameObject("Stacklands Chest Test Board");
+            StacklandsBoardView boardView = boardObject.AddComponent<StacklandsBoardView>();
+
+            try
+            {
+                CoreSystem.Initialize(content, store, boardView);
+                CoreSystem.SubmitCommand(new StacklandsCommandDto { Kind = StacklandsCommandKind.ContinueGame });
+                CoreSystem.SubmitCommand(new StacklandsCommandDto
+                {
+                    Kind = StacklandsCommandKind.MoveCard,
+                    InstanceId = "key",
+                    TargetInstanceId = "chest",
+                });
+
+                Assert.That(run.Works, Has.Count.EqualTo(1));
+                Assert.That(run.Works[0].DefinitionId, Is.EqualTo("action_treasure_chest"));
+            }
+            finally
+            {
+                CoreSystem.Release();
+                Object.DestroyImmediate(boardObject);
+                Object.DestroyImmediate(cameraObject);
+            }
+        }
+
+        [Test]
+        public void Recipe_RemovingExtraCardFromStack_StartsWork()
+        {
+            IStacklandsContentModel content = StacklandsModelLoader.Build(_tables);
+            var run = new StacklandsRunData
+            {
+                RandomState = 1,
+                MoonDuration = 120f,
+                MoonRemaining = 120f,
+                Cards =
+                {
+                    new CardRunData { InstanceId = "wood", CardId = "wood", StackId = "stack_a", StackOrder = 0 },
+                    new CardRunData
+                    {
+                        InstanceId = "villager", CardId = "villager", StackId = "stack_a", StackOrder = 1,
+                    },
+                    new CardRunData { InstanceId = "stone", CardId = "stone", StackId = "stack_a", StackOrder = 2 },
+                },
+            };
+            var store = new MemorySaveStore(run);
+            var cameraObject = new GameObject("Stacklands Split Test Camera");
+            cameraObject.tag = "MainCamera";
+            cameraObject.AddComponent<Camera>();
+            var boardObject = new GameObject("Stacklands Split Test Board");
+            StacklandsBoardView boardView = boardObject.AddComponent<StacklandsBoardView>();
+
+            try
+            {
+                CoreSystem.Initialize(content, store, boardView);
+                CoreSystem.SubmitCommand(new StacklandsCommandDto { Kind = StacklandsCommandKind.ContinueGame });
+                CoreSystem.SubmitCommand(new StacklandsCommandDto
+                {
+                    Kind = StacklandsCommandKind.MoveCard,
+                    InstanceId = "stone",
+                    X = 5f,
+                    Y = 5f,
+                });
+
+                Assert.That(run.Works, Has.Count.EqualTo(1), "移走多余卡牌后剩余牌堆应触发合成进度");
+                Assert.That(run.Works[0].DefinitionId, Is.EqualTo("recipe_stick_28"));
+                Assert.That(run.Works[0].StackId, Is.EqualTo("stack_a"));
             }
             finally
             {

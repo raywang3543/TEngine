@@ -15,14 +15,13 @@ namespace GameLogic.Core.Ctrl
         {
             CardRunData card = Model.GetCard(instanceId);
             if (card == null) return;
-            string sourceStackId = card.StackId;
             List<CardRunData> moving = wholeStack
-                ? Model.Run.Cards.Where(item => item.StackId == sourceStackId)
+                ? Model.Run.Cards.Where(item => item.StackId == card.StackId)
                     .OrderBy(item => item.StackOrder).ToList()
                 : new List<CardRunData> { card };
             CardRunData target = Model.GetCard(targetId);
 
-            // 整堆拖到空白处只改变牌桌坐标，不改变牌堆组成，因此保留正在进行的工作及剩余时间。
+            // 整堆拖到空白处只是空间平移：牌堆组成不变，进行中的工作原样保留。
             if (wholeStack && target == null)
             {
                 foreach (CardRunData movingCard in moving)
@@ -35,12 +34,23 @@ namespace GameLogic.Core.Ctrl
                 return;
             }
 
-            if (target != null && target.StackId != sourceStackId && HasActiveWork(target.StackId))
-            {
-                CoreSystem.ViewCtrl.PublishBoard();
-                return;
-            }
+            string sourceStackId = card.StackId;
+            if (!TryRestack(moving, target, x, y)) return;
 
+            // 组成变化后，落入牌堆与源牌堆剩余卡牌（拆堆移走多余卡牌等场景）都按新组成重新评估。
+            TryStartWork(moving[0].StackId);
+            if (sourceStackId != moving[0].StackId && Model.StackCards(sourceStackId).Count > 0)
+                TryStartWork(sourceStackId);
+            Model.Increment("EventCount:drag_card");
+            Model.Changed();
+        }
+
+        /// <summary>
+        /// 把移动卡牌合并到目标牌堆，或拖到空白处独立成新堆。
+        /// 组成一旦改变，涉及这些卡牌的工作进度立即终止：允许向工作中的牌堆堆叠，代价是打断其进度。
+        /// </summary>
+        private bool TryRestack(List<CardRunData> moving, CardRunData target, float x, float y)
+        {
             List<CardRunData> targetStack = target == null
                 ? new List<CardRunData>()
                 : Model.Run.Cards.Where(item => item.StackId == target.StackId && !moving.Contains(item)).ToList();
@@ -48,11 +58,10 @@ namespace GameLogic.Core.Ctrl
             {
                 CoreSystem.Notify(StacklandsTexts.NotifyStackCapacity(Model.Content.WorldRules.MaxStackSize));
                 CoreSystem.ViewCtrl.PublishBoard();
-                return;
+                return false;
             }
 
-            // 拆堆或合并会改变参与配方的卡牌，源牌堆和目标牌堆的工作都应立即中断。
-            Model.CancelWorks(moving.Concat(targetStack).Select(item => item.InstanceId));
+            CoreSystem.WorkCtrl.TerminateWorksInvolving(moving.Concat(targetStack).Select(item => item.InstanceId));
             if (target == null)
             {
                 string newStack = Model.NewId("stack");
@@ -71,16 +80,13 @@ namespace GameLogic.Core.Ctrl
                 }
             }
             Model.NormalizeStacks();
-            string stackId = moving[0].StackId;
-            if (!CoreSystem.EquipmentCtrl.TryEquipStack(stackId) && !CoreSystem.WorkCtrl.TryStartRecipe(stackId))
-                CoreSystem.WorkCtrl.TryStartAction(stackId);
-            Model.Increment("EventCount:drag_card");
-            Model.Changed();
+            return true;
         }
 
-        private bool HasActiveWork(string stackId)
+        private void TryStartWork(string stackId)
         {
-            return Model.Run.Works.Any(work => work.StackId == stackId);
+            if (!CoreSystem.EquipmentCtrl.TryEquipStack(stackId) && !CoreSystem.WorkCtrl.TryStartRecipe(stackId))
+                CoreSystem.WorkCtrl.TryStartAction(stackId);
         }
 
         internal void Sell(string instanceId)
