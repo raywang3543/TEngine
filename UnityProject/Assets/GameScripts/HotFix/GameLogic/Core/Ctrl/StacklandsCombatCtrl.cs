@@ -97,7 +97,7 @@ namespace GameLogic.Core.Ctrl
                     (int)Math.Round(damage * Model.Content.WorldRules.CombatAdvantageMultiplier));
             if (Model.Random.NextFloat() < source.CritChance.GetValueOrDefault()) damage *= 2;
             target.Hp -= damage;
-            ApplyEffects(attacker, target, "ON_HIT");
+            ApplyEffects(attacker, target, "ON_ATTACK");
             if (target.Hp <= 0) Kill(target);
         }
 
