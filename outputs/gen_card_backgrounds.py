@@ -13,6 +13,7 @@ from PIL import Image, ImageDraw
 WIDTH, HEIGHT = 150, 200
 SS = 4
 CORNER_RADIUS = 26
+# 仅 booster 底图保留黑色描边；card_bg 为纯色圆角矩形，无描边。
 BORDER_WIDTH = 5
 BORDER_COLOR = (16, 16, 16, 255)
 
@@ -57,16 +58,17 @@ SLOTS = {
 }
 
 
-def make_card(fill_rgb, width=WIDTH, height=HEIGHT):
+def make_card(fill_rgb, width=WIDTH, height=HEIGHT, border_width=0):
     w, h = width * SS, height * SS
     radius = CORNER_RADIUS * SS
-    border = BORDER_WIDTH * SS
+    border = border_width * SS
 
     image = Image.new("RGBA", (w, h), (0, 0, 0, 0))
     draw = ImageDraw.Draw(image)
 
-    # 黑色描边外框
-    draw.rounded_rectangle([0, 0, w - 1, h - 1], radius=radius, fill=BORDER_COLOR)
+    if border > 0:
+        # 黑色描边外框
+        draw.rounded_rectangle([0, 0, w - 1, h - 1], radius=radius, fill=BORDER_COLOR)
     # 彩色牌面
     draw.rounded_rectangle(
         [border, border, w - 1 - border, h - 1 - border],
@@ -120,7 +122,7 @@ def main():
         print("written:", path)
     for name, rgb in BOOSTERS.items():
         path = os.path.join(out_dir, name + ".png")
-        make_card(rgb, BOOSTER_WIDTH, BOOSTER_HEIGHT).save(path)
+        make_card(rgb, BOOSTER_WIDTH, BOOSTER_HEIGHT, BORDER_WIDTH).save(path)
         sync_meta_rect(path, BOOSTER_WIDTH, BOOSTER_HEIGHT)
         print("written:", path)
     for name, rgb in SLOTS.items():
