@@ -53,13 +53,24 @@ namespace GameLogic.Core.Ctrl
                 .OrderBy(FeedPriority).ToList();
             int foodAvailable = Model.CurrentFood();
             int spent = 0;
+            var fedUnits = new List<CardRunData>();
+            var starvingUnits = new List<CardRunData>();
             foreach (CardRunData unitCard in units)
             {
                 int need = Model.Content.Units.Get(unitCard.CardId).FoodPerMoon.GetValueOrDefault();
-                if (foodAvailable - spent >= need) spent += need;
-                else CoreSystem.CombatCtrl.Kill(unitCard);
+                if (foodAvailable - spent >= need)
+                {
+                    spent += need;
+                    fedUnits.Add(unitCard);
+                }
+                else starvingUnits.Add(unitCard);
             }
-            Model.ConsumeFood(spent);
+            // 先消耗食物并发布进食配对，再处死挨饿单位：Kill 会触发中间态 Board 快照，
+            // 飞行中的食物视图必须在此之前脱离快照管理，否则会被立即销毁。
+            List<CardRunData> consumed = Model.ConsumeFood(spent);
+            CoreSystem.PublishFeeding(BuildFeedingPairs(consumed, fedUnits));
+            foreach (CardRunData unitCard in starvingUnits)
+                CoreSystem.CombatCtrl.Kill(unitCard);
             if (Model.CurrentCardCount() > Model.CurrentCardCap())
             {
                 Model.Run.AwaitingCardLimit = true; Model.Run.Speed = 0f;
@@ -101,6 +112,36 @@ namespace GameLogic.Core.Ctrl
                     ? Math.Max(1, Model.Content.Units.Get(cardId).CombatLevel.GetValueOrDefault(1)) : 1;
             }
             return results;
+        }
+
+        /// <summary>
+        /// 把被消耗的食物卡（食物值升序）按喂食优先级分配给各单位：每个单位分到累计食物值
+        /// 刚好满足需求的若干张最便宜食物；末尾因溢出而被多消耗的食物归最后一个进食单位。
+        /// </summary>
+        private List<FeedingSnapshot> BuildFeedingPairs(List<CardRunData> consumed, List<CardRunData> fedUnits)
+        {
+            var pairs = new List<FeedingSnapshot>();
+            if (consumed.Count == 0 || fedUnits.Count == 0) return pairs;
+            int index = 0;
+            foreach (CardRunData unit in fedUnits)
+            {
+                int need = Model.Content.Units.Get(unit.CardId).FoodPerMoon.GetValueOrDefault();
+                int taken = 0;
+                while (taken < need && index < consumed.Count)
+                {
+                    CardRunData food = consumed[index++];
+                    taken += Model.Content.Cards.Get(food.CardId).FoodValue.GetValueOrDefault();
+                    pairs.Add(new FeedingSnapshot
+                        { FoodInstanceId = food.InstanceId, UnitInstanceId = unit.InstanceId });
+                }
+            }
+            string lastUnitId = fedUnits[fedUnits.Count - 1].InstanceId;
+            while (index < consumed.Count)
+            {
+                pairs.Add(new FeedingSnapshot
+                    { FoodInstanceId = consumed[index++].InstanceId, UnitInstanceId = lastUnitId });
+            }
+            return pairs;
         }
 
         private void SpawnMoonEvents()

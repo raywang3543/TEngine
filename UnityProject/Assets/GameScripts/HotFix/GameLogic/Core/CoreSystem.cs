@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using GameLogic.Core.Ctrl;
 using GameLogic.Core.Model;
 using GameLogic.Core.View;
@@ -80,6 +81,16 @@ namespace GameLogic.Core
         {
             View?.RenderCardProgress(snapshot);
             GameEvent.Send(EventDefine.StacklandsCardProgressChanged, snapshot);
+        }
+
+        /// <summary>
+        /// 月末结算的进食配对：先直接驱动 View 播放食物飞行动画，再发事件供其他表现层订阅。
+        /// </summary>
+        internal static void PublishFeeding(IReadOnlyList<FeedingSnapshot> pairs)
+        {
+            if (pairs == null || pairs.Count == 0) return;
+            View?.PlayFeeding(pairs);
+            GameEvent.Send(EventDefine.StacklandsFeeding, pairs);
         }
 
         internal static void PublishHud(HudSnapshot snapshot)

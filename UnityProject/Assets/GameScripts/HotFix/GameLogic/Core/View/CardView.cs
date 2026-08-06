@@ -169,6 +169,9 @@ namespace GameLogic.Core.View
             RefreshSorting();
         }
 
+        /// <summary>进食飞行等脚本动画期间关闭碰撞，避免飞行动画中的卡牌被指针选中或拖动。</summary>
+        public void SetColliderEnabled(bool value) => _collider.enabled = value;
+
         private void RefreshSorting()
         {
             _sortingGroup.sortingOrder = (_dragSorting ? DragSortingBase : 0) + _stackOrder;

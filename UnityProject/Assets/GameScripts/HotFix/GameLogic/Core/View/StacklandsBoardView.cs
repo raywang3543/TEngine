@@ -27,6 +27,21 @@ namespace GameLogic.Core.View
         // 装备卡堆相对单位的横向间距与纵向偏移（装备卡与牌面同图，1.5 x 2 世界单位）。
         private const float EquipmentFanSpacing = 1.6f;
         private const float EquipmentFanYOffset = -1.85f;
+        // 月末进食动画：食物卡飞行速度（世界单位/秒）与到达判定距离（小于牌面高度的重合阈值）。
+        private const float FeedingFlySpeed = 16f;
+        private const float FeedingArriveDistance = 0.4f;
+        // 食物卡与单位重合后停留 0.35 秒再消失。
+        private const float FeedingOverlapSeconds = 0.35f;
+        /// <summary>月末结算中被消耗、正飞向进食单位的食物卡。</summary>
+        private sealed class FlyingFood
+        {
+            internal CardView View;
+            internal string UnitInstanceId;
+            internal Vector3 FallbackTarget;
+            /// <summary>与单位重合后的剩余停留秒数；&lt;0 表示尚未重合。</summary>
+            internal float OverlapRemaining = -1f;
+        }
+        private readonly List<FlyingFood> _flyingFoods = new List<FlyingFood>();
         private readonly Dictionary<string, CardView> _cards = new Dictionary<string, CardView>();
         private readonly Dictionary<string, BoosterView> _boosters = new Dictionary<string, BoosterView>();
         private readonly Dictionary<string, ShopSlotView> _shopSlots = new Dictionary<string, ShopSlotView>();
@@ -95,6 +110,7 @@ namespace GameLogic.Core.View
         private void Update()
         {
             UpdateBoardFrame();
+            UpdateFlyingFoods();
             HandleKeyboard();
             HandleMouse();
             HandleTouch();
@@ -148,6 +164,77 @@ namespace GameLogic.Core.View
             foreach (CardProgressSnapshot card in snapshot.Cards)
                 if (_cards.TryGetValue(card.InstanceId, out CardView view))
                     view.RenderProgress(card.Progress);
+        }
+
+        /// <summary>
+        /// 月末结算进食动画：被消耗的食物卡已从 Model 移除，这里把对应视图移出快照管理，
+        /// 让它飞向进食单位；两张卡重合后食物卡销毁。目标单位随帧取实时位置，单位消失时飞向最后已知位置。
+        /// </summary>
+        public void PlayFeeding(IReadOnlyList<FeedingSnapshot> pairs)
+        {
+            if (pairs == null) return;
+            foreach (FeedingSnapshot pair in pairs)
+            {
+                if (pair == null || string.IsNullOrEmpty(pair.FoodInstanceId)) continue;
+                if (!_cards.TryGetValue(pair.FoodInstanceId, out CardView food) || food == null) continue;
+                _cards.Remove(pair.FoodInstanceId);
+                // 结算瞬间玩家可能正拖着这张食物（单卡或整堆）：取消拖拽状态，让飞行动画接管。
+                if (_draggedCard == food)
+                {
+                    ClearWholeStackFeedback();
+                    HideSlotBorders();
+                    _draggedCard = null;
+                    _draggedOffsets.Clear();
+                    _dragWholeStack = false;
+                    _wholeStackHoldEligible = false;
+                }
+                else _draggedOffsets.Remove(food);
+                food.SetDragSorting(true);
+                food.SetColliderEnabled(false);
+                Vector3 fallback = food.transform.position;
+                if (!string.IsNullOrEmpty(pair.UnitInstanceId) &&
+                    _cards.TryGetValue(pair.UnitInstanceId, out CardView unit) && unit != null)
+                    fallback = unit.transform.position;
+                else if (_cardData.TryGetValue(pair.UnitInstanceId, out CardSnapshot data))
+                    fallback = new Vector3(data.X, data.Y, 0f);
+                _flyingFoods.Add(new FlyingFood
+                    { View = food, UnitInstanceId = pair.UnitInstanceId, FallbackTarget = fallback });
+            }
+        }
+
+        /// <summary>同一时刻只飞最早入队的一张：到达销毁后下一张才开始，形成依次飞来的节奏。</summary>
+        private void UpdateFlyingFoods()
+        {
+            if (_flyingFoods.Count == 0) return;
+            FlyingFood item = _flyingFoods[0];
+            if (item.View == null)
+            {
+                _flyingFoods.RemoveAt(0);
+                return;
+            }
+            Vector3 target = item.FallbackTarget;
+            if (!string.IsNullOrEmpty(item.UnitInstanceId) &&
+                _cards.TryGetValue(item.UnitInstanceId, out CardView unit) && unit != null)
+                target = unit.transform.position;
+            if (item.OverlapRemaining >= 0f)
+            {
+                // 已与单位卡重合：停留 0.35 秒再销毁，下一张随后起飞。
+                item.OverlapRemaining -= Time.unscaledDeltaTime;
+                if (item.OverlapRemaining > 0f) return;
+                DestroyView(item.View.gameObject);
+                _flyingFoods.RemoveAt(0);
+                return;
+            }
+            Vector3 next = Vector3.MoveTowards(item.View.transform.position, target,
+                FeedingFlySpeed * Time.unscaledDeltaTime);
+            // 与单位卡重合（距离小于阈值）时停在单位位置，进入停留计时。
+            if (Vector2.Distance(next, target) <= FeedingArriveDistance)
+            {
+                item.View.transform.position = target;
+                item.OverlapRemaining = FeedingOverlapSeconds;
+                return;
+            }
+            item.View.transform.position = next;
         }
 
         public void RenderHud(HudSnapshot snapshot)

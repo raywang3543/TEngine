@@ -21,6 +21,8 @@ namespace GameLogic
             RuntimeId.ToRuntimeId("EventDefine.StacklandsFlowRequested");
         public static readonly int StacklandsNotification =
             RuntimeId.ToRuntimeId("EventDefine.StacklandsNotification");
+        public static readonly int StacklandsFeeding =
+            RuntimeId.ToRuntimeId("EventDefine.StacklandsFeeding");
 
         #endregion
     }

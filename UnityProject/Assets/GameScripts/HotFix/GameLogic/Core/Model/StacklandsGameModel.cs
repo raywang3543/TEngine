@@ -75,9 +75,13 @@ namespace GameLogic.Core.Model
                 RemoveCard(card);
         }
 
-        internal void ConsumeFood(int points)
+        /// <summary>
+        /// 按食物值升序移除食物卡，直到累计食物值达到 points；返回被移除的卡牌（用于进食动画配对）。
+        /// </summary>
+        internal List<CardRunData> ConsumeFood(int points)
         {
             int consumed = 0;
+            var removed = new List<CardRunData>();
             foreach (CardRunData card in Run.Cards.Where(card =>
                          Content.Cards.Get(card.CardId).FoodValue.GetValueOrDefault() > 0)
                          .OrderBy(card => Content.Cards.Get(card.CardId).FoodValue).ToList())
@@ -85,7 +89,9 @@ namespace GameLogic.Core.Model
                 if (consumed >= points) break;
                 consumed += Content.Cards.Get(card.CardId).FoodValue.Value;
                 RemoveCard(card);
+                removed.Add(card);
             }
+            return removed;
         }
 
         internal int CountAdultVillagers() => Run.Cards.Count(card =>

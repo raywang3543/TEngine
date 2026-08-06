@@ -112,7 +112,7 @@ namespace GameLogic.Core.Ctrl
                 MoonRemaining = duration, Peaceful = peaceful, Speed = 1f,
             };
             Model.Random = new DeterministicRandom(Model.Run.RandomState);
-            CoreSystem.LootCtrl.CreateBooster("a_new_world", -4f, 2f, false);
+            CoreSystem.LootCtrl.CreateBooster("a_new_world", 0f, 0f, false);
             Model.Increment("EventCount:new_game");
             Model.MarkDirty();
             CoreSystem.ViewCtrl.PublishAll();

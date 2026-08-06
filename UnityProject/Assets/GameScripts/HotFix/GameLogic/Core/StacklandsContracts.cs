@@ -111,6 +111,15 @@ namespace GameLogic.Core
         public IReadOnlyList<CardProgressSnapshot> Cards { get; internal set; }
     }
 
+    /// <summary>
+    /// 月末结算进食动画的一次性事件负载：一张被消耗的食物卡飞向进食它的单位。
+    /// </summary>
+    public sealed class FeedingSnapshot
+    {
+        public string FoodInstanceId { get; internal set; }
+        public string UnitInstanceId { get; internal set; }
+    }
+
     public sealed class QuestSnapshot
     {
         public string Id { get; internal set; }
