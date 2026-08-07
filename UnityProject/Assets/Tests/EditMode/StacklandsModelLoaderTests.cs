@@ -895,7 +895,7 @@ namespace GameLogic.Tests
         }
 
         [Test]
-        public void StackRules_IncompatiblePair_RejectsStack()
+        public void StackRules_IncompatiblePair_PushesCardAside()
         {
             IStacklandsContentModel content = StacklandsModelLoader.Build(_tables);
             var run = new StacklandsRunData
@@ -925,12 +925,206 @@ namespace GameLogic.Tests
                     Kind = StacklandsCommandKind.MoveCard,
                     InstanceId = "berry",
                     TargetInstanceId = "wood",
+                    X = 0.5f,
+                    Y = 0f,
                 });
 
                 CardRunData berry = run.Cards.Single(card => card.InstanceId == "berry");
-                Assert.That(berry.StackId, Is.EqualTo("stack_berry"), "无归并或交互关系的卡牌不允许堆叠");
-                Assert.That(run.Cards.Single(card => card.InstanceId == "wood").StackId,
-                    Is.EqualTo("stack_wood"));
+                Assert.That(berry.StackId, Is.Not.EqualTo("stack_wood"), "无归并或交互关系的卡牌不允许堆叠");
+                Assert.That(berry.StackId, Is.Not.EqualTo("stack_berry"), "被拒绝的卡牌在落点独立成新堆");
+                // 拒绝后先停在落点，与目标的重叠由布局解算器统一顶开。
+                Assert.That(berry.X, Is.EqualTo(0.5f).Within(0.001f));
+
+                Assert.That(StacklandsBoardLayout.ResolveOverlaps(CoreSystem.Model), Is.True, "重叠应被顶开");
+                // 牌面宽 1.5、间隙 0.1：沿 +x 分离后中心距 1.6。
+                Assert.That(berry.X, Is.EqualTo(1.6f).Within(0.001f));
+                Assert.That(berry.Y, Is.EqualTo(0f).Within(0.001f));
+                Assert.That(StacklandsBoardLayout.ResolveOverlaps(CoreSystem.Model), Is.False, "分离后不再重叠");
+            }
+            finally
+            {
+                CoreSystem.Release();
+                Object.DestroyImmediate(boardObject);
+                Object.DestroyImmediate(cameraObject);
+            }
+        }
+
+        [Test]
+        public void StackRules_FullStack_PushesCardAside()
+        {
+            IStacklandsContentModel content = StacklandsModelLoader.Build(_tables);
+            var run = new StacklandsRunData
+            {
+                RandomState = 1,
+                MoonDuration = 120f,
+                MoonRemaining = 120f,
+            };
+            for (int i = 0; i < content.WorldRules.MaxStackSize; i++)
+                run.Cards.Add(new CardRunData
+                {
+                    InstanceId = "gold_" + i, CardId = "gold", StackId = "stack_full", StackOrder = i,
+                });
+            run.Cards.Add(new CardRunData
+            {
+                InstanceId = "dragged", CardId = "gold", StackId = "stack_dragged", X = 3f,
+            });
+            var store = new MemorySaveStore(run);
+            var cameraObject = new GameObject("Stacklands Full Stack Test Camera");
+            cameraObject.tag = "MainCamera";
+            cameraObject.AddComponent<Camera>();
+            var boardObject = new GameObject("Stacklands Full Stack Test Board");
+            StacklandsBoardView boardView = boardObject.AddComponent<StacklandsBoardView>();
+
+            try
+            {
+                CoreSystem.Initialize(content, store, boardView);
+                CoreSystem.SubmitCommand(new StacklandsCommandDto { Kind = StacklandsCommandKind.ContinueGame });
+                CoreSystem.SubmitCommand(new StacklandsCommandDto
+                {
+                    Kind = StacklandsCommandKind.MoveCard,
+                    InstanceId = "dragged",
+                    TargetInstanceId = "gold_0",
+                    X = 0.5f,
+                    Y = 0f,
+                });
+
+                Assert.That(run.Cards.Count(card => card.StackId == "stack_full"),
+                    Is.EqualTo(content.WorldRules.MaxStackSize), "满堆不接收新卡");
+                CardRunData dragged = run.Cards.Single(card => card.InstanceId == "dragged");
+                Assert.That(dragged.StackId, Is.Not.EqualTo("stack_full"));
+                Assert.That(dragged.X, Is.EqualTo(0.5f).Within(0.001f), "满堆拒绝后先停在落点");
+                Assert.That(StacklandsBoardLayout.ResolveOverlaps(CoreSystem.Model), Is.True);
+                Assert.That(dragged.X, Is.EqualTo(1.6f).Within(0.001f), "重叠由布局解算器顶开");
+            }
+            finally
+            {
+                CoreSystem.Release();
+                Object.DestroyImmediate(boardObject);
+                Object.DestroyImmediate(cameraObject);
+            }
+        }
+
+        [Test]
+        public void Layout_OverlappingStacks_LatestActiveYields()
+        {
+            IStacklandsContentModel content = StacklandsModelLoader.Build(_tables);
+            var run = new StacklandsRunData
+            {
+                RandomState = 1,
+                MoonDuration = 120f,
+                MoonRemaining = 120f,
+                Cards =
+                {
+                    new CardRunData
+                        { InstanceId = "wood", CardId = "wood", StackId = "stack_wood", LastActiveRevision = 1 },
+                    new CardRunData
+                        { InstanceId = "berry", CardId = "berry", StackId = "stack_berry", LastActiveRevision = 2 },
+                },
+            };
+            var store = new MemorySaveStore(run);
+            var cameraObject = new GameObject("Stacklands Layout Test Camera");
+            cameraObject.tag = "MainCamera";
+            cameraObject.AddComponent<Camera>();
+            var boardObject = new GameObject("Stacklands Layout Test Board");
+            StacklandsBoardView boardView = boardObject.AddComponent<StacklandsBoardView>();
+
+            try
+            {
+                CoreSystem.Initialize(content, store, boardView);
+                CoreSystem.SubmitCommand(new StacklandsCommandDto { Kind = StacklandsCommandKind.ContinueGame });
+
+                Assert.That(StacklandsBoardLayout.ResolveOverlaps(CoreSystem.Model), Is.True, "完全重叠的两堆应被分离");
+                CardRunData wood = run.Cards.Single(card => card.InstanceId == "wood");
+                CardRunData berry = run.Cards.Single(card => card.InstanceId == "berry");
+                Assert.That(wood.X, Is.EqualTo(0f).Within(0.001f), "静止的旧牌堆不动");
+                Assert.That(berry.X, Is.EqualTo(-1.6f).Within(0.001f), "较新的牌堆让路（同位置按列表顺序取方向）");
+                Assert.That(StacklandsBoardLayout.ResolveOverlaps(CoreSystem.Model), Is.False);
+            }
+            finally
+            {
+                CoreSystem.Release();
+                Object.DestroyImmediate(boardObject);
+                Object.DestroyImmediate(cameraObject);
+            }
+        }
+
+        [Test]
+        public void Layout_BoosterOverlapping_ResolvesLikeCard()
+        {
+            IStacklandsContentModel content = StacklandsModelLoader.Build(_tables);
+            var run = new StacklandsRunData
+            {
+                RandomState = 1,
+                MoonDuration = 120f,
+                MoonRemaining = 120f,
+                Cards =
+                {
+                    new CardRunData { InstanceId = "wood", CardId = "wood", StackId = "stack_wood" },
+                },
+                Boosters =
+                {
+                    new BoosterRunData
+                    {
+                        InstanceId = "pack", BoosterId = "a_new_world", X = 0.5f, LastActiveRevision = 1,
+                    },
+                },
+            };
+            var store = new MemorySaveStore(run);
+            var cameraObject = new GameObject("Stacklands Booster Layout Test Camera");
+            cameraObject.tag = "MainCamera";
+            cameraObject.AddComponent<Camera>();
+            var boardObject = new GameObject("Stacklands Booster Layout Test Board");
+            StacklandsBoardView boardView = boardObject.AddComponent<StacklandsBoardView>();
+
+            try
+            {
+                CoreSystem.Initialize(content, store, boardView);
+                CoreSystem.SubmitCommand(new StacklandsCommandDto { Kind = StacklandsCommandKind.ContinueGame });
+
+                Assert.That(StacklandsBoardLayout.ResolveOverlaps(CoreSystem.Model), Is.True, "卡包与卡牌重叠同样被顶开");
+                CardRunData wood = run.Cards.Single(card => card.InstanceId == "wood");
+                BoosterRunData pack = run.Boosters.Single();
+                Assert.That(wood.X, Is.EqualTo(0f).Within(0.001f), "静止卡牌不动");
+                Assert.That(pack.X, Is.EqualTo(1.6f).Within(0.001f), "较新的卡包让路：0.5 + 穿透 1.0 + 间隙 0.1");
+            }
+            finally
+            {
+                CoreSystem.Release();
+                Object.DestroyImmediate(boardObject);
+                Object.DestroyImmediate(cameraObject);
+            }
+        }
+
+        [Test]
+        public void Layout_CombatPair_NotSeparated()
+        {
+            IStacklandsContentModel content = StacklandsModelLoader.Build(_tables);
+            var run = new StacklandsRunData
+            {
+                RandomState = 1,
+                MoonDuration = 120f,
+                MoonRemaining = 120f,
+                Cards =
+                {
+                    new CardRunData { InstanceId = "villager", CardId = "villager", StackId = "stack_villager" },
+                    new CardRunData { InstanceId = "wolf", CardId = "wolf", StackId = "stack_wolf", X = 0.5f },
+                },
+            };
+            var store = new MemorySaveStore(run);
+            var cameraObject = new GameObject("Stacklands Combat Layout Test Camera");
+            cameraObject.tag = "MainCamera";
+            cameraObject.AddComponent<Camera>();
+            var boardObject = new GameObject("Stacklands Combat Layout Test Board");
+            StacklandsBoardView boardView = boardObject.AddComponent<StacklandsBoardView>();
+
+            try
+            {
+                CoreSystem.Initialize(content, store, boardView);
+                CoreSystem.SubmitCommand(new StacklandsCommandDto { Kind = StacklandsCommandKind.ContinueGame });
+
+                Assert.That(StacklandsBoardLayout.ResolveOverlaps(CoreSystem.Model), Is.False,
+                    "敌我单位重叠属于交战追击，不做顶开");
+                Assert.That(run.Cards.Single(card => card.InstanceId == "wolf").X, Is.EqualTo(0.5f).Within(0.001f));
             }
             finally
             {

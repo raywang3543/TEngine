@@ -75,6 +75,8 @@ namespace GameLogic.Core.Ctrl
             CoreSystem.ViewCtrl.PublishCardProgress();
             CoreSystem.CombatCtrl.Tick(delta);
             CoreSystem.WorldCtrl.TickMovement(delta);
+            // 任何来源造成的牌面重叠（拖放被拒、开包/事件生成、读档）统一在此顶开。
+            if (StacklandsBoardLayout.ResolveOverlaps(Model)) Model.Changed();
             Model.Run.MoonRemaining -= delta;
             if (Model.Run.MoonRemaining <= 0f) CoreSystem.WorldCtrl.EndMoon();
             CoreSystem.ViewCtrl.PublishHud();

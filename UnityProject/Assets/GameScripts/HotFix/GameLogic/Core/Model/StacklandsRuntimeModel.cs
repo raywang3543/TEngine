@@ -58,6 +58,8 @@ namespace GameLogic.Core.Model
         public EquipmentSlotsRunData EquipmentSlots = new EquipmentSlotsRunData();
         public float AttackCooldown;
         public float StunRemaining;
+        // 最近一次创建/移动时的 Run.Revision，布局解算器据此判定重叠时谁让路（旧存档默认为 0）。
+        public int LastActiveRevision;
     }
 
     [Serializable]
@@ -69,6 +71,8 @@ namespace GameLogic.Core.Model
         public float X;
         public float Y;
         public int Revealed;
+        // 最近一次创建/移动时的 Run.Revision，布局解算器据此判定重叠时谁让路（旧存档默认为 0）。
+        public int LastActiveRevision;
         public List<string> Results = new List<string>();
         public List<bool> Foils = new List<bool>();
     }

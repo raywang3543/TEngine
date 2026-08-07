@@ -54,7 +54,10 @@ namespace GameLogic.Core.Ctrl
         {
             BoosterDefinition definition = Model.Content.Boosters.Get(boosterId);
             var booster = new BoosterRunData
-                { InstanceId = Model.NewId("pack"), BoosterId = boosterId, X = x, Y = y };
+            {
+                InstanceId = Model.NewId("pack"), BoosterId = boosterId, X = x, Y = y,
+                LastActiveRevision = Model.Run.Revision,
+            };
             foreach (BoosterSlotDefinition slot in definition.Slots)
             {
                 string cardId;
@@ -134,6 +137,7 @@ namespace GameLogic.Core.Ctrl
             if (booster == null) return;
             booster.X = x;
             booster.Y = y;
+            booster.LastActiveRevision = Model.Run.Revision;
             Model.Increment("EventCount:drag_booster");
             Model.Changed();
         }

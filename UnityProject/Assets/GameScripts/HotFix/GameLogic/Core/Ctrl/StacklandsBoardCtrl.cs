@@ -29,6 +29,10 @@ namespace GameLogic.Core.Ctrl
                 return;
             }
 
+            // 被拖卡牌记为最活跃：若落点与其它实体重叠，布局解算器顶开的是被拖卡牌而非静止目标。
+            foreach (CardRunData movingCard in moving)
+                movingCard.LastActiveRevision = Model.Run.Revision;
+
             // 整堆拖到空白处只是空间平移：牌堆组成不变，进行中的工作原样保留。
             if (wholeStack && target == null)
             {
@@ -56,26 +60,28 @@ namespace GameLogic.Core.Ctrl
         /// <summary>
         /// 把移动卡牌合并到目标牌堆，或拖到空白处独立成新堆。
         /// 堆叠前先按 StacklandsStackRules 判定被拖卡与目标卡是否兼容，再检查容量。
+        /// 判定无法叠加（不兼容或超出容量）时不回弹原位：卡牌放到落点独立成新堆，
+        /// 与目标的重叠由 StacklandsBoardLayout 在 Tick 末尾统一顶开。
         /// 组成一旦改变，涉及这些卡牌的工作进度立即终止：允许向工作中的牌堆堆叠，代价是打断其进度。
         /// </summary>
         private bool TryRestack(List<CardRunData> moving, CardRunData target, float x, float y)
         {
-            // 只允许有归并或交互关系的卡牌堆叠（同类、村民、装备、佩戴、敌我接触、配方/动作）。
-            if (target != null && !StacklandsStackRules.CanStackOn(Model.Content, moving, target))
-            {
-                CoreSystem.Notify(StacklandsTexts.NotifyIncompatibleStack);
-                CoreSystem.ViewCtrl.PublishBoard();
-                return false;
-            }
-
             List<CardRunData> targetStack = target == null
                 ? new List<CardRunData>()
                 : Model.Run.Cards.Where(item => item.StackId == target.StackId && !moving.Contains(item)).ToList();
-            if (targetStack.Count + moving.Count > Model.Content.WorldRules.MaxStackSize)
+
+            // 只允许有归并或交互关系的卡牌堆叠（同类、村民、装备、佩戴、敌我接触、配方/动作）。
+            string rejection = null;
+            if (target != null && !StacklandsStackRules.CanStackOn(Model.Content, moving, target))
+                rejection = StacklandsTexts.NotifyIncompatibleStack;
+            else if (targetStack.Count + moving.Count > Model.Content.WorldRules.MaxStackSize)
+                rejection = StacklandsTexts.NotifyStackCapacity(Model.Content.WorldRules.MaxStackSize);
+            if (rejection != null)
             {
-                CoreSystem.Notify(StacklandsTexts.NotifyStackCapacity(Model.Content.WorldRules.MaxStackSize));
-                CoreSystem.ViewCtrl.PublishBoard();
-                return false;
+                CoreSystem.Notify(rejection);
+                // 落到 target == null 分支：在落点独立成新堆，重叠留给布局解算器顶开。
+                target = null;
+                targetStack = new List<CardRunData>();
             }
 
             CoreSystem.WorkCtrl.TerminateWorksInvolving(moving.Concat(targetStack).Select(item => item.InstanceId));

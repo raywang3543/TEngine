@@ -49,7 +49,7 @@ namespace GameLogic.Core.Model
             var card = new CardRunData
             {
                 InstanceId = NewId("card"), CardId = cardId, StackId = NewId("stack"), X = x, Y = y,
-                IsFoil = foil,
+                IsFoil = foil, LastActiveRevision = Run.Revision,
                 Hp = Content.Units.Contains(cardId) ? Content.Units.Get(cardId).MaxHp.GetValueOrDefault(1) : 0,
             };
             Run.Cards.Add(card);

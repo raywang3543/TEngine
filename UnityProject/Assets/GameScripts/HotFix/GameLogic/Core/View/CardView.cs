@@ -11,6 +11,8 @@ namespace GameLogic.Core.View
     internal sealed class CardView : MonoBehaviour
     {
         private const int DragSortingBase = 30000;
+        // 快照位置平滑跟随时间：越小越跟手，顶开/战斗位移仍有滑动感。
+        private const float PositionSnapSmoothTime = 0.07f;
         // 装备槽指示圆点：中下位置，左到右对应 Hand / Head / Body。
         private const float EquipmentDotY = -0.35f;
         private const float EquipmentDotSpacing = 0.2f;
@@ -35,6 +37,9 @@ namespace GameLogic.Core.View
         private bool _wholeStackDragFeedback;
         private bool _dropTargetFeedback;
         private int _stackOrder;
+        private Vector3 _targetPosition;
+        private Vector3 _positionVelocity;
+        private bool _hasTargetPosition;
 
         public string InstanceId { get; private set; }
         public string StackId { get; private set; }
@@ -83,7 +88,13 @@ namespace GameLogic.Core.View
             StackId = data.StackId;
             _stackOrder = data.StackOrder;
             _selected = selected;
-            transform.position = new Vector3(data.X, data.Y - data.StackOrder * 0.32f, -data.StackOrder * 0.01f);
+            // 快照位置经 SmoothDamp 平滑跟随：堆叠被拒顶开、战斗位移等有滑动物理感；首张直接落位。
+            _targetPosition = new Vector3(data.X, data.Y - data.StackOrder * 0.32f, -data.StackOrder * 0.01f);
+            if (!_hasTargetPosition)
+            {
+                transform.position = _targetPosition;
+                _hasTargetPosition = true;
+            }
             RefreshSorting();
             Sprite body = ResolveBodySprite(data, out Color tint, out Color textColor);
             if (_body.sprite != body)
@@ -179,6 +190,20 @@ namespace GameLogic.Core.View
         {
             _dragSorting = active;
             RefreshSorting();
+        }
+
+        private void Update()
+        {
+            if (!_hasTargetPosition) return;
+            if (_dragSorting)
+            {
+                // 拖动与进食飞行期间由外部直接控制位置，此期间同步目标位置避免回扯。
+                _targetPosition = transform.position;
+                _positionVelocity = Vector3.zero;
+                return;
+            }
+            transform.position = Vector3.SmoothDamp(transform.position, _targetPosition,
+                ref _positionVelocity, PositionSnapSmoothTime);
         }
 
         /// <summary>进食飞行等脚本动画期间关闭碰撞，避免飞行动画中的卡牌被指针选中或拖动。</summary>
