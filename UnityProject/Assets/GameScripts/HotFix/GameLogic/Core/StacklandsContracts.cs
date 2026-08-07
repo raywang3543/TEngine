@@ -54,6 +54,8 @@ namespace GameLogic.Core
         public float Progress { get; internal set; }
         public bool IsFoil { get; internal set; }
         public bool IsLocked { get; internal set; }
+        /// <summary>是否为敌对单位（含 Boss）；敌对单位不可拖动。</summary>
+        public bool IsHostile { get; internal set; }
         public string Status { get; internal set; }
         /// <summary>是否为可佩戴装备的单位（单位表 CanEquip）。</summary>
         public bool CanEquip { get; internal set; }

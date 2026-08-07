@@ -222,7 +222,7 @@ namespace GameLogic.Tests
                     },
                     new CardRunData
                     {
-                        InstanceId = "card_c", CardId = "berry", StackId = "stack_b", StackOrder = 0,
+                        InstanceId = "card_c", CardId = "wood", StackId = "stack_b", StackOrder = 0,
                         X = -3f,
                     },
                 },
@@ -885,6 +885,232 @@ namespace GameLogic.Tests
                 Assert.That(run.Works, Has.Count.EqualTo(1), "移走多余卡牌后剩余牌堆应触发合成进度");
                 Assert.That(run.Works[0].DefinitionId, Is.EqualTo("recipe_stick_28"));
                 Assert.That(run.Works[0].StackId, Is.EqualTo("stack_a"));
+            }
+            finally
+            {
+                CoreSystem.Release();
+                Object.DestroyImmediate(boardObject);
+                Object.DestroyImmediate(cameraObject);
+            }
+        }
+
+        [Test]
+        public void StackRules_IncompatiblePair_RejectsStack()
+        {
+            IStacklandsContentModel content = StacklandsModelLoader.Build(_tables);
+            var run = new StacklandsRunData
+            {
+                RandomState = 1,
+                MoonDuration = 120f,
+                MoonRemaining = 120f,
+                Cards =
+                {
+                    new CardRunData { InstanceId = "wood", CardId = "wood", StackId = "stack_wood" },
+                    new CardRunData { InstanceId = "berry", CardId = "berry", StackId = "stack_berry", X = 3f },
+                },
+            };
+            var store = new MemorySaveStore(run);
+            var cameraObject = new GameObject("Stacklands Incompatible Test Camera");
+            cameraObject.tag = "MainCamera";
+            cameraObject.AddComponent<Camera>();
+            var boardObject = new GameObject("Stacklands Incompatible Test Board");
+            StacklandsBoardView boardView = boardObject.AddComponent<StacklandsBoardView>();
+
+            try
+            {
+                CoreSystem.Initialize(content, store, boardView);
+                CoreSystem.SubmitCommand(new StacklandsCommandDto { Kind = StacklandsCommandKind.ContinueGame });
+                CoreSystem.SubmitCommand(new StacklandsCommandDto
+                {
+                    Kind = StacklandsCommandKind.MoveCard,
+                    InstanceId = "berry",
+                    TargetInstanceId = "wood",
+                });
+
+                CardRunData berry = run.Cards.Single(card => card.InstanceId == "berry");
+                Assert.That(berry.StackId, Is.EqualTo("stack_berry"), "无归并或交互关系的卡牌不允许堆叠");
+                Assert.That(run.Cards.Single(card => card.InstanceId == "wood").StackId,
+                    Is.EqualTo("stack_wood"));
+            }
+            finally
+            {
+                CoreSystem.Release();
+                Object.DestroyImmediate(boardObject);
+                Object.DestroyImmediate(cameraObject);
+            }
+        }
+
+        [Test]
+        public void StackRules_VillagerClassPairs_AllowStack()
+        {
+            IStacklandsContentModel content = StacklandsModelLoader.Build(_tables);
+            var run = new StacklandsRunData
+            {
+                RandomState = 1,
+                MoonDuration = 120f,
+                MoonRemaining = 120f,
+                Cards =
+                {
+                    new CardRunData { InstanceId = "villager", CardId = "villager", StackId = "stack_villager" },
+                    new CardRunData { InstanceId = "dog", CardId = "dog", StackId = "stack_dog", X = 3f },
+                },
+            };
+            var store = new MemorySaveStore(run);
+            var cameraObject = new GameObject("Stacklands Villager Pair Test Camera");
+            cameraObject.tag = "MainCamera";
+            cameraObject.AddComponent<Camera>();
+            var boardObject = new GameObject("Stacklands Villager Pair Test Board");
+            StacklandsBoardView boardView = boardObject.AddComponent<StacklandsBoardView>();
+
+            try
+            {
+                CoreSystem.Initialize(content, store, boardView);
+                CoreSystem.SubmitCommand(new StacklandsCommandDto { Kind = StacklandsCommandKind.ContinueGame });
+                CoreSystem.SubmitCommand(new StacklandsCommandDto
+                {
+                    Kind = StacklandsCommandKind.MoveCard,
+                    InstanceId = "dog",
+                    TargetInstanceId = "villager",
+                });
+
+                Assert.That(run.Cards.Single(card => card.InstanceId == "dog").StackId,
+                    Is.EqualTo("stack_villager"), "村民类单位（含 Dog）互相可叠");
+            }
+            finally
+            {
+                CoreSystem.Release();
+                Object.DestroyImmediate(boardObject);
+                Object.DestroyImmediate(cameraObject);
+            }
+        }
+
+        [Test]
+        public void StackRules_EquipmentPairs_AllowStack()
+        {
+            IStacklandsContentModel content = StacklandsModelLoader.Build(_tables);
+            var run = new StacklandsRunData
+            {
+                RandomState = 1,
+                MoonDuration = 120f,
+                MoonRemaining = 120f,
+                Cards =
+                {
+                    new CardRunData { InstanceId = "sword", CardId = "sword", StackId = "stack_sword" },
+                    new CardRunData { InstanceId = "spear", CardId = "spear", StackId = "stack_spear", X = 3f },
+                },
+            };
+            var store = new MemorySaveStore(run);
+            var cameraObject = new GameObject("Stacklands Equipment Pair Test Camera");
+            cameraObject.tag = "MainCamera";
+            cameraObject.AddComponent<Camera>();
+            var boardObject = new GameObject("Stacklands Equipment Pair Test Board");
+            StacklandsBoardView boardView = boardObject.AddComponent<StacklandsBoardView>();
+
+            try
+            {
+                CoreSystem.Initialize(content, store, boardView);
+                CoreSystem.SubmitCommand(new StacklandsCommandDto { Kind = StacklandsCommandKind.ContinueGame });
+                CoreSystem.SubmitCommand(new StacklandsCommandDto
+                {
+                    Kind = StacklandsCommandKind.MoveCard,
+                    InstanceId = "spear",
+                    TargetInstanceId = "sword",
+                });
+
+                Assert.That(run.Cards.Single(card => card.InstanceId == "spear").StackId,
+                    Is.EqualTo("stack_sword"), "装备类卡牌互相可叠");
+            }
+            finally
+            {
+                CoreSystem.Release();
+                Object.DestroyImmediate(boardObject);
+                Object.DestroyImmediate(cameraObject);
+            }
+        }
+
+        [Test]
+        public void StackRules_EquipRelation_AllowsStackingOntoUnit()
+        {
+            IStacklandsContentModel content = StacklandsModelLoader.Build(_tables);
+            var run = new StacklandsRunData
+            {
+                RandomState = 1,
+                MoonDuration = 120f,
+                MoonRemaining = 120f,
+                Cards =
+                {
+                    new CardRunData { InstanceId = "villager", CardId = "villager", StackId = "stack_villager" },
+                    new CardRunData { InstanceId = "sword", CardId = "sword", StackId = "stack_sword", X = 3f },
+                },
+            };
+            var store = new MemorySaveStore(run);
+            var cameraObject = new GameObject("Stacklands Equip Stack Test Camera");
+            cameraObject.tag = "MainCamera";
+            cameraObject.AddComponent<Camera>();
+            var boardObject = new GameObject("Stacklands Equip Stack Test Board");
+            StacklandsBoardView boardView = boardObject.AddComponent<StacklandsBoardView>();
+
+            try
+            {
+                CoreSystem.Initialize(content, store, boardView);
+                CoreSystem.SubmitCommand(new StacklandsCommandDto { Kind = StacklandsCommandKind.ContinueGame });
+                CoreSystem.SubmitCommand(new StacklandsCommandDto
+                {
+                    Kind = StacklandsCommandKind.MoveCard,
+                    InstanceId = "sword",
+                    TargetInstanceId = "villager",
+                });
+
+                CardRunData villager = run.Cards.Single(card => card.InstanceId == "villager");
+                Assert.That(villager.EquipmentSlots?.Hand, Is.EqualTo("sword"),
+                    "装备叠到可佩戴单位上应被允许并自动佩戴");
+            }
+            finally
+            {
+                CoreSystem.Release();
+                Object.DestroyImmediate(boardObject);
+                Object.DestroyImmediate(cameraObject);
+            }
+        }
+
+        [Test]
+        public void StackRules_CombatContact_AllowsStack()
+        {
+            IStacklandsContentModel content = StacklandsModelLoader.Build(_tables);
+            var run = new StacklandsRunData
+            {
+                RandomState = 1,
+                MoonDuration = 120f,
+                MoonRemaining = 120f,
+                Cards =
+                {
+                    new CardRunData { InstanceId = "wolf", CardId = "wolf", StackId = "stack_wolf" },
+                    new CardRunData
+                    {
+                        InstanceId = "villager", CardId = "villager", StackId = "stack_villager", X = 3f,
+                    },
+                },
+            };
+            var store = new MemorySaveStore(run);
+            var cameraObject = new GameObject("Stacklands Combat Stack Test Camera");
+            cameraObject.tag = "MainCamera";
+            cameraObject.AddComponent<Camera>();
+            var boardObject = new GameObject("Stacklands Combat Stack Test Board");
+            StacklandsBoardView boardView = boardObject.AddComponent<StacklandsBoardView>();
+
+            try
+            {
+                CoreSystem.Initialize(content, store, boardView);
+                CoreSystem.SubmitCommand(new StacklandsCommandDto { Kind = StacklandsCommandKind.ContinueGame });
+                CoreSystem.SubmitCommand(new StacklandsCommandDto
+                {
+                    Kind = StacklandsCommandKind.MoveCard,
+                    InstanceId = "villager",
+                    TargetInstanceId = "wolf",
+                });
+
+                Assert.That(run.Cards.Single(card => card.InstanceId == "villager").StackId,
+                    Is.EqualTo("stack_wolf"), "友方单位可以叠到敌对单位上发起战斗");
             }
             finally
             {

@@ -21,6 +21,14 @@ namespace GameLogic.Core.Ctrl
                 : new List<CardRunData> { card };
             CardRunData target = Model.GetCard(targetId);
 
+            // 敌对单位不可拖动；整堆拖动只要含敌对单位（如交战中的混合牌堆）同样整体拒绝。
+            if (moving.Any(Model.IsHostile))
+            {
+                CoreSystem.Notify(StacklandsTexts.NotifyHostileUndraggable);
+                CoreSystem.ViewCtrl.PublishBoard();
+                return;
+            }
+
             // 整堆拖到空白处只是空间平移：牌堆组成不变，进行中的工作原样保留。
             if (wholeStack && target == null)
             {
@@ -47,10 +55,19 @@ namespace GameLogic.Core.Ctrl
 
         /// <summary>
         /// 把移动卡牌合并到目标牌堆，或拖到空白处独立成新堆。
+        /// 堆叠前先按 StacklandsStackRules 判定被拖卡与目标卡是否兼容，再检查容量。
         /// 组成一旦改变，涉及这些卡牌的工作进度立即终止：允许向工作中的牌堆堆叠，代价是打断其进度。
         /// </summary>
         private bool TryRestack(List<CardRunData> moving, CardRunData target, float x, float y)
         {
+            // 只允许有归并或交互关系的卡牌堆叠（同类、村民、装备、佩戴、敌我接触、配方/动作）。
+            if (target != null && !StacklandsStackRules.CanStackOn(Model.Content, moving, target))
+            {
+                CoreSystem.Notify(StacklandsTexts.NotifyIncompatibleStack);
+                CoreSystem.ViewCtrl.PublishBoard();
+                return false;
+            }
+
             List<CardRunData> targetStack = target == null
                 ? new List<CardRunData>()
                 : Model.Run.Cards.Where(item => item.StackId == target.StackId && !moving.Contains(item)).ToList();

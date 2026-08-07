@@ -140,6 +140,7 @@ namespace GameLogic.Core.Ctrl
                 CanSell = definition.IsSellable == true,
                 FoodValue = definition.FoodValue.GetValueOrDefault(), Hp = card.Hp, MaxHp = maxHp,
                 IsFoil = card.IsFoil, IsLocked = work != null,
+                IsHostile = Model.IsHostile(card),
                 Progress = showProgress
                     ? 1f - Math.Max(0f, work.Remaining) / Math.Max(0.01f, work.Duration)
                     : 0f,

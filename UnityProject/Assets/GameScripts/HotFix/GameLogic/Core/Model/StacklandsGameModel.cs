@@ -142,12 +142,8 @@ namespace GameLogic.Core.Model
             NormalizeStacks();
         }
 
-        internal bool IsHostile(CardRunData card)
-        {
-            if (!Content.Units.Contains(card.CardId)) return false;
-            UnitFaction faction = Content.Units.Get(card.CardId).Faction;
-            return faction == UnitFaction.Hostile || faction == UnitFaction.Boss;
-        }
+        internal bool IsHostile(CardRunData card) =>
+            Ctrl.StacklandsStackRules.IsHostile(Content, card.CardId);
 
         internal void MarkDirty() => SaveDelay = 0.5f;
 

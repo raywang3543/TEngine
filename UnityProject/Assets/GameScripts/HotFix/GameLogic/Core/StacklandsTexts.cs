@@ -29,6 +29,8 @@ namespace GameLogic.Core
         public const string NotifyBoosterLocked = "卡包尚未解锁";
         public const string NotifyDragCoinsToSlot = "请将金币堆拖到卡槽购买";
         public const string NotifyNotEnoughCoins = "金币不足";
+        public const string NotifyHostileUndraggable = "敌对单位无法拖动";
+        public const string NotifyIncompatibleStack = "这些卡牌无法堆叠";
 
         public static string NotifyQuestCompleted(string questName) => "任务完成：" + questName;
         public static string NotifyStackCapacity(int maxStackSize) => $"牌堆最多容纳 {maxStackSize} 张卡";

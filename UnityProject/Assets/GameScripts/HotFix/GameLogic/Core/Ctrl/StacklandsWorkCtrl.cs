@@ -192,20 +192,10 @@ namespace GameLogic.Core.Ctrl
         }
 
         private bool RequirementMatches(CardRunData card, CardRequirementDefinition requirement)
-        {
-            if (requirement.Matcher == "EXACT") return card.CardId == requirement.CardId;
-            CardDefinition definition = Model.Content.Cards.Get(card.CardId);
-            if (requirement.Matcher == "CATEGORY")
-                return string.Equals(definition.Category, requirement.Tag, StringComparison.OrdinalIgnoreCase);
-            return definition.Tags.Any(tag => string.Equals(tag, requirement.Tag, StringComparison.OrdinalIgnoreCase));
-        }
+            => StacklandsStackRules.RequirementMatches(Model.Content, card, requirement);
 
         private bool WorkerMatches(CardRunData card, WorkerKind kind)
-        {
-            CardDefinition definition = Model.Content.Cards.Get(card.CardId);
-            string tag = kind.ToString().ToUpperInvariant();
-            return definition.Tags.Contains(tag) || kind == WorkerKind.Worker && definition.Tags.Contains("WORKER");
-        }
+            => StacklandsStackRules.WorkerMatches(Model.Content, card, kind);
 
         private void ConsumeRequirements(List<CardRunData> cards,
             IReadOnlyList<CardRequirementDefinition> requirements)

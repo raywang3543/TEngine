@@ -119,6 +119,7 @@ namespace GameLogic.Core.View
         public void Render(BoardSnapshot snapshot)
         {
             if (snapshot == null) return;
+            EnsureAssets();
             // 所属单位被销毁（出售/战斗死亡等）时清理残留的装备卡堆。
             if (_equipmentFanUnit == null) CloseEquipmentFan();
             _cardData.Clear();
@@ -240,6 +241,7 @@ namespace GameLogic.Core.View
         public void RenderHud(HudSnapshot snapshot)
         {
             if (snapshot == null) return;
+            EnsureAssets();
             // 出售槽与商店槽延迟到对局开始后的首个 HUD 快照创建，开始菜单阶段不显示。
             if (_sellSlot == null)
             {
@@ -397,6 +399,17 @@ namespace GameLogic.Core.View
             if (_draggedCard == null)
             {
                 CloseEquipmentFan();
+                return;
+            }
+            // 敌对单位不可拖动，按下时只响应点选，不进入拖动状态。
+            if (_cardData.TryGetValue(_draggedCard.InstanceId, out CardSnapshot pressedData) &&
+                pressedData.IsHostile)
+            {
+                CoreSystem.SubmitCommand(new StacklandsCommandDto
+                {
+                    Kind = StacklandsCommandKind.SelectCard, InstanceId = _draggedCard.InstanceId,
+                });
+                _draggedCard = null;
                 return;
             }
             // 按下其他卡牌时收起装备卡堆；按下所属单位时保留，松开时切换展开/收起。
@@ -923,6 +936,15 @@ namespace GameLogic.Core.View
             _borderBlack = null;
             _borderWhite = null;
             _borderYellow = null;
+        }
+
+        /// <summary>
+        /// EditMode 测试等不走 Awake 的场景下补建基础绘制资源，保证 Render/RenderHud 可直接调用。
+        /// </summary>
+        private void EnsureAssets()
+        {
+            if (_whiteSprite == null) _whiteSprite = CreateWhiteSprite();
+            if (_font == null) _font = CreateChineseFont();
         }
 
         private static Sprite CreateWhiteSprite()
