@@ -62,6 +62,7 @@ namespace GameLogic.Core.View
         private Font _font;
         private SellSlotView _sellSlot;
         private CardView _draggedCard;
+        private CardView _dropTargetCard;
         private readonly Dictionary<string, CardSnapshot> _cardData = new Dictionary<string, CardSnapshot>();
         private readonly List<EquippedCardView> _equipmentFanCards = new List<EquippedCardView>();
         private CardView _equipmentFanUnit;
@@ -316,6 +317,7 @@ namespace GameLogic.Core.View
                     PromoteToWholeStackDrag();
                 CloseEquipmentFanOnDrag(mouse);
                 MoveDraggedCards(anchorPosition);
+                UpdateStackTargetFeedback();
                 UpdateSlotFeedback(ScreenToWorld(mouse));
             }
             else if (Input.GetMouseButton(0) && _draggedBooster != null)
@@ -353,6 +355,7 @@ namespace GameLogic.Core.View
                         PromoteToWholeStackDrag();
                     CloseEquipmentFanOnDrag(touch.position);
                     MoveDraggedCards(anchorPosition);
+                    UpdateStackTargetFeedback();
                     UpdateSlotFeedback(ScreenToWorld(touch.position));
                 }
                 else if (_draggedBooster != null)
@@ -395,6 +398,7 @@ namespace GameLogic.Core.View
             }
             ShopSlotView shopSlot = hit.GetComponent<ShopSlotView>();
             if (shopSlot != null) return;
+            ClearDropTargetFeedback();
             _draggedCard = hit.GetComponent<CardView>();
             if (_draggedCard == null)
             {
@@ -491,6 +495,7 @@ namespace GameLogic.Core.View
             {
                 RestoreDraggedCards();
                 ClearWholeStackFeedback();
+                ClearDropTargetFeedback();
                 SetDraggedCardsSorting(false);
                 HideSlotBorders();
                 _draggedCard = null;
@@ -501,6 +506,7 @@ namespace GameLogic.Core.View
                 return;
             }
             ClearWholeStackFeedback();
+            ClearDropTargetFeedback();
             SetDraggedCardsSorting(false);
             HideSlotBorders();
             _draggedCard = null;
@@ -526,15 +532,13 @@ namespace GameLogic.Core.View
                 });
                 return;
             }
-            Collider2D target = Physics2D.OverlapPointAll(world)
-                .OrderBy(item => item.transform.position.z)
-                .FirstOrDefault(item => item.GetComponent<CardView>() != null &&
-                                        !movingIds.Contains(item.GetComponent<CardView>().InstanceId));
+            // 松手判定按被拖卡的牌面重叠（而非指针点）寻找堆叠目标，避免牌面已接触但指针未命中。
+            CardView target = FindStackTarget(pressedCard, movingIds);
             CoreSystem.SubmitCommand(new StacklandsCommandDto
             {
                 Kind = moveWholeStack ? StacklandsCommandKind.MoveStack : StacklandsCommandKind.MoveCard,
                 InstanceId = draggedId,
-                TargetInstanceId = target == null ? null : target.GetComponent<CardView>().InstanceId,
+                TargetInstanceId = target == null ? null : target.InstanceId,
                 X = world.x,
                 Y = world.y,
             });
@@ -694,6 +698,54 @@ namespace GameLogic.Core.View
         {
             foreach (KeyValuePair<CardView, Vector3> pair in _draggedOffsets)
                 if (pair.Key != null) pair.Key.transform.position = anchorPosition + pair.Value;
+        }
+
+        /// <summary>
+        /// 以被拖卡的碰撞体（而非指针点）做重叠检测，返回重叠面积最大的可堆叠目标卡。
+        /// </summary>
+        private CardView FindStackTarget(CardView anchor, HashSet<string> movingIds)
+        {
+            Bounds bounds = anchor.ColliderBounds;
+            CardView best = null;
+            float bestOverlap = 0f;
+            foreach (Collider2D hit in Physics2D.OverlapBoxAll(bounds.center, bounds.size, 0f))
+            {
+                CardView card = hit.GetComponent<CardView>();
+                if (card == null || movingIds.Contains(card.InstanceId)) continue;
+                Bounds other = card.ColliderBounds;
+                float overlap = Mathf.Max(0f, Mathf.Min(bounds.max.x, other.max.x) -
+                                            Mathf.Max(bounds.min.x, other.min.x)) *
+                                Mathf.Max(0f, Mathf.Min(bounds.max.y, other.max.y) -
+                                            Mathf.Max(bounds.min.y, other.min.y));
+                if (overlap > bestOverlap)
+                {
+                    bestOverlap = overlap;
+                    best = card;
+                }
+            }
+            return best;
+        }
+
+        /// <summary>拖动途中实时高亮当前牌面重叠命中的堆叠目标。</summary>
+        private void UpdateStackTargetFeedback()
+        {
+            CardView target = null;
+            if (_draggedCard != null && _draggedOffsets.Count > 0)
+            {
+                var movingIds = new HashSet<string>(_draggedOffsets.Keys
+                    .Where(card => card != null).Select(card => card.InstanceId));
+                target = FindStackTarget(_draggedCard, movingIds);
+            }
+            if (target == _dropTargetCard) return;
+            if (_dropTargetCard != null) _dropTargetCard.SetDropTargetFeedback(false);
+            _dropTargetCard = target;
+            if (_dropTargetCard != null) _dropTargetCard.SetDropTargetFeedback(true);
+        }
+
+        private void ClearDropTargetFeedback()
+        {
+            if (_dropTargetCard != null) _dropTargetCard.SetDropTargetFeedback(false);
+            _dropTargetCard = null;
         }
 
         private void UpdateBoosterDrag(Vector3 pointer)

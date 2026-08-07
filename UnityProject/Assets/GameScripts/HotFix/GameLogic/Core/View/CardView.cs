@@ -33,10 +33,14 @@ namespace GameLogic.Core.View
         private bool _selected;
         private bool _dragSorting;
         private bool _wholeStackDragFeedback;
+        private bool _dropTargetFeedback;
         private int _stackOrder;
 
         public string InstanceId { get; private set; }
         public string StackId { get; private set; }
+
+        /// <summary>牌面碰撞体的世界包围盒，用于拖动重叠检测。</summary>
+        public Bounds ColliderBounds => _collider.bounds;
 
         public CardView Initialize(string id, Sprite sprite, Font font,
             IReadOnlyDictionary<string, Sprite> cardSprites)
@@ -163,6 +167,14 @@ namespace GameLogic.Core.View
             RefreshOutline();
         }
 
+        /// <summary>拖动途中被牌面重叠命中的堆叠目标：黄色边框提示，与整堆拖动同色但不显示角标。</summary>
+        public void SetDropTargetFeedback(bool active)
+        {
+            if (_dropTargetFeedback == active) return;
+            _dropTargetFeedback = active;
+            RefreshOutline();
+        }
+
         public void SetDragSorting(bool active)
         {
             _dragSorting = active;
@@ -190,7 +202,8 @@ namespace GameLogic.Core.View
 
         private void RefreshOutline()
         {
-            Sprite border = _wholeStackDragFeedback ? _borderYellow
+            bool highlight = _wholeStackDragFeedback || _dropTargetFeedback;
+            Sprite border = highlight ? _borderYellow
                 : _selected ? _borderWhite : _borderBlack;
             if (border != null)
             {
@@ -206,10 +219,10 @@ namespace GameLogic.Core.View
             Vector2 bodySize = _body.sprite.bounds.size;
             _outline.sprite = _fallbackSprite;
             _outline.sortingOrder = -1;
-            _outline.color = _wholeStackDragFeedback
+            _outline.color = highlight
                 ? new Color32(255, 226, 92, 255)
                 : _selected ? Color.white : Color.black;
-            _outline.transform.localScale = _wholeStackDragFeedback
+            _outline.transform.localScale = highlight
                 ? new Vector3(bodySize.x + 0.2f, bodySize.y + 0.2f, 1f)
                 : new Vector3(bodySize.x + 0.12f, bodySize.y + 0.12f, 1f);
         }
